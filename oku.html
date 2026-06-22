@@ -3,170 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oku – MangaTürk</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <title>Oku – AkaToon</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22;
-      --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899;
-    }
+    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899; }
     body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
     a { color: inherit; text-decoration: none; }
-
-    /* TOP BAR */
-    .reader-nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(13,13,15,0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 24px;
-      display: flex; align-items: center; gap: 16px;
-    }
-    .reader-nav .logo { font-family: 'Bebas Neue'; font-size: 22px; }
-    .logo-manga { color: var(--red); }
-    .reader-title { font-size: 14px; font-weight: 600; flex: 1; }
-    .reader-title span { color: var(--muted); font-weight: 400; }
-
-    .chapter-select {
-      background: var(--bg3); border: 1px solid var(--border);
-      color: var(--text); padding: 6px 12px; border-radius: 6px;
-      font-size: 13px; cursor: pointer; outline: none;
-    }
-    .chapter-select:focus { border-color: var(--red); }
-
-    .nav-btn {
-      background: var(--bg3); border: 1px solid var(--border);
-      color: var(--text); padding: 6px 14px; border-radius: 6px;
-      font-size: 13px; font-weight: 600; cursor: pointer;
-      transition: background .2s, border-color .2s;
-    }
-    .nav-btn:hover { background: var(--red); border-color: var(--red); }
-
-    /* AD */
-    .ad-reader {
-      max-width: 728px; margin: 16px auto;
-      background: var(--bg2); border: 1px dashed var(--border);
-      height: 90px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: 12px; letter-spacing: 1px;
-    }
-
-    /* PAGES */
-    .reader-container { max-width: 800px; margin: 0 auto; padding: 0 16px 60px; }
-
-    .page-img {
-      width: 100%; display: block; margin-bottom: 4px; border-radius: 4px;
-      background: var(--bg2);
-      min-height: 400px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: 14px;
-    }
-
-    .page-placeholder {
-      width: 100%; background: var(--bg2);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: 13px; border-radius: 4px;
-      margin-bottom: 4px; min-height: 500px;
-      border: 1px solid var(--border);
-      position: relative;
-    }
-    .page-num {
-      position: absolute; top: 12px; right: 12px;
-      background: rgba(0,0,0,.6); color: var(--muted);
-      font-size: 11px; padding: 3px 8px; border-radius: 4px;
-    }
-    .page-content {
-      font-family: 'Bebas Neue'; font-size: 80px; color: #1c1c22;
-      user-select: none;
-    }
-
-    /* BOTTOM NAV */
-    .reader-bottom {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(13,13,15,0.97);
-      backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border);
-      padding: 12px 24px;
-      display: flex; align-items: center; justify-content: center; gap: 16px;
-    }
+    .reader-nav { position: sticky; top: 0; z-index: 100; background: rgba(13,13,15,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .logo { font-family: 'Bebas Neue'; font-size: 22px; } .logo span { color: var(--red); }
+    .reader-title { font-size: 13px; font-weight: 600; flex: 1; }
+    .reader-title small { color: var(--muted); font-weight: 400; }
+    .chapter-select { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; outline: none; }
+    .nav-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; }
+    .nav-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+    .nav-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .ad-reader { max-width: 728px; margin: 14px auto; background: var(--bg2); border: 1px dashed var(--border); height: 90px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
+    .reader-container { max-width: 800px; margin: 0 auto; padding: 0 12px 80px; }
+    .page-img { width: 100%; display: block; margin-bottom: 3px; border-radius: 4px; }
+    .page-placeholder { width: 100%; background: var(--bg2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; border-radius: 4px; margin-bottom: 3px; min-height: 500px; border: 1px solid var(--border); position: relative; }
+    .page-num { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,.6); color: var(--muted); font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+    .reader-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(13,13,15,0.97); backdrop-filter: blur(12px); border-top: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 16px; }
     .progress { color: var(--muted); font-size: 13px; }
+    .kaldigim-kaydedildi { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; animation: fadeIn .3s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
-
   <nav class="reader-nav">
-    <a href="index.html" class="logo"><span class="logo-manga">M</span>T</a>
-    <div class="reader-title">
-      Jujutsu Kaisen <span>/ Bölüm 1</span>
-    </div>
-    <select class="chapter-select" onchange="changeChapter(this.value)">
-      <option value="1" selected>Bölüm 1</option>
-      <option value="2">Bölüm 2</option>
-      <option value="3">Bölüm 3</option>
-      <option value="4">Bölüm 4</option>
-      <option value="5">Bölüm 5</option>
-    </select>
-    <button class="nav-btn" onclick="prevChapter()">← Önceki</button>
-    <button class="nav-btn" onclick="nextChapter()">Sonraki →</button>
+    <a href="index.html" class="logo"><span>A</span>T</a>
+    <div class="reader-title" id="readerTitle">Yükleniyor... <small></small></div>
+    <select class="chapter-select" id="chapterSelect" onchange="bolumDegistir(this.value)"></select>
+    <button class="nav-btn" id="prevBtn" onclick="prevChapter()" disabled>← Önceki</button>
+    <button class="nav-btn" id="nextBtn" onclick="nextChapter()" disabled>Sonraki →</button>
   </nav>
 
   <div class="ad-reader">Reklam</div>
-
-  <div class="reader-container" id="readerContainer">
-    <!-- Sayfalar JavaScript ile oluşturuluyor -->
-  </div>
-
+  <div class="reader-container" id="readerContainer"><div style="color:var(--muted);text-align:center;padding:60px">Yükleniyor...</div></div>
   <div class="ad-reader">Reklam</div>
 
   <div class="reader-bottom">
-    <button class="nav-btn" onclick="prevChapter()">← Önceki Bölüm</button>
-    <span class="progress" id="progressText">Sayfa 1 / 20</span>
-    <button class="nav-btn" onclick="nextChapter()">Sonraki Bölüm →</button>
+    <button class="nav-btn" id="prevBtn2" onclick="prevChapter()" disabled>← Önceki Bölüm</button>
+    <span class="progress" id="progressText"></span>
+    <button class="nav-btn" id="nextBtn2" onclick="nextChapter()" disabled>Sonraki Bölüm →</button>
   </div>
 
   <script>
-    const totalPages = 20;
+    const SUPABASE_URL='https://wxfmatafacdjhiurowut.supabase.co';
+    const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+    const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+    const params=new URLSearchParams(window.location.search);
+    const mangaId=params.get('manga');
+    let bolumNo=parseInt(params.get('bolum'))||1;
+    let tumBolumler=[], currentUser=null, mangaBaslik='';
 
-    function renderPages() {
-      const container = document.getElementById('readerContainer');
-      container.innerHTML = '';
-      for (let i = 1; i <= totalPages; i++) {
-        const div = document.createElement('div');
-        div.className = 'page-placeholder';
-        div.style.minHeight = (i % 3 === 0 ? '700px' : '520px');
-        div.innerHTML = `
-          <span class="page-content">SAYFA ${i}</span>
-          <span class="page-num">${i} / ${totalPages}</span>
-        `;
-        container.appendChild(div);
+    async function init(){
+      const{data:{user}}=await sb.auth.getUser();
+      currentUser=user;
+      await loadManga();
+      await loadBolumler();
+      renderBolum();
+      if(currentUser) kaydetKaldigimBolum();
+    }
+
+    async function loadManga(){
+      const{data}=await sb.from('manga').select('baslik').eq('id',mangaId).single();
+      if(data) mangaBaslik=data.baslik;
+    }
+
+    async function loadBolumler(){
+      const{data}=await sb.from('bolumler').select('*').eq('manga_id',mangaId).order('bolum_no');
+      tumBolumler=data||[];
+      const sel=document.getElementById('chapterSelect');
+      sel.innerHTML=tumBolumler.map(b=>`<option value="${b.bolum_no}" ${b.bolum_no==bolumNo?'selected':''}>Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</option>`).join('');
+    }
+
+    function renderBolum(){
+      const bolum=tumBolumler.find(b=>b.bolum_no==bolumNo);
+      const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);
+
+      document.getElementById('readerTitle').innerHTML=`${mangaBaslik} <small>/ Bölüm ${bolumNo}</small>`;
+      document.title=`Bölüm ${bolumNo} – ${mangaBaslik} – AkaToon`;
+
+      const hasPrev=idx>0, hasNext=idx<tumBolumler.length-1;
+      ['prevBtn','prevBtn2'].forEach(id=>{document.getElementById(id).disabled=!hasPrev;});
+      ['nextBtn','nextBtn2'].forEach(id=>{document.getElementById(id).disabled=!hasNext;});
+
+      const container=document.getElementById('readerContainer');
+      if(!bolum){container.innerHTML='<div style="color:var(--muted);text-align:center;padding:60px">Bölüm bulunamadı.</div>';return;}
+
+      const sayfalar=bolum.sayfalar||[];
+      document.getElementById('progressText').textContent=`${sayfalar.length} Sayfa`;
+
+      if(sayfalar.length===0){
+        container.innerHTML='<div style="color:var(--muted);text-align:center;padding:60px">Bu bölümde sayfa yok.</div>';return;
       }
-      document.getElementById('progressText').textContent = `Toplam ${totalPages} Sayfa`;
+
+      container.innerHTML=sayfalar.map((url,i)=>`
+        <div style="position:relative">
+          <img class="page-img" src="${url}" alt="Sayfa ${i+1}" loading="lazy" onerror="this.style.minHeight='300px';this.style.background='var(--bg2)'" />
+          <span class="page-num">${i+1} / ${sayfalar.length}</span>
+        </div>`).join('');
     }
 
-    function changeChapter(val) {
-      console.log('Bölüm değişti:', val);
-      renderPages();
+    async function kaydetKaldigimBolum(){
+      if(!currentUser||!mangaId) return;
+      await sb.from('okuma_gecmisi').upsert([{user_id:currentUser.id,manga_id:mangaId,bolum_no:bolumNo,updated_at:new Date().toISOString()}],{onConflict:'user_id,manga_id'});
     }
 
-    function nextChapter() {
-      const sel = document.querySelector('.chapter-select');
-      if (sel.selectedIndex < sel.options.length - 1) {
-        sel.selectedIndex++;
-        changeChapter(sel.value);
-      }
+    function bolumDegistir(no){
+      bolumNo=parseInt(no);
+      window.scrollTo(0,0);
+      renderBolum();
+      if(currentUser) kaydetKaldigimBolum();
+      history.replaceState(null,'',`oku.html?manga=${mangaId}&bolum=${bolumNo}`);
     }
 
-    function prevChapter() {
-      const sel = document.querySelector('.chapter-select');
-      if (sel.selectedIndex > 0) {
-        sel.selectedIndex--;
-        changeChapter(sel.value);
-      }
+    function prevChapter(){
+      const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);
+      if(idx>0) bolumDegistir(tumBolumler[idx-1].bolum_no);
+    }
+    function nextChapter(){
+      const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);
+      if(idx<tumBolumler.length-1) bolumDegistir(tumBolumler[idx+1].bolum_no);
     }
 
-    renderPages();
+    init();
   </script>
 </body>
 </html>

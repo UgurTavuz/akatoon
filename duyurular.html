@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Duyurular – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    nav { background: rgba(13,13,15,0.96); border-bottom: 1px solid var(--border); padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px; }
+    .logo { font-family: 'Bebas Neue'; font-size: 26px; } .logo span { color: var(--red); }
+    .container { max-width: 800px; margin: 40px auto; padding: 0 24px 60px; }
+    h1 { font-family: 'Bebas Neue'; font-size: 36px; margin-bottom: 24px; }
+    .duyuru-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+    .duyuru-card.onemli { border-color: var(--red); }
+    .duyuru-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .duyuru-baslik { font-size: 18px; font-weight: 700; }
+    .onemli-badge { background: rgba(232,25,44,0.15); color: var(--red); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .duyuru-icerik { color: var(--muted); font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+    .duyuru-footer { display: flex; align-items: center; gap: 12px; margin-top: 14px; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+    <span style="color:var(--muted);font-size:14px">/ Duyurular</span>
+  </nav>
+  <div class="container">
+    <h1>📢 Duyurular</h1>
+    <div id="content"><div style="color:var(--muted);text-align:center;padding:40px">Yükleniyor...</div></div>
+  </div>
+  <script>
+    const SUPABASE_URL='https://wxfmatafacdjhiurowut.supabase.co';
+    const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+    const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+    async function init(){
+      const{data}=await sb.from('duyurular').select('*').order('created_at',{ascending:false});
+      const el=document.getElementById('content');
+      if(!data||!data.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:40px">Henüz duyuru yok.</div>';return;}
+      el.innerHTML=data.map(d=>`<div class="duyuru-card${d.onemli?' onemli':''}"><div class="duyuru-header"><div class="duyuru-baslik">${d.baslik}</div>${d.onemli?'<span class="onemli-badge">🔴 ÖNEMLİ</span>':''}</div><div class="duyuru-icerik">${d.icerik}</div><div class="duyuru-footer"><span>✍️ ${d.yazar}</span><span>${new Date(d.created_at).toLocaleDateString('tr-TR')}</span></div></div>`).join('');
+    }
+    init();
+  </script>
+</body>
+</html>

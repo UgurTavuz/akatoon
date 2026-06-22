@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İstek Listesi – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899; --gold: #f5c842; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    nav { background: rgba(13,13,15,0.96); border-bottom: 1px solid var(--border); padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px; }
+    .logo { font-family: 'Bebas Neue'; font-size: 26px; } .logo span { color: var(--red); }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 24px; }
+    h1 { font-family: 'Bebas Neue'; font-size: 36px; margin-bottom: 24px; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+    .card { background: var(--bg2); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: transform .2s, border-color .2s; }
+    .card:hover { transform: translateY(-4px); border-color: var(--red); }
+    .card-cover { height: 220px; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue'; font-size: 32px; color: var(--red); position: relative; overflow: hidden; }
+    .card-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .card-info { padding: 10px 12px; }
+    .card-info h3 { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .card-rating { color: var(--gold); font-size: 11px; }
+    .remove-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.7); border: none; color: #fff; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .2s; }
+    .card:hover .remove-btn { opacity: 1; }
+    .empty { text-align: center; padding: 60px; color: var(--muted); }
+    .empty p { font-size: 14px; margin-bottom: 16px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--red); color: #fff; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+    <span style="color:var(--muted);font-size:14px">/ İstek Listesi</span>
+  </nav>
+  <div class="container">
+    <h1>❤️ İstek Listem</h1>
+    <div id="content"><div style="color:var(--muted);text-align:center;padding:40px">Yükleniyor...</div></div>
+  </div>
+  <script>
+    const SUPABASE_URL='https://wxfmatafacdjhiurowut.supabase.co';
+    const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+    const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+
+    async function init(){
+      const{data:{user}}=await sb.auth.getUser();
+      if(!user){window.location.href='giris.html';return;}
+      const{data}=await sb.from('istek_listesi').select('*,manga(*)').eq('user_id',user.id).order('created_at',{ascending:false});
+      const el=document.getElementById('content');
+      if(!data||!data.length){
+        el.innerHTML='<div class="empty"><p>İstek listeniz boş.</p><a href="index.html" class="btn">Manga Keşfet</a></div>';
+        return;
+      }
+      el.innerHTML=`<div class="cards-grid">${data.map(d=>{const m=d.manga;return`<div class="card" onclick="window.location.href='detay.html?manga=${m.id}'"><div class="card-cover">${m.kapak_url?`<img src="${m.kapak_url}"/>`:'<span>'+m.baslik.substring(0,3).toUpperCase()+'</span>'}<button class="remove-btn" onclick="event.stopPropagation();kaldir('${d.id}',this)">✕</button></div><div class="card-info"><h3>${m.baslik}</h3>${m.puan?`<div class="card-rating">⭐ ${m.puan}</div>`:''}</div></div>`;}).join('')}</div>`;
+    }
+
+    async function kaldir(id,btn){
+      await sb.from('istek_listesi').delete().eq('id',id);
+      btn.closest('.card').remove();
+    }
+    init();
+  </script>
+</body>
+</html>
