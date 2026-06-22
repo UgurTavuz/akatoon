@@ -231,7 +231,21 @@
               <div class="form-group"><label>Başlık *</label><input type="text" id="mangaBaslik" placeholder="Örn: Jujutsu Kaisen" /></div>
               <div class="form-group"><label>Durum</label><select id="mangaDurum"><option value="devam">Devam Ediyor</option><option value="tamamlandi">Tamamlandı</option><option value="beklemede">Beklemede</option></select></div>
               <div class="form-group full"><label>Açıklama</label><textarea id="mangaAciklama" placeholder="Manga hakkında açıklama..."></textarea></div>
-              <div class="form-group"><label>Kapak URL</label><input type="text" id="mangaKapak" placeholder="https://i.ibb.co/..." /></div>
+              <div class="form-group">
+                <label>Kapak Görseli</label>
+                <div style="display:flex;gap:10px;align-items:flex-start;flex-direction:column">
+                  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                    <input type="file" id="kapakDosya" accept="image/*" style="display:none" onchange="kapakYukle(this)" />
+                    <button type="button" class="btn btn-secondary" style="padding:8px 16px;font-size:13px" onclick="document.getElementById('kapakDosya').click()">📷 Fotoğraf Seç</button>
+                    <span style="color:var(--muted);font-size:12px">veya</span>
+                    <input type="text" id="mangaKapak" placeholder="https://... URL yapıştır" style="flex:1;min-width:200px;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:13px;outline:none" />
+                  </div>
+                  <div id="kapakOnizleme" style="display:none">
+                    <img id="kapakImg" src="" style="width:120px;height:160px;object-fit:cover;border-radius:8px;border:1px solid var(--border)" />
+                    <div style="color:var(--green);font-size:12px;margin-top:4px" id="kapakDurum"></div>
+                  </div>
+                </div>
+              </div>
               <div class="form-group"><label>Puan (1-10)</label><input type="number" id="mangaPuan" min="1" max="10" step="0.1" placeholder="9.4" /></div>
               <div class="form-group"><label>SEO Başlık</label><input type="text" id="mangaSeoBaslik" placeholder="Manga adı + Türkçe Oku" /></div>
               <div class="form-group full"><label>SEO Açıklama</label><textarea id="mangaSeoAciklama" placeholder="Arama motorları için kısa açıklama..." style="min-height:60px"></textarea></div>
@@ -752,6 +766,42 @@ async function veriYukle(){
   const{error}=await sb.from(tablo).insert(data);
   if(error)showMsg('yukleMsg','error','Hata: '+error.message);
   else showMsg('yukleMsg','success','✅ '+data.length+' kayıt yüklendi!');
+}
+
+
+async function kapakYukle(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Maksimum 5MB yükleyebilirsiniz!');
+    return;
+  }
+
+  document.getElementById('kapakDurum').textContent = '⏳ Yükleniyor...';
+  document.getElementById('kapakOnizleme').style.display = 'block';
+
+  // Önizleme göster
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('kapakImg').src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  // Supabase Storage'a yükle
+  const ext = file.name.split('.').pop();
+  const path = 'kapaklar/' + Date.now() + '.' + ext;
+
+  const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+  if (upErr) {
+    document.getElementById('kapakDurum').textContent = '❌ Hata: ' + upErr.message;
+    document.getElementById('kapakDurum').style.color = 'var(--red)';
+    return;
+  }
+
+  const { data } = sb.storage.from('avatars').getPublicUrl(path);
+  document.getElementById('mangaKapak').value = data.publicUrl;
+  document.getElementById('kapakDurum').textContent = '✅ Yüklendi!';
+  document.getElementById('kapakDurum').style.color = 'var(--green)';
 }
 
 function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<3600)return Math.floor(s/60)+'dk';if(s<86400)return Math.floor(s/3600)+'sa';return Math.floor(s/86400)+'g';}
