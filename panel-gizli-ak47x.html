@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Panel – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --red-dark: #b01020; --gold: #f5c842; --green: #22c55e; --text: #e8e8f0; --muted: #888899; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    .topbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; height: 58px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .logo { font-family: 'Bebas Neue'; font-size: 24px; } .logo span { color: var(--red); }
+    .admin-badge { background: rgba(232,25,44,0.15); color: var(--red); border: 1px solid rgba(232,25,44,0.3); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .btn-sm { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: none; color: var(--muted); transition: all .2s; }
+    .btn-sm:hover { border-color: var(--red); color: var(--red); }
+    .btn-sm.red { background: var(--red); color: #fff; border-color: var(--red); }
+    .layout { display: flex; min-height: calc(100vh - 58px); }
+    .sidebar { width: 230px; background: var(--bg2); border-right: 1px solid var(--border); padding: 16px 0; flex-shrink: 0; overflow-y: auto; }
+    .sidebar-title { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; padding: 8px 20px 4px; text-transform: uppercase; }
+    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .15s; border-left: 2px solid transparent; }
+    .sidebar-item:hover { color: var(--text); background: var(--bg3); }
+    .sidebar-item.active { color: var(--text); background: var(--bg3); border-left-color: var(--red); }
+    .main { flex: 1; padding: 28px; overflow-y: auto; }
+    .page { display: none; } .page.active { display: block; }
+    .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .back-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 7px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+    .back-btn:hover { color: var(--text); border-color: var(--red); }
+    .page-header h2 { font-family: 'Bebas Neue'; font-size: 28px; letter-spacing: 1px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+    .stat-label { font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: .5px; margin-bottom: 8px; text-transform: uppercase; }
+    .stat-value { font-family: 'Bebas Neue'; font-size: 34px; line-height: 1; }
+    .stat-value.red { color: var(--red); } .stat-value.gold { color: var(--gold); } .stat-value.green { color: var(--green); }
+    .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 18px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .card-header h3 { font-size: 15px; font-weight: 700; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group.full { grid-column: 1/-1; }
+    .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .3px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; transition: border-color .2s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--red); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .tur-secim { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+    .tur-card { background: var(--bg3); border: 2px solid var(--border); border-radius: 10px; padding: 16px 10px; text-align: center; cursor: pointer; transition: all .2s; }
+    .tur-card:hover, .tur-card.selected { border-color: var(--red); background: rgba(232,25,44,0.08); }
+    .tur-icon { font-size: 28px; margin-bottom: 6px; }
+    .tur-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .tur-card p { color: var(--muted); font-size: 10px; }
+    .kategori-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
+    .kategori-item { display: flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border); border-radius: 7px; padding: 7px 10px; cursor: pointer; transition: all .2s; }
+    .kategori-item:hover, .kategori-item.checked { border-color: var(--red); background: rgba(232,25,44,0.08); }
+    .kategori-item span { font-size: 11px; font-weight: 500; }
+    .sayfalar-container { border: 1px solid var(--border); border-radius: 8px; padding: 14px; background: var(--bg3); }
+    .sayfa-url-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; max-height: 350px; overflow-y: auto; }
+    .sayfa-url-item { display: flex; gap: 8px; align-items: center; }
+    .sayfa-no { color: var(--muted); font-size: 11px; min-width: 22px; font-weight: 600; }
+    .btn-sayfa-ekle { background: var(--bg2); border: 1px dashed var(--border); color: var(--muted); padding: 7px; border-radius: 6px; cursor: pointer; font-size: 12px; width: 100%; transition: all .2s; }
+    .btn-sayfa-ekle:hover { border-color: var(--red); color: var(--red); }
+    .btn-sayfa-sil { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; padding: 3px; border-radius: 4px; }
+    .btn-sayfa-sil:hover { color: var(--red); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 10px; color: var(--muted); font-weight: 700; padding: 9px 12px; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: .5px; }
+    td { padding: 11px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.015); }
+    .badge { padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+    .badge-manga { background: rgba(96,96,255,0.15); color: #9090ff; }
+    .badge-webtoon { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .badge-manhua { background: rgba(245,200,66,0.15); color: var(--gold); }
+    .badge-manhwa { background: rgba(255,150,50,0.15); color: #ff9632; }
+    .badge-onay { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .badge-bekle { background: rgba(245,200,66,0.15); color: var(--gold); }
+    .btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--red); color: #fff; } .btn-primary:hover { background: var(--red-dark); }
+    .btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); } .btn-secondary:hover { border-color: var(--red); }
+    .btn-success { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .btn-danger { background: rgba(232,25,44,0.1); color: var(--red); border: 1px solid rgba(232,25,44,0.3); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 12px; display: none; }
+    .msg.error { background: rgba(232,25,44,0.1); border: 1px solid rgba(232,25,44,0.3); color: #ff6b7a; display: block; }
+    .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; display: block; }
+    .chart-container { position: relative; height: 200px; }
+    .top-list { display: flex; flex-direction: column; gap: 6px; }
+    .top-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--bg3); border-radius: 8px; }
+    .top-rank { font-family: 'Bebas Neue'; font-size: 20px; color: var(--red); min-width: 24px; }
+    .top-info { flex: 1; }
+    .top-title { font-size: 13px; font-weight: 600; }
+    .top-count { font-size: 11px; color: var(--muted); }
+    .yorum-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+    .yorum-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .yorum-user { font-weight: 600; font-size: 13px; }
+    .yorum-manga { color: var(--red); font-size: 11px; }
+    .yorum-text { color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 10px; }
+    .yorum-puan { color: var(--gold); font-size: 12px; }
+    .duyuru-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+    .duyuru-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .onemli-badge { background: rgba(232,25,44,0.15); color: var(--red); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    #loadingScreen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 999; font-size: 14px; color: var(--muted); }
+    @media (max-width: 768px) { .sidebar { display: none; } .form-grid { grid-template-columns: 1fr; } .kategori-grid { grid-template-columns: repeat(2,1fr); } .tur-secim { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<div id="loadingScreen">⏳ Yükleniyor...</div>
+<div id="adminPanel" style="display:none">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo"><span>Aka</span>Toon</div>
+      <span class="admin-badge">⚡ Admin</span>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="btn-sm">← Siteye Dön</a>
+      <button class="btn-sm red" onclick="cikisYap()">Çıkış</button>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-title">Genel</div>
+      <div class="sidebar-item active" onclick="showPage('dashboard')">📊 Dashboard</div>
+      <div class="sidebar-item" onclick="showPage('istatistik')">📈 İstatistikler</div>
+      <div class="sidebar-title" style="margin-top:8px">İçerik</div>
+      <div class="sidebar-item" onclick="showPage('manga-ekle')">➕ İçerik Ekle</div>
+      <div class="sidebar-item" onclick="showPage('manga-listesi')">📚 İçerik Listesi</div>
+      <div class="sidebar-item" onclick="showPage('bolum-ekle')">📖 Bölüm Ekle</div>
+      <div class="sidebar-item" onclick="showPage('bolum-listesi')">📋 Bölüm Listesi</div>
+      <div class="sidebar-title" style="margin-top:8px">Topluluk</div>
+      <div class="sidebar-item" onclick="showPage('yorumlar')">💬 Yorumlar</div>
+      <div class="sidebar-item" onclick="showPage('duyurular')">📢 Duyurular</div>
+      <div class="sidebar-title" style="margin-top:8px">Kullanıcılar</div>
+      <div class="sidebar-item" onclick="showPage('kullanicilar')">👥 Kullanıcılar</div>
+    </div>
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header"><h2>📊 Dashboard</h2></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Toplam Manga</div><div class="stat-value red" id="statManga">-</div></div>
+          <div class="stat-card"><div class="stat-label">Toplam Bölüm</div><div class="stat-value gold" id="statBolum">-</div></div>
+          <div class="stat-card"><div class="stat-label">Bu Ay Eklenen</div><div class="stat-value green" id="statAy">-</div></div>
+          <div class="stat-card"><div class="stat-label">Bekleyen Yorum</div><div class="stat-value red" id="statYorum">-</div></div>
+          <div class="stat-card"><div class="stat-label">Duyurular</div><div class="stat-value" id="statDuyuru">-</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+          <div class="card"><div class="card-header"><h3>🏆 En Yüksek Puanlı</h3></div><div class="top-list" id="topOkunan"><div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Yükleniyor...</div></div></div>
+          <div class="card"><div class="card-header"><h3>🆕 Son Eklenen Bölümler</h3></div><div class="top-list" id="sonBolumler"><div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Yükleniyor...</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>⚡ Hızlı İşlemler</h3></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="showPage('manga-ekle')">➕ İçerik Ekle</button>
+            <button class="btn btn-secondary" onclick="showPage('bolum-ekle')">📖 Bölüm Ekle</button>
+            <button class="btn btn-secondary" onclick="showPage('yorumlar')">💬 Yorumlar</button>
+            <button class="btn btn-secondary" onclick="showPage('duyurular')">📢 Duyuru Yaz</button>
+            <button class="btn btn-secondary" onclick="showPage('istatistik')">📈 İstatistik</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- İSTATİSTİKLER -->
+      <div class="page" id="page-istatistik">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>📈 İstatistikler</h2></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Toplam İçerik</div><div class="stat-value red" id="statManga2">-</div></div>
+          <div class="stat-card"><div class="stat-label">Manga</div><div class="stat-value" id="statSadeceManga">-</div></div>
+          <div class="stat-card"><div class="stat-label">Webtoon</div><div class="stat-value gold" id="statSadeceWebtoon">-</div></div>
+          <div class="stat-card"><div class="stat-label">Toplam Bölüm</div><div class="stat-value green" id="statBolum2">-</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+          <div class="card"><div class="card-header"><h3>🎭 Kategori Dağılımı</h3></div><div class="chart-container"><canvas id="turChart"></canvas></div></div>
+          <div class="card"><div class="card-header"><h3>📚 Tür Dağılımı</h3></div><div class="chart-container"><canvas id="turDagChart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>🏆 En Yüksek Puanlı</h3></div>
+          <div class="table-wrap"><table><thead><tr><th>#</th><th>Başlık</th><th>Tür</th><th>Puan</th><th>Durum</th></tr></thead><tbody id="topPuanTable"><tr><td colspan="5" style="text-align:center;color:var(--muted)">Yükleniyor...</td></tr></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- MANGA EKLE -->
+      <div class="page" id="page-manga-ekle">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>➕ Yeni İçerik Ekle</h2></div>
+        <div id="adim1">
+          <div class="card">
+            <div class="card-header"><h3>Adım 1 — Tür Seçin</h3></div>
+            <div class="tur-secim">
+              <div class="tur-card" onclick="turSec('manga')" id="turCardManga"><div class="tur-icon">📕</div><h3>Manga</h3><p>Japon çizgi romanı</p></div>
+              <div class="tur-card" onclick="turSec('webtoon')" id="turCardWebtoon"><div class="tur-icon">📱</div><h3>Webtoon</h3><p>Kore webtoon</p></div>
+              <div class="tur-card" onclick="turSec('manhua')" id="turCardManhua"><div class="tur-icon">🐉</div><h3>Manhua</h3><p>Çin çizgi romanı</p></div>
+              <div class="tur-card" onclick="turSec('manhwa')" id="turCardManhwa"><div class="tur-icon">🎭</div><h3>Manhwa</h3><p>Kore çizgi romanı</p></div>
+            </div>
+            <button class="btn btn-primary" onclick="adimIleri()" id="adimBtn" disabled>Devam Et →</button>
+          </div>
+        </div>
+        <div id="adim2" style="display:none">
+          <div class="card">
+            <div class="card-header"><h3>Adım 2 — Bilgiler</h3><button class="btn btn-secondary btn-sm" onclick="adimGeri()">← Geri</button></div>
+            <div class="form-grid">
+              <div class="form-group"><label>Başlık *</label><input type="text" id="mangaBaslik" placeholder="Örn: Jujutsu Kaisen" /></div>
+              <div class="form-group"><label>Durum</label><select id="mangaDurum"><option value="devam">Devam Ediyor</option><option value="tamamlandi">Tamamlandı</option><option value="beklemede">Beklemede</option></select></div>
+              <div class="form-group full"><label>Açıklama</label><textarea id="mangaAciklama" placeholder="Manga hakkında kısa açıklama..."></textarea></div>
+              <div class="form-group"><label>Kapak Görseli URL</label><input type="text" id="mangaKapak" placeholder="https://i.ibb.co/..." /></div>
+              <div class="form-group"><label>Puan (1-10)</label><input type="number" id="mangaPuan" min="1" max="10" step="0.1" placeholder="9.4" /></div>
+            </div>
+            <div class="form-group">
+              <label>Kategoriler</label>
+              <div class="kategori-grid">
+                <div class="kategori-item" onclick="toggleKategori(this,'Aksiyon')"><span>⚔️ Aksiyon</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Romantik')"><span>💕 Romantik</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Fantastik')"><span>🔮 Fantastik</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Korku')"><span>👻 Korku</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Komedi')"><span>😂 Komedi</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Dram')"><span>🎭 Dram</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Spor')"><span>⚽ Spor</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Doğaüstü')"><span>✨ Doğaüstü</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Shounen')"><span>🔥 Shounen</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Shoujo')"><span>🌸 Shoujo</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Seinen')"><span>💀 Seinen</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Isekai')"><span>🌀 Isekai</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Macera')"><span>🗺️ Macera</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Psikolojik')"><span>🧠 Psikolojik</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Tarihi')"><span>🏯 Tarihi</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Bilim Kurgu')"><span>🚀 Bilim Kurgu</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Müzik')"><span>🎵 Müzik</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Okul')"><span>🏫 Okul</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Harem')"><span>👥 Harem</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Dövüş Sanatları')"><span>🥋 Dövüş Sanatları</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Dedektif')"><span>🔍 Dedektif</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Vahşi Batı')"><span>🤠 Vahşi Batı</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Vampir')"><span>🧛 Vampir</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Zombi')"><span>🧟 Zombi</span></div>
+              </div>
+            </div>
+            <div style="margin-top:14px"><button class="btn btn-primary" onclick="mangaEkle()">✅ İçeriği Ekle</button></div>
+            <div class="msg" id="mangaMsg"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MANGA LİSTESİ -->
+      <div class="page" id="page-manga-listesi">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>📚 İçerik Listesi</h2></div>
+        <div class="card">
+          <div class="card-header"><h3>Tüm İçerikler</h3><button class="btn btn-primary btn-sm" onclick="showPage('manga-ekle')">➕ Yeni</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Başlık</th><th>Tür</th><th>Kategori</th><th>Puan</th><th>Eklenme</th><th>İşlem</th></tr></thead><tbody id="mangaTableBody"><tr><td colspan="6" style="text-align:center;color:var(--muted)">Yükleniyor...</td></tr></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- BÖLÜM EKLE -->
+      <div class="page" id="page-bolum-ekle">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>📖 Bölüm Ekle</h2></div>
+        <div class="card">
+          <div class="card-header"><h3>Bölüm Bilgileri</h3></div>
+          <div class="form-grid">
+            <div class="form-group"><label>İçerik Seç *</label><select id="bolumManga"><option value="">Seçiniz...</option></select></div>
+            <div class="form-group"><label>Bölüm No *</label><input type="number" id="bolumNo" placeholder="1" min="1" /></div>
+            <div class="form-group full"><label>Bölüm Başlığı (opsiyonel)</label><input type="text" id="bolumBaslik" placeholder="Örn: Başlangıç" /></div>
+          </div>
+          <div class="form-group">
+            <label>Sayfa Görselleri — Sınırsız!</label>
+            <div class="sayfalar-container">
+              <div class="sayfa-url-list" id="sayfaList"></div>
+              <button class="btn-sayfa-ekle" onclick="sayfaEkle()">+ Sayfa Ekle</button>
+            </div>
+            <div style="margin-top:6px;color:var(--muted);font-size:11px">💡 Sayfa sayısında limit yok. imgbb.com ile görsel yükleyip URL yapıştırabilirsin.</div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:14px">
+            <button class="btn btn-primary" onclick="bolumEkle()">✅ Bölümü Ekle</button>
+            <button class="btn btn-secondary" onclick="sayfaListTemizle()">🗑️ Temizle</button>
+          </div>
+          <div class="msg" id="bolumMsg"></div>
+        </div>
+      </div>
+
+      <!-- BÖLÜM LİSTESİ -->
+      <div class="page" id="page-bolum-listesi">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>📋 Bölüm Listesi</h2></div>
+        <div class="card">
+          <div class="card-header"><h3>Tüm Bölümler</h3><button class="btn btn-primary btn-sm" onclick="showPage('bolum-ekle')">➕ Ekle</button></div>
+          <div class="form-group" style="margin-bottom:14px"><select id="bolumFilterManga" onchange="loadBolumListesi()"><option value="">Tüm içerikler</option></select></div>
+          <div class="table-wrap"><table><thead><tr><th>Manga</th><th>Bölüm</th><th>Başlık</th><th>Sayfa</th><th>Eklenme</th><th>İşlem</th></tr></thead><tbody id="bolumTableBody"><tr><td colspan="6" style="text-align:center;color:var(--muted)">Yükleniyor...</td></tr></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- YORUMLAR -->
+      <div class="page" id="page-yorumlar">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>💬 Yorum Yönetimi</h2></div>
+        <div style="display:flex;gap:10px;margin-bottom:16px">
+          <button class="btn btn-secondary" onclick="yorumFiltre('hepsi')">Tümü</button>
+          <button class="btn btn-secondary" onclick="yorumFiltre('bekleyen')">⏳ Bekleyenler</button>
+          <button class="btn btn-secondary" onclick="yorumFiltre('onaylandi')">✅ Onaylananlar</button>
+        </div>
+        <div id="yorumlarList"><div style="color:var(--muted);text-align:center;padding:30px">Yükleniyor...</div></div>
+      </div>
+
+      <!-- DUYURULAR -->
+      <div class="page" id="page-duyurular">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>📢 Duyurular & Site Yazıları</h2></div>
+        <div class="card">
+          <div class="card-header"><h3>Yeni Duyuru / Yazı Ekle</h3></div>
+          <div class="form-group"><label>Başlık *</label><input type="text" id="duyuruBaslik" placeholder="Duyuru başlığı..." /></div>
+          <div class="form-group"><label>İçerik *</label><textarea id="duyuruIcerik" style="min-height:150px" placeholder="Duyuru veya site yazısı içeriği..."></textarea></div>
+          <div class="form-group"><label>Yazar</label><input type="text" id="duyuruYazar" placeholder="AkaToon Ekibi" value="AkaToon Ekibi" /></div>
+          <div class="form-group" style="display:flex;align-items:center;gap:10px">
+            <input type="checkbox" id="duyuruOnemli" style="width:auto" />
+            <label style="text-transform:none;font-size:13px;color:var(--text)">🔴 Önemli Duyuru (Anasayfada öne çıksın)</label>
+          </div>
+          <button class="btn btn-primary" onclick="duyuruEkle()">📢 Yayınla</button>
+          <div class="msg" id="duyuruMsg"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Yayınlanan Duyurular</h3></div>
+          <div id="duyuruList"><div style="color:var(--muted);text-align:center;padding:20px">Yükleniyor...</div></div>
+        </div>
+      </div>
+
+      <!-- KULLANICILAR -->
+      <div class="page" id="page-kullanicilar">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>👥 Kullanıcılar</h2></div>
+        <div class="card">
+          <p style="color:var(--muted);font-size:14px;margin-bottom:14px">Kullanıcı yönetimi için Supabase panelini kullan.</p>
+          <a href="https://supabase.com/dashboard/project/wxfmatafacdjhiurowut/auth/users" target="_blank" class="btn btn-secondary">Supabase Paneli →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://wxfmatafacdjhiurowut.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+const ADMIN_EMAIL = 'tavuzugur@gmail.com';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let seciliTur='', seciliKategoriler=[], sayfaSayaci=0, chartTur=null, chartDag=null;
+
+async function init() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user || user.email !== ADMIN_EMAIL) { window.location.href = 'giris.html'; return; }
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  loadDashboard(); loadMangaSelect(); sayfaEkle();
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (id==='manga-listesi') loadMangaListesi();
+  if (id==='bolum-listesi') { loadBolumFilterSelect(); loadBolumListesi(); }
+  if (id==='bolum-ekle') loadMangaSelect();
+  if (id==='istatistik') loadIstatistik();
+  if (id==='yorumlar') loadYorumlar('hepsi');
+  if (id==='duyurular') loadDuyurular();
+}
+
+async function loadDashboard() {
+  const { count: mc } = await sb.from('manga').select('*',{count:'exact',head:true});
+  const { count: bc } = await sb.from('bolumler').select('*',{count:'exact',head:true});
+  const { count: yc } = await sb.from('yorumlar').select('*',{count:'exact',head:true}).eq('onaylandi',false);
+  const { count: dc } = await sb.from('duyurular').select('*',{count:'exact',head:true});
+  document.getElementById('statManga').textContent = mc||0;
+  document.getElementById('statBolum').textContent = bc||0;
+  document.getElementById('statYorum').textContent = yc||0;
+  document.getElementById('statDuyuru').textContent = dc||0;
+  const s=new Date(); s.setDate(1); s.setHours(0,0,0,0);
+  const { count: ac } = await sb.from('manga').select('*',{count:'exact',head:true}).gte('created_at',s.toISOString());
+  document.getElementById('statAy').textContent = ac||0;
+
+  const { data: top } = await sb.from('manga').select('*').order('puan',{ascending:false}).limit(5);
+  const topEl = document.getElementById('topOkunan');
+  if (!top||!top.length) { topEl.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Henüz içerik yok</div>'; }
+  else { const mx=top[0]?.puan||10; topEl.innerHTML=top.map((m,i)=>`<div class="top-item"><span class="top-rank">${i+1}</span><div class="top-info"><div class="top-title">${m.baslik}</div><div class="top-count">⭐ ${m.puan||'-'}</div></div></div>`).join(''); }
+
+  const { data: sb2 } = await sb.from('bolumler').select('*, manga(baslik)').order('created_at',{ascending:false}).limit(5);
+  const sonEl = document.getElementById('sonBolumler');
+  if (!sb2||!sb2.length) { sonEl.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Henüz bölüm yok</div>'; }
+  else { sonEl.innerHTML=sb2.map(b=>`<div class="top-item"><div class="top-info"><div class="top-title">${b.manga?.baslik||'?'}</div><div class="top-count">Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</div></div><span style="color:var(--muted);font-size:11px">${timeAgo(b.created_at)}</span></div>`).join(''); }
+}
+
+async function loadIstatistik() {
+  if(chartTur){chartTur.destroy();chartTur=null;} if(chartDag){chartDag.destroy();chartDag=null;}
+  const { data: md } = await sb.from('manga').select('tur,puan,durum,kategori,baslik');
+  const { count: bc } = await sb.from('bolumler').select('*',{count:'exact',head:true});
+  if(!md) return;
+  document.getElementById('statManga2').textContent=md.length;
+  document.getElementById('statBolum2').textContent=bc||0;
+  document.getElementById('statSadeceManga').textContent=md.filter(m=>m.tur==='manga').length;
+  document.getElementById('statSadeceWebtoon').textContent=md.filter(m=>m.tur==='webtoon').length;
+  const ts={};md.forEach(m=>{ts[m.tur]=(ts[m.tur]||0)+1;});
+  chartDag=new Chart(document.getElementById('turDagChart').getContext('2d'),{type:'doughnut',data:{labels:Object.keys(ts),datasets:[{data:Object.values(ts),backgroundColor:['#e8192c','#6060ff','#f5c842','#22c55e','#ff9632']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#888899'}}}}});
+  const ks={};md.forEach(m=>{if(m.kategori)m.kategori.split(',').forEach(k=>{const t=k.trim();ks[t]=(ks[t]||0)+1;});});
+  const tk=Object.entries(ks).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  chartTur=new Chart(document.getElementById('turChart').getContext('2d'),{type:'bar',data:{labels:tk.map(k=>k[0]),datasets:[{label:'Adet',data:tk.map(k=>k[1]),backgroundColor:'#e8192c88',borderColor:'#e8192c',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888899'}},y:{ticks:{color:'#888899'},beginAtZero:true}}}});
+  const sorted=[...md].filter(m=>m.puan).sort((a,b)=>b.puan-a.puan);
+  document.getElementById('topPuanTable').innerHTML=sorted.slice(0,10).map((m,i)=>`<tr><td>${i+1}</td><td><strong>${m.baslik}</strong></td><td><span class="badge badge-${m.tur}">${m.tur}</span></td><td>⭐ ${m.puan}</td><td>${m.durum}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--muted)">Veri yok</td></tr>';
+}
+
+function turSec(t) {
+  seciliTur=t;
+  document.querySelectorAll('.tur-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('turCard'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('selected');
+  document.getElementById('adimBtn').disabled=false;
+}
+function adimIleri(){if(!seciliTur)return;document.getElementById('adim1').style.display='none';document.getElementById('adim2').style.display='block';}
+function adimGeri(){document.getElementById('adim2').style.display='none';document.getElementById('adim1').style.display='block';}
+function toggleKategori(el,k){el.classList.toggle('checked');if(el.classList.contains('checked'))seciliKategoriler.push(k);else seciliKategoriler=seciliKategoriler.filter(x=>x!==k);}
+
+async function mangaEkle() {
+  const b=document.getElementById('mangaBaslik').value.trim();
+  if(!b){showMsg('mangaMsg','error','Başlık zorunlu!');return;}
+  if(!seciliTur){showMsg('mangaMsg','error','Tür seçiniz!');return;}
+  const btn=document.querySelector('#adim2 .btn-primary');btn.disabled=true;btn.textContent='Ekleniyor...';
+  const {error}=await sb.from('manga').insert([{baslik:b,tur:seciliTur,durum:document.getElementById('mangaDurum').value,kategori:seciliKategoriler.join(', '),aciklama:document.getElementById('mangaAciklama').value.trim(),kapak_url:document.getElementById('mangaKapak').value.trim(),puan:document.getElementById('mangaPuan').value?parseFloat(document.getElementById('mangaPuan').value):null}]);
+  if(error){showMsg('mangaMsg','error','Hata: '+error.message);}
+  else{showMsg('mangaMsg','success','✅ '+b+' eklendi!');['mangaBaslik','mangaAciklama','mangaKapak','mangaPuan'].forEach(id=>document.getElementById(id).value='');seciliKategoriler=[];document.querySelectorAll('.kategori-item').forEach(k=>k.classList.remove('checked'));loadMangaSelect();}
+  btn.disabled=false;btn.textContent='✅ İçeriği Ekle';
+}
+
+async function loadMangaListesi() {
+  const {data}=await sb.from('manga').select('*').order('created_at',{ascending:false});
+  const tbody=document.getElementById('mangaTableBody');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">Henüz içerik yok.</td></tr>';return;}
+  tbody.innerHTML=data.map(m=>`<tr><td><strong>${m.baslik}</strong></td><td><span class="badge badge-${m.tur}">${m.tur}</span></td><td style="color:var(--muted);font-size:11px">${m.kategori||'—'}</td><td>${m.puan?'⭐ '+m.puan:'—'}</td><td style="color:var(--muted);font-size:11px">${new Date(m.created_at).toLocaleDateString('tr-TR')}</td><td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="mangaSil('${m.id}','${m.baslik.replace(/'/g,"\\'")}')">Sil</button></td></tr>`).join('');
+}
+
+async function mangaSil(id,b){if(!confirm('"'+b+'" silinsin mi?'))return;await sb.from('manga').delete().eq('id',id);loadMangaListesi();}
+
+function sayfaEkle(){sayfaSayaci++;const l=document.getElementById('sayfaList');const d=document.createElement('div');d.className='sayfa-url-item';d.id='sayfa-'+sayfaSayaci;const n=l.children.length+1;d.innerHTML=`<span class="sayfa-no">${n}</span><input type="text" placeholder="https://i.ibb.co/sayfa-${n}.jpg" /><button class="btn-sayfa-sil" onclick="sayfaSil('sayfa-${sayfaSayaci}')">✕</button>`;l.appendChild(d);}
+function sayfaSil(id){document.getElementById(id)?.remove();numaraGuncelle();}
+function sayfaListTemizle(){document.getElementById('sayfaList').innerHTML='';sayfaSayaci=0;sayfaEkle();}
+function numaraGuncelle(){document.querySelectorAll('.sayfa-url-item').forEach((item,i)=>{item.querySelector('.sayfa-no').textContent=i+1;});}
+
+async function loadMangaSelect(){const{data}=await sb.from('manga').select('id,baslik,tur').order('baslik');const sel=document.getElementById('bolumManga');if(sel){sel.innerHTML='<option value="">Seçiniz...</option>';if(data)data.forEach(m=>sel.innerHTML+=`<option value="${m.id}">[${m.tur}] ${m.baslik}</option>`);}}
+
+async function bolumEkle(){
+  const mid=document.getElementById('bolumManga').value,no=document.getElementById('bolumNo').value;
+  if(!mid||!no){showMsg('bolumMsg','error','İçerik ve bölüm no zorunlu!');return;}
+  const inputs=document.querySelectorAll('#sayfaList input');
+  const sayfalar=Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
+  if(!sayfalar.length){showMsg('bolumMsg','error','En az 1 sayfa ekleyin!');return;}
+  const btn=document.querySelector('#page-bolum-ekle .btn-primary');btn.disabled=true;btn.textContent='Ekleniyor...';
+  const{error}=await sb.from('bolumler').insert([{manga_id:mid,bolum_no:parseInt(no),baslik:document.getElementById('bolumBaslik').value.trim(),sayfalar}]);
+  if(error){showMsg('bolumMsg','error','Hata: '+error.message);}
+  else{showMsg('bolumMsg','success',`✅ Bölüm ${no} eklendi! (${sayfalar.length} sayfa)`);document.getElementById('bolumNo').value='';document.getElementById('bolumBaslik').value='';sayfaListTemizle();}
+  btn.disabled=false;btn.textContent='✅ Bölümü Ekle';
+}
+
+async function loadBolumFilterSelect(){const{data}=await sb.from('manga').select('id,baslik').order('baslik');const sel=document.getElementById('bolumFilterManga');sel.innerHTML='<option value="">Tüm içerikler</option>';if(data)data.forEach(m=>sel.innerHTML+=`<option value="${m.id}">${m.baslik}</option>`);}
+
+async function loadBolumListesi(){
+  const f=document.getElementById('bolumFilterManga')?.value;
+  let q=sb.from('bolumler').select('*,manga(baslik)').order('created_at',{ascending:false});
+  if(f)q=q.eq('manga_id',f);
+  const{data}=await q;
+  const tbody=document.getElementById('bolumTableBody');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">Bölüm bulunamadı.</td></tr>';return;}
+  tbody.innerHTML=data.map(b=>`<tr><td>${b.manga?.baslik||'?'}</td><td><strong>Bölüm ${b.bolum_no}</strong></td><td>${b.baslik||'—'}</td><td>${b.sayfalar?.length||0}</td><td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td><td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSil('${b.id}',${b.bolum_no})">Sil</button></td></tr>`).join('');
+}
+
+async function bolumSil(id,no){if(!confirm(`Bölüm ${no} silinsin mi?`))return;await sb.from('bolumler').delete().eq('id',id);loadBolumListesi();}
+
+// YORUMLAR
+async function loadYorumlar(filtre='hepsi'){
+  let q=sb.from('yorumlar').select('*,manga(baslik)').order('created_at',{ascending:false});
+  if(filtre==='bekleyen')q=q.eq('onaylandi',false);
+  if(filtre==='onaylandi')q=q.eq('onaylandi',true);
+  const{data}=await q;
+  const el=document.getElementById('yorumlarList');
+  if(!data||!data.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:30px">Yorum bulunamadı.</div>';return;}
+  el.innerHTML=data.map(y=>`
+    <div class="yorum-card">
+      <div class="yorum-header">
+        <div><span class="yorum-user">👤 ${y.kullanici_adi||'Anonim'}</span> <span class="yorum-manga">→ ${y.manga?.baslik||'?'}</span></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="${y.onaylandi?'badge badge-onay':'badge badge-bekle'}">${y.onaylandi?'✅ Onaylı':'⏳ Bekliyor'}</span>
+          <span style="color:var(--muted);font-size:11px">${timeAgo(y.created_at)}</span>
+        </div>
+      </div>
+      ${y.puan?`<div class="yorum-puan">${'⭐'.repeat(y.puan)} (${y.puan}/5)</div>`:''}
+      <div class="yorum-text">${y.yorum}</div>
+      <div style="display:flex;gap:8px">
+        ${!y.onaylandi?`<button class="btn btn-success" style="padding:5px 10px;font-size:11px" onclick="yorumOnayla('${y.id}')">✅ Onayla</button>`:''}
+        <button class="btn btn-danger" style="padding:5px 10px;font-size:11px" onclick="yorumSil('${y.id}')">🗑️ Sil</button>
+      </div>
+    </div>`).join('');
+}
+
+function yorumFiltre(f){loadYorumlar(f);}
+async function yorumOnayla(id){await sb.from('yorumlar').update({onaylandi:true}).eq('id',id);loadYorumlar('hepsi');}
+async function yorumSil(id){if(!confirm('Yorum silinsin mi?'))return;await sb.from('yorumlar').delete().eq('id',id);loadYorumlar('hepsi');}
+
+// DUYURULAR
+async function duyuruEkle(){
+  const b=document.getElementById('duyuruBaslik').value.trim();
+  const ic=document.getElementById('duyuruIcerik').value.trim();
+  if(!b||!ic){showMsg('duyuruMsg','error','Başlık ve içerik zorunlu!');return;}
+  const{error}=await sb.from('duyurular').insert([{baslik:b,icerik:ic,yazar:document.getElementById('duyuruYazar').value||'AkaToon Ekibi',onemli:document.getElementById('duyuruOnemli').checked}]);
+  if(error){showMsg('duyuruMsg','error','Hata: '+error.message);}
+  else{showMsg('duyuruMsg','success','✅ Duyuru yayınlandı!');document.getElementById('duyuruBaslik').value='';document.getElementById('duyuruIcerik').value='';document.getElementById('duyuruOnemli').checked=false;loadDuyurular();}
+}
+
+async function loadDuyurular(){
+  const{data}=await sb.from('duyurular').select('*').order('created_at',{ascending:false});
+  const el=document.getElementById('duyuruList');
+  if(!data||!data.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px">Henüz duyuru yok.</div>';return;}
+  el.innerHTML=data.map(d=>`
+    <div class="duyuru-card">
+      <div class="duyuru-header">
+        <div><strong>${d.baslik}</strong>${d.onemli?'  <span class="onemli-badge">🔴 ÖNEMLİ</span>':''}</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="color:var(--muted);font-size:11px">${timeAgo(d.created_at)}</span>
+          <button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="duyuruSil('${d.id}')">Sil</button>
+        </div>
+      </div>
+      <div style="color:var(--muted);font-size:13px;margin-top:6px">${d.icerik.substring(0,150)}${d.icerik.length>150?'...':''}</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:6px">✍️ ${d.yazar}</div>
+    </div>`).join('');
+}
+
+async function duyuruSil(id){if(!confirm('Duyuru silinsin mi?'))return;await sb.from('duyurular').delete().eq('id',id);loadDuyurular();}
+
+function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<3600)return Math.floor(s/60)+'dk önce';if(s<86400)return Math.floor(s/3600)+'sa önce';return Math.floor(s/86400)+'g önce';}
+function showMsg(id,tip,text){const el=document.getElementById(id);el.className='msg '+tip;el.textContent=text;setTimeout(()=>el.className='msg',5000);}
+async function cikisYap(){await sb.auth.signOut();window.location.href='giris.html';}
+
+init();
+</script>
+</body>
+</html>
