@@ -380,12 +380,16 @@ async function initAuth() {
 
   if (user) {
     const initial = (user.user_metadata?.username || user.email)[0].toUpperCase();
+    const avatarUrl = user.user_metadata?.avatar_url || '';
     navAuth.innerHTML = `
       <div class="user-avatar" onclick="toggleUserMenu()" id="userAvatar">
-        ${initial}
+        ${avatarUrl ? '<img src="'+avatarUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />' : initial}
         <div class="user-dropdown" id="userDropdown">
           <a href="profil.html">👤 Profilim</a>
           <a href="ayarlar.html">⚙️ Ayarlar</a>
+          <a href="istek.html">❤️ İstek Listem</a>
+          <a href="manga-istekleri.html">📋 Manga İstekleri</a>
+          <a href="duyurular.html">📢 Duyurular</a>
           <div class="divider"></div>
           <button class="logout" onclick="cikisYap()">🚪 Çıkış Yap</button>
         </div>
