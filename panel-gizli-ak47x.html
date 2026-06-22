@@ -622,13 +622,17 @@ let duzenleId = null;
 let duzenleKategoriler = [];
 
 async function loadDuzenleSelect() {
-  await loadMangaSelect();
   const { data } = await sb.from('manga').select('id,baslik,tur').order('baslik');
   const sel = document.getElementById('duzenleSelect');
-  if (sel) {
-    sel.innerHTML = '<option value="">Seçiniz...</option>';
-    if (data) data.forEach(m => sel.innerHTML += `<option value="${m.id}">[${m.tur}] ${m.baslik}</option>`);
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Seçiniz...</option>';
+  if (data && data.length) {
+    data.forEach(m => sel.innerHTML += `<option value="${m.id}">[${m.tur}] ${m.baslik}</option>`);
+  } else {
+    sel.innerHTML = '<option value="">Henüz içerik eklenmedi</option>';
   }
+  // Ayrıca diğer selectleri de doldur
+  await loadMangaSelect();
 }
 
 async function duzenleYukle() {
