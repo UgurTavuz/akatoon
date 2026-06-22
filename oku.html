@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,334 +8,459 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899; }
-    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom: 70px; }
+    :root {
+      --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22;
+      --border: #2a2a35; --red: #e8192c; --red-dark: #b01020;
+      --text: #e8e8f0; --muted: #888899; --gold: #f5c842;
+    }
+    [data-theme="light"] {
+      --bg: #f5f5f0; --bg2: #ffffff; --bg3: #eaeae5;
+      --border: #d0d0c8; --text: #1a1a1a; --muted: #666660;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom: 70px; transition: background .3s, color .3s; }
     a { color: inherit; text-decoration: none; }
+
+    /* NAV */
     .reader-nav { position: sticky; top: 0; z-index: 100; background: rgba(13,13,15,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    [data-theme="light"] .reader-nav { background: rgba(245,245,240,0.97); }
     .logo { font-family: 'Bebas Neue'; font-size: 22px; } .logo span { color: var(--red); }
-    .reader-title { font-size: 13px; font-weight: 600; flex: 1; }
+    .reader-title { font-size: 13px; font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .reader-title small { color: var(--muted); font-weight: 400; }
-    .chapter-select { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; outline: none; }
+    .chapter-select { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; outline: none; max-width: 160px; }
     .nav-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; }
     .nav-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
     .nav-btn:disabled { opacity: .4; cursor: not-allowed; }
-    .ad-reader { max-width: 728px; margin: 14px auto; background: var(--bg2); border: 1px dashed var(--border); height: 90px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
-    .reader-container { max-width: 800px; margin: 0 auto; padding: 0 12px 80px; }
-    .page-img { width: 100%; display: block; margin-bottom: 3px; border-radius: 4px; }
-    .page-placeholder { width: 100%; background: var(--bg2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; border-radius: 4px; margin-bottom: 3px; min-height: 500px; border: 1px solid var(--border); position: relative; }
-    .page-num { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,.6); color: var(--muted); font-size: 11px; padding: 2px 8px; border-radius: 4px; }
-    .reader-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(13,13,15,0.97); backdrop-filter: blur(12px); border-top: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 16px; }
-    .progress { color: var(--muted); font-size: 13px; }
-    .kaldigim-kaydedildi { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; animation: fadeIn .3s; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* === READER TOOLBAR === */
-    .reader-toolbar {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(18,18,22,0.97);
-      backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border);
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      z-index: 200;
-    }
-    .toolbar-group { display: flex; align-items: center; gap: 8px; }
-    .tb-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
-      font-size: 20px;
-      transition: color .2s, background .2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-    }
+    /* OKUMA MODU SEÇİMİ */
+    .mode-bar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 8px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .mode-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; }
+    .mode-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .mode-sep { color: var(--border); font-size: 18px; }
+
+    /* REKLAM */
+    .ad-reader { max-width: 728px; margin: 14px auto; background: var(--bg2); border: 1px dashed var(--border); height: 90px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
+
+    /* WEBTOON MODU (dikey kaydırma) */
+    .reader-container { max-width: 800px; margin: 0 auto; padding: 0 12px; }
+    .reader-container.webtoon-mode { max-width: 720px; }
+    .reader-container.manga-mode { max-width: 900px; }
+
+    /* SAYFA */
+    .page-img { width: 100%; display: block; margin-bottom: 3px; border-radius: 4px; transition: transform .2s; }
+    .page-img.zoomed { transform: scale(1.5); transform-origin: center top; cursor: zoom-out; }
+    .page-wrapper { position: relative; margin-bottom: 3px; }
+    .page-num-badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,.65); color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 4px; pointer-events: none; }
+
+    /* ÇİFT SAYFA MODU */
+    .double-page-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; max-width: 1400px; margin: 0 auto; padding: 0 12px; }
+    .double-page-grid .page-img { margin-bottom: 0; }
+
+    /* MANGA MODU (sağdan sola, sayfa sayfa) */
+    .single-page-view { display: flex; align-items: center; justify-content: center; min-height: 80vh; padding: 20px; position: relative; }
+    .single-page-view .page-img { max-height: 85vh; width: auto; max-width: 100%; border-radius: 8px; box-shadow: 0 8px 40px rgba(0,0,0,.4); }
+    .page-nav-area { position: fixed; top: 58px; bottom: 70px; width: 30%; cursor: pointer; z-index: 50; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .2s; }
+    .page-nav-area:hover { opacity: 1; }
+    .page-nav-area.left { left: 0; }
+    .page-nav-area.right { right: 0; }
+    .page-nav-area .arrow { background: rgba(0,0,0,.5); color: #fff; padding: 16px 10px; border-radius: 8px; font-size: 24px; }
+    .page-counter { text-align: center; color: var(--muted); font-size: 13px; padding: 10px; }
+
+    /* TAM EKRAN */
+    body.fullscreen .reader-nav, body.fullscreen .mode-bar, body.fullscreen .ad-reader { display: none; }
+    body.fullscreen { padding-bottom: 60px; }
+    .fullscreen-overlay { display: none; }
+    body.fullscreen .fullscreen-overlay { display: flex; position: fixed; top: 0; left: 0; right: 0; z-index: 99; background: rgba(0,0,0,.8); padding: 8px 20px; align-items: center; gap: 12px; opacity: 0; transition: opacity .3s; }
+    body.fullscreen .fullscreen-overlay:hover { opacity: 1; }
+
+    /* BÖLÜM YORUMLARI */
+    .bolum-yorumlar { max-width: 800px; margin: 24px auto; padding: 0 12px 40px; }
+    .bolum-yorumlar h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .yorum-form-mini { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .yorum-input-mini { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; resize: vertical; min-height: 70px; }
+    .yorum-input-mini:focus { border-color: var(--red); }
+    .yorum-card-mini { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 8px; }
+    .yorum-header-mini { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .yorum-user-mini { font-weight: 600; font-size: 13px; }
+    .yorum-date-mini { color: var(--muted); font-size: 11px; }
+    .yorum-text-mini { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+    /* TOOLBAR */
+    .reader-toolbar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(18,18,22,0.97); backdrop-filter: blur(16px); border-top: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; z-index: 200; }
+    [data-theme="light"] .reader-toolbar { background: rgba(245,245,240,0.97); }
+    .toolbar-group { display: flex; align-items: center; gap: 4px; }
+    .tb-btn { background: none; border: none; color: var(--muted); cursor: pointer; padding: 8px; border-radius: 8px; font-size: 18px; transition: color .2s, background .2s; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; position: relative; }
     .tb-btn:hover { color: var(--text); background: var(--bg3); }
     .tb-btn:disabled { opacity: .3; cursor: not-allowed; }
     .tb-btn.active { color: var(--red); }
-    .speed-slider {
-      -webkit-appearance: none;
-      width: 100px;
-      height: 4px;
-      border-radius: 4px;
-      background: var(--border);
-      outline: none;
-    }
-    .speed-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--red);
-      cursor: pointer;
-    }
-    .speed-label { color: var(--muted); font-size: 11px; min-width: 55px; text-align: center; }
-    .bolum-listesi-panel {
-      position: fixed;
-      bottom: 62px; right: 16px;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      width: 260px;
-      max-height: 400px;
-      overflow-y: auto;
-      z-index: 300;
-      display: none;
-      box-shadow: 0 8px 30px rgba(0,0,0,.5);
-    }
-    .bolum-listesi-panel.open { display: block; }
-    .bolum-panel-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; }
-    .bolum-panel-item { padding: 10px 16px; font-size: 13px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background .15s; display: flex; align-items: center; justify-content: space-between; }
+    .tb-tooltip { position: absolute; bottom: 46px; left: 50%; transform: translateX(-50%); background: var(--bg2); color: var(--text); font-size: 11px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .2s; border: 1px solid var(--border); z-index: 300; }
+    .tb-btn:hover .tb-tooltip { opacity: 1; }
+    .speed-slider { -webkit-appearance: none; width: 80px; height: 3px; border-radius: 4px; background: var(--border); outline: none; }
+    .speed-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--red); cursor: pointer; }
+    .speed-label { color: var(--muted); font-size: 10px; min-width: 48px; text-align: center; }
+
+    /* BÖLÜM PANELİ */
+    .bolum-panel { position: fixed; bottom: 62px; right: 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; width: 260px; max-height: 380px; overflow-y: auto; z-index: 300; display: none; box-shadow: 0 8px 30px rgba(0,0,0,.5); }
+    .bolum-panel.open { display: block; }
+    .bolum-panel-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; position: sticky; top: 0; background: var(--bg2); }
+    .bolum-panel-item { padding: 9px 16px; font-size: 13px; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; transition: background .15s; }
     .bolum-panel-item:hover { background: var(--bg3); }
     .bolum-panel-item.aktif { color: var(--red); font-weight: 600; }
-    .scroll-top-reader {
-      position: fixed;
-      bottom: 76px;
-      right: 20px;
-      width: 44px;
-      height: 44px;
-      background: var(--red);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(232,25,44,0.4);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity .3s, transform .3s;
-      z-index: 199;
+
+    /* YUKARI ÇIK */
+    .scroll-top-btn { position: fixed; bottom: 76px; right: 16px; width: 42px; height: 42px; background: var(--red); color: #fff; border: none; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(232,25,44,0.4); opacity: 0; transform: translateY(10px); transition: opacity .3s, transform .3s; z-index: 199; }
+    .scroll-top-btn.visible { opacity: 1; transform: translateY(0); }
+
+    /* OKUMA LİSTESİ */
+    .liste-dropdown { position: absolute; bottom: 46px; right: 0; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 6px; min-width: 160px; display: none; z-index: 400; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+    .liste-dropdown.open { display: block; }
+    .liste-item { padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: background .15s; white-space: nowrap; }
+    .liste-item:hover { background: var(--bg3); }
+    .liste-item.selected { color: var(--red); font-weight: 600; }
+
+    /* MSG */
+    .msg { padding: 8px 14px; border-radius: 8px; font-size: 12px; display: none; margin-top: 8px; }
+    .msg.error { background: rgba(232,25,44,0.1); border: 1px solid rgba(232,25,44,0.3); color: #ff6b7a; display: block; }
+    .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; display: block; }
+
+    @media (max-width: 600px) {
+      .speed-slider, .speed-label { display: none; }
+      .reader-title { font-size: 12px; }
+      .double-page-grid { grid-template-columns: 1fr; }
     }
-    .scroll-top-reader.visible { opacity: 1; transform: translateY(0); }
-    .scroll-top-reader:hover { background: var(--red-dark); }
-    .tooltip {
-      position: absolute;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--bg3);
-      color: var(--text);
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity .2s;
-      border: 1px solid var(--border);
-    }
-    .tb-btn:hover .tooltip { opacity: 1; }
   </style>
 </head>
 <body>
-  <nav class="reader-nav">
-    <a href="index.html" class="logo"><span>A</span>T</a>
-    <div class="reader-title" id="readerTitle">Yükleniyor... <small></small></div>
-    <select class="chapter-select" id="chapterSelect" onchange="bolumDegistir(this.value)"></select>
-    <button class="nav-btn" id="prevBtn" onclick="prevChapter()" disabled>← Önceki</button>
-    <button class="nav-btn" id="nextBtn" onclick="nextChapter()" disabled>Sonraki →</button>
-  </nav>
 
-  <div class="ad-reader">Reklam</div>
-  <div class="reader-container" id="readerContainer"><div style="color:var(--muted);text-align:center;padding:60px">Yükleniyor...</div></div>
-  <div class="ad-reader">Reklam</div>
+<!-- TAM EKRAN OVERLAY -->
+<div class="fullscreen-overlay" id="fullscreenOverlay">
+  <a href="index.html" style="color:#fff;font-size:20px">🏠</a>
+  <span id="fsTitle" style="color:#fff;font-size:13px;flex:1"></span>
+  <button onclick="toggleFullscreen()" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px">✕ Tam Ekrandan Çık</button>
+</div>
 
-  <!-- YUKARI ÇIK -->
-  <button class="scroll-top-reader" id="scrollTopReader" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Yukarı Çık">↑</button>
+<nav class="reader-nav">
+  <a href="index.html" class="logo"><span>A</span>T</a>
+  <div class="reader-title" id="readerTitle">Yükleniyor... <small></small></div>
+  <select class="chapter-select" id="chapterSelect" onchange="bolumDegistir(this.value)"></select>
+  <button class="nav-btn" id="prevBtn" onclick="prevChapter()" disabled>←</button>
+  <button class="nav-btn" id="nextBtn" onclick="nextChapter()" disabled>→</button>
+</nav>
 
-  <!-- BÖLÜM LİSTESİ PANELİ -->
-  <div class="bolum-listesi-panel" id="bolumPanel">
-    <div class="bolum-panel-header">📚 Bölümler</div>
-    <div id="bolumPanelList"></div>
+<!-- OKUMA MODU BAR -->
+<div class="mode-bar">
+  <span style="color:var(--muted);font-size:12px;font-weight:600">MOD:</span>
+  <button class="mode-btn active" id="modeWebtoon" onclick="setMode('webtoon')">📱 Webtoon</button>
+  <button class="mode-btn" id="modeManga" onclick="setMode('manga')">📕 Manga (Sağdan Sol)</button>
+  <button class="mode-btn" id="modeDouble" onclick="setMode('double')">📰 Çift Sayfa</button>
+  <span class="mode-sep">|</span>
+  <button class="mode-btn" onclick="toggleTheme()">🌙 Tema</button>
+  <button class="mode-btn" onclick="toggleFullscreen()">⛶ Tam Ekran</button>
+</div>
+
+<div class="ad-reader">Reklam</div>
+
+<div id="readerArea"></div>
+
+<div class="ad-reader">Reklam</div>
+
+<!-- BÖLÜM YORUMLARI -->
+<div class="bolum-yorumlar" id="bolumYorumlar" style="display:none">
+  <h3>💬 Bu Bölümün Yorumları</h3>
+  <div class="yorum-form-mini" id="yorumFormBolum">
+    <textarea class="yorum-input-mini" id="bolumYorumText" placeholder="Bu bölüm hakkında ne düşünüyorsunuz?"></textarea>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button class="nav-btn" style="padding:6px 16px;font-size:12px" onclick="bolumYorumGonder()">Gönder</button>
+    </div>
+    <div class="msg" id="bolumYorumMsg"></div>
   </div>
+  <div id="bolumYorumListesi"></div>
+</div>
 
-  <!-- ALT TOOLBAR -->
-  <div class="reader-toolbar">
-    <div class="toolbar-group">
-      <a href="index.html" style="position:relative">
-        <button class="tb-btn" title="Ana Sayfa">🏠<span class="tooltip">Ana Sayfa</span></button>
-      </a>
-      <button class="tb-btn" onclick="toggleBolumPanel()" title="Bölümler" id="bolumPanelBtn">
-        ☰<span class="tooltip">Bölümler</span>
-      </button>
-    </div>
+<!-- BÖLÜM PANELİ -->
+<div class="bolum-panel" id="bolumPanel">
+  <div class="bolum-panel-header">📚 Bölümler</div>
+  <div id="bolumPanelList"></div>
+</div>
 
-    <div class="toolbar-group">
-      <button class="tb-btn" id="prevBtn2" onclick="prevChapter()" disabled title="Önceki">
-        ‹<span class="tooltip">Önceki</span>
-      </button>
-      <button class="tb-btn" id="nextBtn2" onclick="nextChapter()" disabled title="Sonraki">
-        ›<span class="tooltip">Sonraki</span>
-      </button>
-    </div>
+<!-- YUKARI ÇIK -->
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-    <div class="toolbar-group">
-      <button class="tb-btn" id="autoScrollBtn" onclick="toggleAutoScroll()" title="Otomatik Kaydır">
-        ▷<span class="tooltip">Otomatik Kaydır</span>
-      </button>
-      <input type="range" class="speed-slider" id="speedSlider" min="50" max="500" value="180" oninput="updateSpeed(this.value)" />
-      <span class="speed-label" id="speedLabel">180 px/s</span>
-    </div>
-
-    <div class="toolbar-group">
-      <button class="tb-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Yukarı">
-        ↑<span class="tooltip">Yukarı</span>
-      </button>
-      <button class="tb-btn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})" title="Aşağı">
-        ↓<span class="tooltip">Aşağı</span>
-      </button>
+<!-- TOOLBAR -->
+<div class="reader-toolbar">
+  <div class="toolbar-group">
+    <a href="index.html"><button class="tb-btn"><span class="tb-tooltip">Ana Sayfa</span>🏠</button></a>
+    <button class="tb-btn" onclick="toggleBolumPanel()" id="bolumPanelBtn"><span class="tb-tooltip">Bölümler</span>☰</button>
+  </div>
+  <div class="toolbar-group">
+    <button class="tb-btn" id="prevBtn2" onclick="prevChapter()" disabled><span class="tb-tooltip">Önceki</span>‹</button>
+    <button class="tb-btn" id="nextBtn2" onclick="nextChapter()" disabled><span class="tb-tooltip">Sonraki</span>›</button>
+  </div>
+  <div class="toolbar-group">
+    <button class="tb-btn" id="autoScrollBtn" onclick="toggleAutoScroll()"><span class="tb-tooltip">Otomatik Kaydır</span>▷</button>
+    <input type="range" class="speed-slider" id="speedSlider" min="30" max="500" value="150" oninput="updateSpeed(this.value)" />
+    <span class="speed-label" id="speedLabel">150 px/s</span>
+  </div>
+  <div class="toolbar-group" style="position:relative">
+    <button class="tb-btn" id="listeBtn" onclick="toggleListeMenu()"><span class="tb-tooltip">Okuma Listesi</span>📚</button>
+    <div class="liste-dropdown" id="listeDropdown">
+      <div class="liste-item" onclick="listeEkle('okuyorum')">📖 Okuyorum</div>
+      <div class="liste-item" onclick="listeEkle('okuyacagim')">⏳ Okuyacağım</div>
+      <div class="liste-item" onclick="listeEkle('bıraktım')">⏸ Bıraktım</div>
+      <div class="liste-item" onclick="listeEkle('bitirdim')">✅ Bitirdim</div>
+      <div class="liste-item" onclick="listeEkle('tavsiye')">⭐ Tavsiye Ederim</div>
     </div>
   </div>
+  <div class="toolbar-group">
+    <button class="tb-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="tb-tooltip">Yukarı</span>↑</button>
+    <button class="tb-btn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})"><span class="tb-tooltip">Aşağı</span>↓</button>
+  </div>
+</div>
 
-  <script>
-    const SUPABASE_URL='https://wxfmatafacdjhiurowut.supabase.co';
-    const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
-    const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+<script>
+const SUPABASE_URL='https://wxfmatafacdjhiurowut.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+const params=new URLSearchParams(window.location.search);
+const mangaId=params.get('manga');
+let bolumNo=parseInt(params.get('bolum'))||1;
+let tumBolumler=[], currentUser=null, mangaBaslik='';
+let okumaMode=localStorage.getItem('okumaMode')||'webtoon';
+let autoScrolling=false, autoScrollRAF=null, scrollSpeed=150;
+let zoomedPage=null, mevcutSayfa=0;
 
-    // === TOOLBAR JS ===
-    let autoScrolling = false, autoScrollInterval = null, scrollSpeed = 180;
+async function init(){
+  const{data:{user}}=await sb.auth.getUser();
+  currentUser=user;
+  await loadManga();
+  await loadBolumler();
+  setMode(okumaMode, true);
+  if(currentUser){ kaydetKaldigimBolum(); loadOkumaListesi(); }
+  loadBolumYorumlari();
+}
 
-    function toggleAutoScroll() {
-      autoScrolling = !autoScrolling;
-      const btn = document.getElementById('autoScrollBtn');
-      if (autoScrolling) {
-        btn.textContent = '⏸';
-        btn.classList.add('active');
-        autoScrollInterval = setInterval(() => {
-          window.scrollBy(0, scrollSpeed / 60);
-          if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
-            toggleAutoScroll();
-          }
-        }, 16);
-      } else {
-        btn.textContent = '▷';
-        btn.classList.remove('active');
-        clearInterval(autoScrollInterval);
-      }
+async function loadManga(){
+  const{data}=await sb.from('manga').select('baslik').eq('id',mangaId).single();
+  if(data) mangaBaslik=data.baslik;
+}
+
+async function loadBolumler(){
+  const{data}=await sb.from('bolumler').select('*').eq('manga_id',mangaId).order('bolum_no');
+  tumBolumler=data||[];
+  const sel=document.getElementById('chapterSelect');
+  sel.innerHTML=tumBolumler.map(b=>`<option value="${b.bolum_no}" ${b.bolum_no==bolumNo?'selected':''}>Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</option>`).join('');
+  doldurBolumPanel();
+}
+
+// ===== OKUMA MODLARI =====
+function setMode(mode, init=false){
+  okumaMode=mode;
+  localStorage.setItem('okumaMode', mode);
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  const modeMap={webtoon:'modeWebtoon',manga:'modeManga',double:'modeDouble'};
+  if(modeMap[mode]) document.getElementById(modeMap[mode]).classList.add('active');
+  renderBolum();
+}
+
+function renderBolum(){
+  const bolum=tumBolumler.find(b=>b.bolum_no==bolumNo);
+  const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);
+  document.getElementById('readerTitle').innerHTML=`${mangaBaslik} <small>/ Bölüm ${bolumNo}</small>`;
+  document.title=`Bölüm ${bolumNo} – ${mangaBaslik} – AkaToon`;
+  document.getElementById('fsTitle').textContent=`${mangaBaslik} / Bölüm ${bolumNo}`;
+  const hasPrev=idx>0, hasNext=idx<tumBolumler.length-1;
+  ['prevBtn','prevBtn2'].forEach(id=>document.getElementById(id).disabled=!hasPrev);
+  ['nextBtn','nextBtn2'].forEach(id=>document.getElementById(id).disabled=!hasNext);
+  doldurBolumPanel();
+
+  const area=document.getElementById('readerArea');
+  if(!bolum){area.innerHTML='<div style="color:var(--muted);text-align:center;padding:60px">Bölüm bulunamadı.</div>';return;}
+
+  const sayfalar=bolum.sayfalar||[];
+  mevcutSayfa=0;
+
+  if(okumaMode==='webtoon'){
+    area.innerHTML=`<div class="reader-container webtoon-mode">${sayfalar.map((url,i)=>`<div class="page-wrapper"><img class="page-img" src="${url}" loading="lazy" onclick="toggleZoom(this)" /><span class="page-num-badge">${i+1}/${sayfalar.length}</span></div>`).join('')}</div>`;
+  }
+  else if(okumaMode==='double'){
+    let html='<div class="double-page-grid">';
+    for(let i=0;i<sayfalar.length;i+=2){
+      html+=`<img class="page-img" src="${sayfalar[i]}" loading="lazy" />`;
+      if(sayfalar[i+1]) html+=`<img class="page-img" src="${sayfalar[i+1]}" loading="lazy" />`;
+      else html+=`<div></div>`;
     }
+    html+='</div>';
+    area.innerHTML=html;
+  }
+  else if(okumaMode==='manga'){
+    renderMangaSayfa(sayfalar);
+  }
 
-    function updateSpeed(val) {
-      scrollSpeed = parseInt(val);
-      document.getElementById('speedLabel').textContent = val + ' px/s';
+  // Yorum bölümü
+  document.getElementById('bolumYorumlar').style.display='block';
+  loadBolumYorumlari();
+}
+
+// MANGA MODU (sayfa sayfa, sağdan sola)
+function renderMangaSayfa(sayfalar){
+  const area=document.getElementById('readerArea');
+  const s=sayfalar[mevcutSayfa];
+  area.innerHTML=`
+    <div class="page-nav-area left" onclick="mangaSayfaDegistir(-1)"><div class="arrow">›</div></div>
+    <div class="single-page-view">
+      <img class="page-img" src="${s||''}" loading="lazy" />
+    </div>
+    <div class="page-nav-area right" onclick="mangaSayfaDegistir(1)"><div class="arrow">‹</div></div>
+    <div class="page-counter">${mevcutSayfa+1} / ${sayfalar.length}</div>`;
+}
+
+function mangaSayfaDegistir(yon){
+  const bolum=tumBolumler.find(b=>b.bolum_no==bolumNo);
+  const sayfalar=bolum?.sayfalar||[];
+  const yeni=mevcutSayfa-yon; // Sağdan sola: sağ ok = önceki sayfa
+  if(yeni>=0 && yeni<sayfalar.length){ mevcutSayfa=yeni; renderMangaSayfa(sayfalar); }
+  else if(yeni<0) nextChapter();
+  else if(yeni>=sayfalar.length) prevChapter();
+}
+
+// ZOOM
+function toggleZoom(img){
+  if(zoomedPage && zoomedPage!==img) zoomedPage.classList.remove('zoomed');
+  img.classList.toggle('zoomed');
+  zoomedPage=img.classList.contains('zoomed')?img:null;
+}
+
+// TEMA
+function toggleTheme(){
+  const html=document.documentElement;
+  const newTheme=html.getAttribute('data-theme')==='dark'?'light':'dark';
+  html.setAttribute('data-theme',newTheme);
+  localStorage.setItem('akatoon-theme',newTheme);
+  document.querySelector('[onclick="toggleTheme()"]').textContent=newTheme==='dark'?'🌙 Tema':'☀️ Tema';
+}
+
+// TAM EKRAN
+function toggleFullscreen(){
+  document.body.classList.toggle('fullscreen');
+}
+
+// OTO KAYDIRMA
+function toggleAutoScroll(){
+  autoScrolling=!autoScrolling;
+  const btn=document.getElementById('autoScrollBtn');
+  if(autoScrolling){
+    btn.textContent='⏸'; btn.classList.add('active');
+    let last=performance.now();
+    function scroll(now){
+      const dt=(now-last)/1000; last=now;
+      window.scrollBy(0,scrollSpeed*dt);
+      if((window.innerHeight+window.scrollY)>=document.body.offsetHeight-10){toggleAutoScroll();return;}
+      if(autoScrolling) autoScrollRAF=requestAnimationFrame(scroll);
     }
+    autoScrollRAF=requestAnimationFrame(scroll);
+  } else {
+    btn.textContent='▷'; btn.classList.remove('active');
+    cancelAnimationFrame(autoScrollRAF);
+  }
+}
 
-    function toggleBolumPanel() {
-      const panel = document.getElementById('bolumPanel');
-      panel.classList.toggle('open');
-    }
+function updateSpeed(val){ scrollSpeed=parseInt(val); document.getElementById('speedLabel').textContent=val+' px/s'; }
 
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#bolumPanel') && !e.target.closest('#bolumPanelBtn')) {
-        document.getElementById('bolumPanel').classList.remove('open');
-      }
-    });
+// BÖLÜM PANELİ
+function toggleBolumPanel(){
+  document.getElementById('bolumPanel').classList.toggle('open');
+}
+function doldurBolumPanel(){
+  const list=document.getElementById('bolumPanelList');
+  list.innerHTML=tumBolumler.map(b=>`<div class="bolum-panel-item ${b.bolum_no==bolumNo?'aktif':''}" onclick="bolumDegistir(${b.bolum_no});document.getElementById('bolumPanel').classList.remove('open')"><span>Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</span>${b.bolum_no==bolumNo?'<span style="color:var(--red)">▶</span>':''}</div>`).join('');
+  // Aktif bölüme scroll
+  setTimeout(()=>{const a=list.querySelector('.aktif');if(a)a.scrollIntoView({block:'center'});},100);
+}
 
-    // Yukarı çık butonu
-    const scrollReaderBtn = document.getElementById('scrollTopReader');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) scrollReaderBtn.classList.add('visible');
-      else scrollReaderBtn.classList.remove('visible');
-    });
+// OKUMA LİSTESİ
+function toggleListeMenu(){
+  document.getElementById('listeDropdown').classList.toggle('open');
+}
+async function listeEkle(durum){
+  if(!currentUser){window.location.href='giris.html';return;}
+  document.getElementById('listeDropdown').classList.remove('open');
+  await sb.from('istek_listesi').upsert([{user_id:currentUser.id,manga_id:mangaId,durum}],{onConflict:'user_id,manga_id'});
+  document.getElementById('listeBtn').style.color='var(--gold)';
+  setTimeout(()=>document.getElementById('listeBtn').style.color='',2000);
+}
+async function loadOkumaListesi(){
+  if(!currentUser) return;
+  const{data}=await sb.from('istek_listesi').select('durum').eq('user_id',currentUser.id).eq('manga_id',mangaId).single();
+  if(data){ document.getElementById('listeBtn').style.color='var(--gold)'; }
+}
 
-    // Bölüm panelini doldur
-    function doldurBolumPanel() {
-      const list = document.getElementById('bolumPanelList');
-      list.innerHTML = tumBolumler.map(b => `
-        <div class="bolum-panel-item ${b.bolum_no==bolumNo?'aktif':''}" onclick="bolumDegistir(${b.bolum_no});toggleBolumPanel()">
-          <span>Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</span>
-          ${b.bolum_no==bolumNo?'<span style="color:var(--red);font-size:11px">▶</span>':''}
-        </div>`).join('');
-    }
-    const params=new URLSearchParams(window.location.search);
-    const mangaId=params.get('manga');
-    let bolumNo=parseInt(params.get('bolum'))||1;
-    let tumBolumler=[], currentUser=null, mangaBaslik='';
+// BÖLÜM YORUMLARI
+async function loadBolumYorumlari(){
+  if(!mangaId||!bolumNo) return;
+  const{data}=await sb.from('yorumlar').select('*').eq('manga_id',mangaId).eq('bolum_no',bolumNo).eq('onaylandi',true).order('created_at',{ascending:false});
+  const el=document.getElementById('bolumYorumListesi');
+  if(!data||!data.length){el.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Henüz yorum yok.</div>';return;}
+  el.innerHTML=data.map(y=>`<div class="yorum-card-mini"><div class="yorum-header-mini"><span class="yorum-user-mini">👤 ${y.kullanici_adi||'Anonim'}</span><span class="yorum-date-mini">${timeAgo(y.created_at)}</span></div><div class="yorum-text-mini">${y.yorum}</div></div>`).join('');
+  if(!currentUser) document.getElementById('yorumFormBolum').innerHTML='<p style="color:var(--muted);font-size:13px">Yorum yapmak için <a href="giris.html" style="color:var(--red)">giriş yapın</a>.</p>';
+}
 
-    async function init(){
-      const{data:{user}}=await sb.auth.getUser();
-      currentUser=user;
-      await loadManga();
-      await loadBolumler();
-      renderBolum();
-      if(currentUser) kaydetKaldigimBolum();
-    }
+async function bolumYorumGonder(){
+  if(!currentUser){window.location.href='giris.html';return;}
+  const text=document.getElementById('bolumYorumText').value.trim();
+  if(!text){showMsg('bolumYorumMsg','error','Yorum boş olamaz!');return;}
+  const username=currentUser.user_metadata?.username||currentUser.email.split('@')[0];
+  const{error}=await sb.from('yorumlar').insert([{manga_id:mangaId,bolum_no:bolumNo,user_id:currentUser.id,kullanici_adi:username,yorum:text,onaylandi:false}]);
+  if(error){showMsg('bolumYorumMsg','error','Hata: '+error.message);}
+  else{showMsg('bolumYorumMsg','success','✅ Yorumunuz onay bekliyor!');document.getElementById('bolumYorumText').value='';}
+}
 
-    async function loadManga(){
-      const{data}=await sb.from('manga').select('baslik').eq('id',mangaId).single();
-      if(data) mangaBaslik=data.baslik;
-    }
+// NAVİGASYON
+function bolumDegistir(no){
+  bolumNo=parseInt(no);
+  window.scrollTo(0,0);
+  mevcutSayfa=0;
+  renderBolum();
+  if(currentUser) kaydetKaldigimBolum();
+  history.replaceState(null,'',`oku.html?manga=${mangaId}&bolum=${bolumNo}`);
+  document.getElementById('chapterSelect').value=no;
+}
+function prevChapter(){const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);if(idx>0)bolumDegistir(tumBolumler[idx-1].bolum_no);}
+function nextChapter(){const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);if(idx<tumBolumler.length-1)bolumDegistir(tumBolumler[idx+1].bolum_no);}
 
-    async function loadBolumler(){
-      const{data}=await sb.from('bolumler').select('*').eq('manga_id',mangaId).order('bolum_no');
-      tumBolumler=data||[];
-      const sel=document.getElementById('chapterSelect');
-      sel.innerHTML=tumBolumler.map(b=>`<option value="${b.bolum_no}" ${b.bolum_no==bolumNo?'selected':''}>Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</option>`).join('');
-    }
+async function kaydetKaldigimBolum(){
+  if(!currentUser||!mangaId) return;
+  await sb.from('okuma_gecmisi').upsert([{user_id:currentUser.id,manga_id:mangaId,bolum_no:bolumNo,updated_at:new Date().toISOString()}],{onConflict:'user_id,manga_id'});
+}
 
-    function renderBolum(){
-      if(tumBolumler.length) doldurBolumPanel();
-      const bolum=tumBolumler.find(b=>b.bolum_no==bolumNo);
-      const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);
+// KLAVİYE KISAYOLLARI
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') nextChapter();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') prevChapter();
+  if(e.key==='f'||e.key==='F') toggleFullscreen();
+  if(e.key==='Escape') document.body.classList.remove('fullscreen');
+});
 
-      document.getElementById('readerTitle').innerHTML=`${mangaBaslik} <small>/ Bölüm ${bolumNo}</small>`;
-      document.title=`Bölüm ${bolumNo} – ${mangaBaslik} – AkaToon`;
+// YUKARI ÇIK
+window.addEventListener('scroll',()=>{
+  const btn=document.getElementById('scrollTopBtn');
+  if(window.scrollY>300) btn.classList.add('visible');
+  else btn.classList.remove('visible');
+});
 
-      const hasPrev=idx>0, hasNext=idx<tumBolumler.length-1;
-      ['prevBtn','prevBtn2'].forEach(id=>{document.getElementById(id).disabled=!hasPrev;});
-      ['nextBtn','nextBtn2'].forEach(id=>{document.getElementById(id).disabled=!hasNext;});
+// CLICK DIŞI KAPAT
+document.addEventListener('click',(e)=>{
+  if(!e.target.closest('#bolumPanel')&&!e.target.closest('#bolumPanelBtn')) document.getElementById('bolumPanel').classList.remove('open');
+  if(!e.target.closest('#listeDropdown')&&!e.target.closest('#listeBtn')) document.getElementById('listeDropdown').classList.remove('open');
+});
 
-      const container=document.getElementById('readerContainer');
-      if(!bolum){container.innerHTML='<div style="color:var(--muted);text-align:center;padding:60px">Bölüm bulunamadı.</div>';return;}
+// TEMA YÜKLE
+const savedTheme=localStorage.getItem('akatoon-theme')||'dark';
+document.documentElement.setAttribute('data-theme',savedTheme);
 
-      const sayfalar=bolum.sayfalar||[];
-      document.getElementById('progressText').textContent=`${sayfalar.length} Sayfa`;
+function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<3600)return Math.floor(s/60)+' dk önce';if(s<86400)return Math.floor(s/3600)+' sa önce';return Math.floor(s/86400)+' gün önce';}
+function showMsg(id,tip,text){const el=document.getElementById(id);el.className='msg '+tip;el.textContent=text;setTimeout(()=>el.className='msg',5000);}
 
-      if(sayfalar.length===0){
-        container.innerHTML='<div style="color:var(--muted);text-align:center;padding:60px">Bu bölümde sayfa yok.</div>';return;
-      }
-
-      container.innerHTML=sayfalar.map((url,i)=>`
-        <div style="position:relative">
-          <img class="page-img" src="${url}" alt="Sayfa ${i+1}" loading="lazy" onerror="this.style.minHeight='300px';this.style.background='var(--bg2)'" />
-          <span class="page-num">${i+1} / ${sayfalar.length}</span>
-        </div>`).join('');
-    }
-
-    async function kaydetKaldigimBolum(){
-      if(!currentUser||!mangaId) return;
-      await sb.from('okuma_gecmisi').upsert([{user_id:currentUser.id,manga_id:mangaId,bolum_no:bolumNo,updated_at:new Date().toISOString()}],{onConflict:'user_id,manga_id'});
-    }
-
-    function bolumDegistir(no){
-      bolumNo=parseInt(no);
-      window.scrollTo(0,0);
-      renderBolum();
-      if(currentUser) kaydetKaldigimBolum();
-      history.replaceState(null,'',`oku.html?manga=${mangaId}&bolum=${bolumNo}`);
-    }
-
-    function prevChapter(){
-      const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);
-      if(idx>0) bolumDegistir(tumBolumler[idx-1].bolum_no);
-    }
-    function nextChapter(){
-      const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);
-      if(idx<tumBolumler.length-1) bolumDegistir(tumBolumler[idx+1].bolum_no);
-    }
-
-    init();
-  </script>
+init();
+</script>
 </body>
 </html>
