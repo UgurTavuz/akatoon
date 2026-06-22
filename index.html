@@ -140,6 +140,39 @@
     .footer-bottom { border-top: 1px solid var(--border); padding: 16px 24px; text-align: center; }
     .footer-bottom p { color: var(--muted); font-size: 12px; }
 
+
+    /* === YUKARI ÇIK BUTONU === */
+    .scroll-top {
+      position: fixed;
+      bottom: 28px;
+      right: 20px;
+      width: 46px;
+      height: 46px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(232,25,44,0.4);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .3s, transform .3s;
+      z-index: 999;
+    }
+    .scroll-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .scroll-top:hover {
+      background: var(--red-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(232,25,44,0.5);
+    }
+
     /* === BÜYÜK EKRAN (1440px+) === */
     @media (min-width: 1440px) {
       .nav-inner, .hero, .section, .ad-banner { max-width: 1440px; }
