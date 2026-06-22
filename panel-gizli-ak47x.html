@@ -138,6 +138,7 @@
       <div class="sidebar-title" style="margin-top:8px">İçerik</div>
       <div class="sidebar-item" onclick="showPage('manga-ekle')">➕ İçerik Ekle</div>
       <div class="sidebar-item" onclick="showPage('manga-listesi')">📚 İçerik Listesi</div>
+      <div class="sidebar-item" onclick="showPage('manga-duzenle')">✏️ İçerik Düzenle</div>
       <div class="sidebar-item" onclick="showPage('bolum-ekle')">📖 Bölüm Ekle</div>
       <div class="sidebar-item" onclick="showPage('toplu-bolum')">📦 Toplu Bölüm</div>
       <div class="sidebar-item" onclick="showPage('bolum-listesi')">📋 Bölüm Listesi</div>
@@ -303,6 +304,116 @@
         <div class="card">
           <div class="card-header"><h3>Tüm İçerikler</h3><button class="btn btn-primary btn-sm" onclick="showPage('manga-ekle')">➕ Yeni</button></div>
           <div class="table-wrap"><table><thead><tr><th>Başlık</th><th>Tür</th><th>Kategori</th><th>Puan</th><th>Eklenme</th><th>İşlem</th></tr></thead><tbody id="mangaTableBody"></tbody></table></div>
+        </div>
+      </div>
+
+
+      <!-- MANGA DÜZENLE -->
+      <div class="page" id="page-manga-duzenle">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>✏️ İçerik Düzenle</h2></div>
+        <div class="card">
+          <div class="card-header"><h3>İçerik Seç</h3></div>
+          <div class="form-group">
+            <label>Hangi içeriği düzenlemek istiyorsun?</label>
+            <select id="duzenleSelect" onchange="duzenleYukle()">
+              <option value="">Seçiniz...</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="duzenleForm" style="display:none">
+          <div class="card">
+            <div class="card-header"><h3>📝 Bilgileri Düzenle</h3></div>
+            <div class="form-grid">
+              <div class="form-group"><label>Başlık</label><input type="text" id="dBaslik" /></div>
+              <div class="form-group"><label>Durum</label>
+                <select id="dDurum">
+                  <option value="devam">Devam Ediyor</option>
+                  <option value="tamamlandi">Tamamlandı</option>
+                  <option value="beklemede">Beklemede</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Puan (1-10)</label><input type="number" id="dPuan" min="1" max="10" step="0.1" /></div>
+              <div class="form-group"><label>Tür</label>
+                <select id="dTur">
+                  <option value="manga">Manga</option>
+                  <option value="webtoon">Webtoon</option>
+                  <option value="manhua">Manhua</option>
+                  <option value="manhwa">Manhwa</option>
+                </select>
+              </div>
+              <div class="form-group full"><label>Açıklama</label><textarea id="dAciklama" style="min-height:80px"></textarea></div>
+            </div>
+
+            <!-- KAPAK -->
+            <div class="form-group">
+              <label>Kapak Görseli</label>
+              <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+                <div id="dKapakOnizleme" style="width:100px;height:140px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--red);flex-shrink:0">?</div>
+                <div style="flex:1">
+                  <input type="file" id="dKapakDosya" accept="image/*" style="display:none" onchange="duzenleKapakYukle(this)" />
+                  <button type="button" class="btn btn-secondary" style="margin-bottom:8px" onclick="document.getElementById('dKapakDosya').click()">📷 Yeni Fotoğraf Seç</button>
+                  <div class="form-group" style="margin-bottom:0">
+                    <input type="text" id="dKapak" placeholder="veya URL yapıştır..." />
+                  </div>
+                  <div id="dKapakDurum" style="font-size:12px;margin-top:6px"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KATEGORİLER -->
+            <div class="form-group">
+              <label>Kategoriler</label>
+              <div class="kategori-grid" id="dKategoriGrid">
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Aksiyon')"><span>⚔️ Aksiyon</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Romantik')"><span>💕 Romantik</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Fantastik')"><span>🔮 Fantastik</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Korku')"><span>👻 Korku</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Komedi')"><span>😂 Komedi</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Dram')"><span>🎭 Dram</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Spor')"><span>⚽ Spor</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Doğaüstü')"><span>✨ Doğaüstü</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Shounen')"><span>🔥 Shounen</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Shoujo')"><span>🌸 Shoujo</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Seinen')"><span>💀 Seinen</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Isekai')"><span>🌀 Isekai</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Macera')"><span>🗺️ Macera</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Psikolojik')"><span>🧠 Psikolojik</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Tarihi')"><span>🏯 Tarihi</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Bilim Kurgu')"><span>🚀 Bilim Kurgu</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Vampir')"><span>🧛 Vampir</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Zombi')"><span>🧟 Zombi</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'İntikam')"><span>😤 İntikam</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Müzik')"><span>🎵 Müzik</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Dövüş Sanatları')"><span>🥋 Dövüş Sanatları</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Dedektif')"><span>🔍 Dedektif</span></div>
+              </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="form-group"><label>SEO Başlık</label><input type="text" id="dSeoBaslik" placeholder="Manga adı – Türkçe Oku | AkaToon" /></div>
+            <div class="form-group"><label>SEO Açıklama</label><textarea id="dSeoAciklama" style="min-height:60px" placeholder="Arama motorları için açıklama..."></textarea></div>
+
+            <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="duzenleKaydet()">💾 Değişiklikleri Kaydet</button>
+              <button class="btn btn-danger" onclick="duzenleSecilenSil()">🗑️ Bu İçeriği Sil</button>
+            </div>
+            <div class="msg" id="duzenleMsg"></div>
+          </div>
+
+          <!-- BÖLÜM YÖNETİMİ -->
+          <div class="card">
+            <div class="card-header">
+              <h3>📖 Bölüm Yönetimi</h3>
+              <button class="btn btn-primary btn-sm" onclick="showPage('bolum-ekle')">➕ Yeni Bölüm</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Bölüm</th><th>Başlık</th><th>Sayfa</th><th>Eklenme</th><th>İşlem</th></tr></thead>
+                <tbody id="dunzeleBolumTable"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -506,6 +617,151 @@ const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const ADMIN_EMAIL='tavuzugur@gmail.com';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
 let seciliTur='',seciliKategoriler=[],sayfaSayaci=0,chartTur=null,chartDag=null;
+
+let duzenleId = null;
+let duzenleKategoriler = [];
+
+async function loadDuzenleSelect() {
+  await loadMangaSelect();
+  const { data } = await sb.from('manga').select('id,baslik,tur').order('baslik');
+  const sel = document.getElementById('duzenleSelect');
+  if (sel) {
+    sel.innerHTML = '<option value="">Seçiniz...</option>';
+    if (data) data.forEach(m => sel.innerHTML += `<option value="${m.id}">[${m.tur}] ${m.baslik}</option>`);
+  }
+}
+
+async function duzenleYukle() {
+  const id = document.getElementById('duzenleSelect').value;
+  if (!id) { document.getElementById('duzenleForm').style.display = 'none'; return; }
+  duzenleId = id;
+
+  const { data: m } = await sb.from('manga').select('*').eq('id', id).single();
+  if (!m) return;
+
+  document.getElementById('dBaslik').value = m.baslik || '';
+  document.getElementById('dDurum').value = m.durum || 'devam';
+  document.getElementById('dTur').value = m.tur || 'manga';
+  document.getElementById('dPuan').value = m.puan || '';
+  document.getElementById('dAciklama').value = m.aciklama || '';
+  document.getElementById('dKapak').value = m.kapak_url || '';
+  document.getElementById('dSeoBaslik').value = m.seo_baslik || '';
+  document.getElementById('dSeoAciklama').value = m.seo_aciklama || '';
+
+  // Kapak önizleme
+  if (m.kapak_url) {
+    document.getElementById('dKapakOnizleme').innerHTML = `<img src="${m.kapak_url}" style="width:100%;height:100%;object-fit:cover" />`;
+  } else {
+    document.getElementById('dKapakOnizleme').innerHTML = m.baslik.substring(0,3).toUpperCase();
+  }
+
+  // Kategoriler
+  duzenleKategoriler = m.kategori ? m.kategori.split(',').map(k => k.trim()) : [];
+  document.querySelectorAll('#dKategoriGrid .kategori-item').forEach(el => {
+    const kat = el.querySelector('span').textContent.replace(/^[^\s]+ /, '');
+    if (duzenleKategoriler.includes(kat)) el.classList.add('checked');
+    else el.classList.remove('checked');
+  });
+
+  // Bölümler
+  await loadDunzeleBolumler(id);
+
+  document.getElementById('duzenleForm').style.display = 'block';
+}
+
+async function loadDunzeleBolumler(mangaId) {
+  const { data } = await sb.from('bolumler').select('*').eq('manga_id', mangaId).order('bolum_no');
+  const tbody = document.getElementById('dunzeleBolumTable');
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Henüz bölüm yok</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(b => `
+    <tr>
+      <td><strong>Bölüm ${b.bolum_no}</strong></td>
+      <td>${b.baslik || '—'}</td>
+      <td>${b.sayfalar?.length || 0} sayfa</td>
+      <td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-secondary" style="padding:4px 8px;font-size:11px" onclick="bolumDuzenleAc('${b.id}',${b.bolum_no})">✏️ Düzenle</button>
+        <button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSilD('${b.id}',${b.bolum_no})">Sil</button>
+      </td>
+    </tr>`).join('');
+}
+
+function toggleKategoriD(el, k) {
+  el.classList.toggle('checked');
+  if (el.classList.contains('checked')) duzenleKategoriler.push(k);
+  else duzenleKategoriler = duzenleKategoriler.filter(x => x !== k);
+}
+
+async function duzenleKapakYukle(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('dKapakDurum').textContent = '⏳ Yükleniyor...';
+  const ext = file.name.split('.').pop();
+  const path = 'kapaklar/' + Date.now() + '.' + ext;
+  const { error } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+  if (error) { document.getElementById('dKapakDurum').textContent = '❌ Hata!'; return; }
+  const { data } = sb.storage.from('avatars').getPublicUrl(path);
+  document.getElementById('dKapak').value = data.publicUrl;
+  document.getElementById('dKapakOnizleme').innerHTML = `<img src="${data.publicUrl}" style="width:100%;height:100%;object-fit:cover" />`;
+  document.getElementById('dKapakDurum').textContent = '✅ Yüklendi!';
+  document.getElementById('dKapakDurum').style.color = 'var(--green)';
+}
+
+async function duzenleKaydet() {
+  if (!duzenleId) return;
+  const btn = document.querySelector('#page-manga-duzenle .btn-primary');
+  btn.disabled = true; btn.textContent = 'Kaydediliyor...';
+
+  const { error } = await sb.from('manga').update({
+    baslik: document.getElementById('dBaslik').value.trim(),
+    durum: document.getElementById('dDurum').value,
+    tur: document.getElementById('dTur').value,
+    puan: document.getElementById('dPuan').value ? parseFloat(document.getElementById('dPuan').value) : null,
+    aciklama: document.getElementById('dAciklama').value.trim(),
+    kapak_url: document.getElementById('dKapak').value.trim(),
+    kategori: duzenleKategoriler.join(', '),
+    seo_baslik: document.getElementById('dSeoBaslik').value.trim(),
+    seo_aciklama: document.getElementById('dSeoAciklama').value.trim()
+  }).eq('id', duzenleId);
+
+  if (error) showMsg('duzenleMsg', 'error', 'Hata: ' + error.message);
+  else showMsg('duzenleMsg', 'success', '✅ Değişiklikler kaydedildi!');
+  btn.disabled = false; btn.textContent = '💾 Değişiklikleri Kaydet';
+}
+
+async function duzenleSecilenSil() {
+  if (!duzenleId) return;
+  const baslik = document.getElementById('dBaslik').value;
+  if (!confirm('"' + baslik + '" silinsin mi? Bu işlem geri alınamaz!')) return;
+  await sb.from('manga').delete().eq('id', duzenleId);
+  showMsg('duzenleMsg', 'success', '✅ Silindi!');
+  document.getElementById('duzenleForm').style.display = 'none';
+  document.getElementById('duzenleSelect').value = '';
+  duzenleId = null;
+  loadDuzenleSelect();
+}
+
+async function bolumSilD(id, no) {
+  if (!confirm('Bölüm ' + no + ' silinsin mi?')) return;
+  await sb.from('bolumler').delete().eq('id', id);
+  loadDunzeleBolumler(duzenleId);
+}
+
+function bolumDuzenleAc(id, no) {
+  // Bölüm düzenleme için bölüm listesi sayfasına yönlendir
+  showPage('bolum-listesi');
+  setTimeout(() => {
+    if (duzenleId) {
+      document.getElementById('bolumFilterManga').value = duzenleId;
+      loadBolumListesi();
+    }
+  }, 300);
+}
+
+
 
 function toggleSidebar(){
   const s=document.getElementById('adminSidebar');
