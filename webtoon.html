@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Webtoon – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--bg:#0d0d0f;--bg2:#141418;--bg3:#1c1c22;--border:#2a2a35;--red:#e8192c;--text:#e8e8f0;--muted:#888899;--gold:#f5c842;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+    a{color:inherit;text-decoration:none;}
+    nav{background:rgba(13,13,15,0.96);border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+    .logo{font-family:'Bebas Neue';font-size:26px;}.logo span{color:var(--red);}
+    .container{max-width:1280px;margin:0 auto;padding:32px 24px 60px;}
+    h1{font-family:'Bebas Neue';font-size:40px;letter-spacing:1px;margin-bottom:8px;}
+    .subtitle{color:var(--muted);font-size:14px;margin-bottom:24px;}
+    .filtre-bar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
+    .filtre-bar select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:13px;outline:none;}
+    .sonuc{color:var(--muted);font-size:13px;align-self:center;}
+    .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;}
+    .card{background:var(--bg2);border-radius:10px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;}
+    .card:hover{transform:translateY(-4px);border-color:var(--red);box-shadow:0 8px 30px rgba(232,25,44,0.15);}
+    .card-cover{height:240px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:36px;color:rgba(255,255,255,0.3);overflow:hidden;position:relative;}
+    .card-cover img{width:100%;height:100%;object-fit:cover;}
+    .card-badge{position:absolute;top:8px;right:8px;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;}
+    .card-info{padding:12px;}
+    .card-info h3{font-size:14px;font-weight:600;margin-bottom:6px;}
+    .card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+    .genre-tag{background:rgba(34,197,94,0.12);color:#4ade80;font-size:11px;padding:2px 8px;border-radius:4px;}
+    .card-rating{color:var(--gold);font-size:11px;}
+    .empty{text-align:center;padding:60px;color:var(--muted);grid-column:1/-1;}
+    .empty h2{font-family:'Bebas Neue';font-size:32px;margin-bottom:8px;}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+    <span style="color:var(--muted);font-size:14px">/ Webtoon</span>
+  </nav>
+  <div class="container">
+    <h1>📱 Webtoonlar</h1>
+    <p class="subtitle">Tüm webtoon, manhwa ve manhua serimizi keşfet</p>
+    <div class="filtre-bar">
+      <select onchange="load()">
+        <option value="puan">⭐ Puana Göre</option>
+        <option value="yeni">🆕 En Yeni</option>
+        <option value="isim">🔤 A-Z</option>
+      </select>
+      <select id="turSelect" onchange="load()">
+        <option value="">Tüm Türler</option>
+        <option value="webtoon">Webtoon</option>
+        <option value="manhwa">Manhwa</option>
+        <option value="manhua">Manhua</option>
+      </select>
+      <span class="sonuc" id="sonuc"></span>
+    </div>
+    <div class="cards-grid" id="grid"><div class="empty"><h2>Yükleniyor...</h2></div></div>
+  </div>
+  <script>
+    const sb=supabase.createClient('https://wxfmatafacdjhiurowut.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE');
+    async function load(){
+      const siralama=document.querySelector('select').value;
+      const tur=document.getElementById('turSelect').value;
+      let q=sb.from('manga').select('*').in('tur',tur?[tur]:['webtoon','manhwa','manhua']);
+      if(siralama==='puan') q=q.order('puan',{ascending:false});
+      else if(siralama==='yeni') q=q.order('created_at',{ascending:false});
+      else q=q.order('baslik',{ascending:true});
+      const{data}=await q;
+      const grid=document.getElementById('grid');
+      if(!data||!data.length){grid.innerHTML='<div class="empty"><h2>😔 Henüz Webtoon Yok</h2><p>Yakında eklenecek!</p></div>';document.getElementById('sonuc').textContent='';return;}
+      document.getElementById('sonuc').textContent=data.length+' webtoon';
+      grid.innerHTML=data.map(m=>`<div class="card" onclick="location.href='detay.html?manga=${m.id}'"><div class="card-cover">${m.kapak_url?`<img src="${m.kapak_url}" loading="lazy"/>`:'<span>'+m.baslik.substring(0,3).toUpperCase()+'</span>'}${m.durum==='devam'?'<div class="card-badge">GÜNCEL</div>':''}</div><div class="card-info"><h3>${m.baslik}</h3><div class="card-meta">${m.kategori?'<span class="genre-tag">'+m.kategori.split(',')[0].trim()+'</span>':''}${m.puan?'<span class="card-rating">⭐ '+m.puan+'</span>':''}</div></div></div>`).join('');
+    }
+    load();
+  </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yeni Bölümler – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--bg:#0d0d0f;--bg2:#141418;--bg3:#1c1c22;--border:#2a2a35;--red:#e8192c;--text:#e8e8f0;--muted:#888899;--gold:#f5c842;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+    a{color:inherit;text-decoration:none;}
+    nav{background:rgba(13,13,15,0.96);border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+    .logo{font-family:'Bebas Neue';font-size:26px;}.logo span{color:var(--red);}
+    .container{max-width:900px;margin:0 auto;padding:32px 24px 60px;}
+    h1{font-family:'Bebas Neue';font-size:40px;margin-bottom:8px;}
+    .subtitle{color:var(--muted);font-size:14px;margin-bottom:24px;}
+    .update-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--bg2);border-radius:10px;cursor:pointer;border:1px solid transparent;transition:all .2s;margin-bottom:4px;}
+    .update-item:hover{background:var(--bg3);border-color:var(--border);}
+    .cover{width:52px;height:52px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:13px;color:var(--red);overflow:hidden;flex-shrink:0;}
+    .cover img{width:100%;height:100%;object-fit:cover;}
+    .info{flex:1;}
+    .manga-title{font-weight:700;font-size:15px;margin-bottom:3px;}
+    .bolum-info{color:var(--muted);font-size:13px;}
+    .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+    .time{color:var(--muted);font-size:12px;}
+    .read-btn{background:var(--red);color:#fff;padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;}
+    .empty{text-align:center;padding:60px;color:var(--muted);}
+    .empty h2{font-family:'Bebas Neue';font-size:32px;margin-bottom:8px;}
+    .gun-baslik{font-family:'Bebas Neue';font-size:18px;color:var(--muted);letter-spacing:1px;padding:12px 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;margin-top:16px;}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+    <span style="color:var(--muted);font-size:14px">/ Yeni Bölümler</span>
+  </nav>
+  <div class="container">
+    <h1>🆕 Yeni Bölümler</h1>
+    <p class="subtitle">Son eklenen bölümler</p>
+    <div id="list"><div class="empty"><h2>Yükleniyor...</h2></div></div>
+  </div>
+  <script>
+    const sb=supabase.createClient('https://wxfmatafacdjhiurowut.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE');
+    function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<3600)return Math.floor(s/60)+' dk önce';if(s<86400)return Math.floor(s/3600)+' saat önce';return Math.floor(s/86400)+' gün önce';}
+    function gunAdi(d){const t=new Date(d);const bugun=new Date();const dun=new Date(bugun-86400000);if(t.toDateString()===bugun.toDateString())return 'BUGÜN';if(t.toDateString()===dun.toDateString())return 'DÜN';return t.toLocaleDateString('tr-TR',{day:'numeric',month:'long'});}
+    async function load(){
+      const{data}=await sb.from('bolumler').select('*,manga(id,baslik,kapak_url)').order('created_at',{ascending:false}).limit(100);
+      const el=document.getElementById('list');
+      if(!data||!data.length){el.innerHTML='<div class="empty"><h2>😔 Henüz Bölüm Yok</h2><p>Yakında eklenecek!</p></div>';return;}
+      let html='',lastGun='';
+      data.forEach(b=>{
+        const gun=gunAdi(b.created_at);
+        if(gun!==lastGun){html+=`<div class="gun-baslik">${gun}</div>`;lastGun=gun;}
+        const m=b.manga;
+        html+=`<div class="update-item" onclick="location.href='oku.html?manga=${m?.id}&bolum=${b.bolum_no}'">
+          <div class="cover">${m?.kapak_url?`<img src="${m.kapak_url}"/>`:(m?.baslik?.substring(0,3)||'?')}</div>
+          <div class="info">
+            <div class="manga-title">${m?.baslik||'?'}</div>
+            <div class="bolum-info">Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''} · ${b.sayfalar?.length||0} sayfa</div>
+          </div>
+          <div class="right">
+            <span class="time">${timeAgo(b.created_at)}</span>
+            <span class="read-btn">Oku</span>
+          </div>
+        </div>`;
+      });
+      el.innerHTML=html;
+    }
+    load();
+  </script>
+</body>
+</html>
