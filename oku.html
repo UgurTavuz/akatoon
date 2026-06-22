@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oku – MangaTürk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22;
+      --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+    a { color: inherit; text-decoration: none; }
+
+    /* TOP BAR */
+    .reader-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,15,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .reader-nav .logo { font-family: 'Bebas Neue'; font-size: 22px; }
+    .logo-manga { color: var(--red); }
+    .reader-title { font-size: 14px; font-weight: 600; flex: 1; }
+    .reader-title span { color: var(--muted); font-weight: 400; }
+
+    .chapter-select {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); padding: 6px 12px; border-radius: 6px;
+      font-size: 13px; cursor: pointer; outline: none;
+    }
+    .chapter-select:focus { border-color: var(--red); }
+
+    .nav-btn {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); padding: 6px 14px; border-radius: 6px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .nav-btn:hover { background: var(--red); border-color: var(--red); }
+
+    /* AD */
+    .ad-reader {
+      max-width: 728px; margin: 16px auto;
+      background: var(--bg2); border: 1px dashed var(--border);
+      height: 90px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 12px; letter-spacing: 1px;
+    }
+
+    /* PAGES */
+    .reader-container { max-width: 800px; margin: 0 auto; padding: 0 16px 60px; }
+
+    .page-img {
+      width: 100%; display: block; margin-bottom: 4px; border-radius: 4px;
+      background: var(--bg2);
+      min-height: 400px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 14px;
+    }
+
+    .page-placeholder {
+      width: 100%; background: var(--bg2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 13px; border-radius: 4px;
+      margin-bottom: 4px; min-height: 500px;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .page-num {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(0,0,0,.6); color: var(--muted);
+      font-size: 11px; padding: 3px 8px; border-radius: 4px;
+    }
+    .page-content {
+      font-family: 'Bebas Neue'; font-size: 80px; color: #1c1c22;
+      user-select: none;
+    }
+
+    /* BOTTOM NAV */
+    .reader-bottom {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(13,13,15,0.97);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+    }
+    .progress { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <nav class="reader-nav">
+    <a href="index.html" class="logo"><span class="logo-manga">M</span>T</a>
+    <div class="reader-title">
+      Jujutsu Kaisen <span>/ Bölüm 1</span>
+    </div>
+    <select class="chapter-select" onchange="changeChapter(this.value)">
+      <option value="1" selected>Bölüm 1</option>
+      <option value="2">Bölüm 2</option>
+      <option value="3">Bölüm 3</option>
+      <option value="4">Bölüm 4</option>
+      <option value="5">Bölüm 5</option>
+    </select>
+    <button class="nav-btn" onclick="prevChapter()">← Önceki</button>
+    <button class="nav-btn" onclick="nextChapter()">Sonraki →</button>
+  </nav>
+
+  <div class="ad-reader">Reklam</div>
+
+  <div class="reader-container" id="readerContainer">
+    <!-- Sayfalar JavaScript ile oluşturuluyor -->
+  </div>
+
+  <div class="ad-reader">Reklam</div>
+
+  <div class="reader-bottom">
+    <button class="nav-btn" onclick="prevChapter()">← Önceki Bölüm</button>
+    <span class="progress" id="progressText">Sayfa 1 / 20</span>
+    <button class="nav-btn" onclick="nextChapter()">Sonraki Bölüm →</button>
+  </div>
+
+  <script>
+    const totalPages = 20;
+
+    function renderPages() {
+      const container = document.getElementById('readerContainer');
+      container.innerHTML = '';
+      for (let i = 1; i <= totalPages; i++) {
+        const div = document.createElement('div');
+        div.className = 'page-placeholder';
+        div.style.minHeight = (i % 3 === 0 ? '700px' : '520px');
+        div.innerHTML = `
+          <span class="page-content">SAYFA ${i}</span>
+          <span class="page-num">${i} / ${totalPages}</span>
+        `;
+        container.appendChild(div);
+      }
+      document.getElementById('progressText').textContent = `Toplam ${totalPages} Sayfa`;
+    }
+
+    function changeChapter(val) {
+      console.log('Bölüm değişti:', val);
+      renderPages();
+    }
+
+    function nextChapter() {
+      const sel = document.querySelector('.chapter-select');
+      if (sel.selectedIndex < sel.options.length - 1) {
+        sel.selectedIndex++;
+        changeChapter(sel.value);
+      }
+    }
+
+    function prevChapter() {
+      const sel = document.querySelector('.chapter-select');
+      if (sel.selectedIndex > 0) {
+        sel.selectedIndex--;
+        changeChapter(sel.value);
+      }
+    }
+
+    renderPages();
+  </script>
+</body>
+</html>

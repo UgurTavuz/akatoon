@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MangaTürk – Türkçe Manga & Webtoon</title>
+  <meta name="description" content="Türkiye'nin en kaliteli manga ve webtoon platformu. Ücretsiz oku, güncel bölümler." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-manga">Manga</span><span class="logo-turk">Türk</span>
+      </a>
+      <div class="nav-links">
+        <a href="manga.html">Manga</a>
+        <a href="webtoon.html">Webtoon</a>
+        <a href="popular.html">Popüler</a>
+        <a href="new.html">Yeni Bölümler</a>
+      </div>
+      <div class="nav-right">
+        <button class="search-btn" onclick="toggleSearch()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <a href="giris.html" class="btn-login">Giriş Yap</a>
+      </div>
+      <button class="hamburger" onclick="toggleMenu()">☰</button>
+    </div>
+    <div class="search-bar" id="searchBar">
+      <input type="text" placeholder="Manga veya webtoon ara..." id="searchInput" />
+      <button onclick="doSearch()">Ara</button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="manga.html">Manga</a>
+      <a href="webtoon.html">Webtoon</a>
+      <a href="popular.html">Popüler</a>
+      <a href="new.html">Yeni Bölümler</a>
+      <a href="giris.html">Giriş Yap</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🔥 Haftanın En Çok Okunanı</div>
+      <h1 class="hero-title">Jujutsu Kaisen</h1>
+      <p class="hero-desc">Gizli güçlerin ve lanetlerin dünyasında geçen epik bir dövüş destanı. Yuji Itadori'nin inanılmaz yolculuğunu takip et.</p>
+      <div class="hero-meta">
+        <span class="tag">Aksiyon</span>
+        <span class="tag">Shounen</span>
+        <span class="tag">Doğaüstü</span>
+        <span class="hero-chapter">Bölüm 265 – Güncel</span>
+      </div>
+      <div class="hero-btns">
+        <a href="oku.html?manga=jjk&bolum=1" class="btn-primary">Okumaya Başla</a>
+        <a href="manga-detay.html?manga=jjk" class="btn-secondary">Detaylar</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-img-placeholder">
+        <span>JJK</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- AD BANNER TOP -->
+  <div class="ad-banner">
+    <span>Reklam</span>
+  </div>
+
+  <!-- SON EKLENENLER -->
+  <section class="section">
+    <div class="section-header">
+      <h2>🆕 Son Eklenen Bölümler</h2>
+      <a href="new.html" class="see-all">Tümünü Gör →</a>
+    </div>
+    <div class="updates-list">
+      <div class="update-item" onclick="window.location='oku.html?manga=op&bolum=1111'">
+        <div class="update-cover op">OP</div>
+        <div class="update-info">
+          <span class="update-title">One Piece</span>
+          <span class="update-chapter">Bölüm 1111</span>
+        </div>
+        <span class="update-time">2 saat önce</span>
+      </div>
+      <div class="update-item" onclick="window.location='oku.html?manga=boruto&bolum=12'">
+        <div class="update-cover boruto">BR</div>
+        <div class="update-info">
+          <span class="update-title">Boruto: Two Blue Vortex</span>
+          <span class="update-chapter">Bölüm 12</span>
+        </div>
+        <span class="update-time">5 saat önce</span>
+      </div>
+      <div class="update-item" onclick="window.location='oku.html?manga=aot&bolum=139'">
+        <div class="update-cover aot">AOT</div>
+        <div class="update-info">
+          <span class="update-title">Attack on Titan</span>
+          <span class="update-chapter">Bölüm 139</span>
+        </div>
+        <span class="update-time">1 gün önce</span>
+      </div>
+      <div class="update-item" onclick="window.location='oku.html?manga=ds&bolum=205'">
+        <div class="update-cover ds">DS</div>
+        <div class="update-info">
+          <span class="update-title">Demon Slayer</span>
+          <span class="update-chapter">Bölüm 205</span>
+        </div>
+        <span class="update-time">1 gün önce</span>
+      </div>
+      <div class="update-item" onclick="window.location='oku.html?manga=spy&bolum=98'">
+        <div class="update-cover spy">SPY</div>
+        <div class="update-info">
+          <span class="update-title">Spy x Family</span>
+          <span class="update-chapter">Bölüm 98</span>
+        </div>
+        <span class="update-time">2 gün önce</span>
+      </div>
+      <div class="update-item" onclick="window.location='oku.html?manga=csm&bolum=168'">
+        <div class="update-cover csm">CSM</div>
+        <div class="update-info">
+          <span class="update-title">Chainsaw Man</span>
+          <span class="update-chapter">Bölüm 168</span>
+        </div>
+        <span class="update-time">3 gün önce</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- POPÜLER MANGALAR -->
+  <section class="section">
+    <div class="section-header">
+      <h2>🔥 Popüler Mangalar</h2>
+      <a href="popular.html" class="see-all">Tümünü Gör →</a>
+    </div>
+    <div class="cards-grid">
+      <div class="card" onclick="window.location='manga-detay.html?manga=jjk'">
+        <div class="card-cover jjk-c">
+          <span>JJK</span>
+          <div class="card-badge">HOT</div>
+        </div>
+        <div class="card-info">
+          <h3>Jujutsu Kaisen</h3>
+          <div class="card-meta">
+            <span class="genre-tag">Aksiyon</span>
+            <span class="chapter-count">265 Bölüm</span>
+          </div>
+          <div class="card-rating">⭐ 9.4</div>
+        </div>
+      </div>
+      <div class="card" onclick="window.location='manga-detay.html?manga=op'">
+        <div class="card-cover op-c">
+          <span>OP</span>
+          <div class="card-badge">GÜNCEL</div>
+        </div>
+        <div class="card-info">
+          <h3>One Piece</h3>
+          <div class="card-meta">
+            <span class="genre-tag">Macera</span>
+            <span class="chapter-count">1111 Bölüm</span>
+          </div>
+          <div class="card-rating">⭐ 9.7</div>
+        </div>
+      </div>
+      <div class="card" onclick="window.location='manga-detay.html?manga=bnha'">
+        <div class="card-cover bnha-c">
+          <span>MHA</span>
+        </div>
+        <div class="card-info">
+          <h3>My Hero Academia</h3>
+          <div class="card-meta">
+            <span class="genre-tag">Shounen</span>
+            <span class="chapter-count">430 Bölüm</span>
+          </div>
+          <div class="card-rating">⭐ 8.9</div>
+        </div>
+      </div>
+      <div class="card" onclick="window.location='manga-detay.html?manga=solo'">
+        <div class="card-cover solo-c">
+          <span>SL</span>
+          <div class="card-badge">WEBTOON</div>
+        </div>
+        <div class="card-info">
+          <h3>Solo Leveling</h3>
+          <div class="card-meta">
+            <span class="genre-tag">Fantastik</span>
+            <span class="chapter-count">200 Bölüm</span>
+          </div>
+          <div class="card-rating">⭐ 9.6</div>
+        </div>
+      </div>
+      <div class="card" onclick="window.location='manga-detay.html?manga=aot'">
+        <div class="card-cover aot-c">
+          <span>AOT</span>
+        </div>
+        <div class="card-info">
+          <h3>Attack on Titan</h3>
+          <div class="card-meta">
+            <span class="genre-tag">Dram</span>
+            <span class="chapter-count">139 Bölüm</span>
+          </div>
+          <div class="card-rating">⭐ 9.8</div>
+        </div>
+      </div>
+      <div class="card" onclick="window.location='manga-detay.html?manga=csm'">
+        <div class="card-cover csm-c">
+          <span>CSM</span>
+          <div class="card-badge">HOT</div>
+        </div>
+        <div class="card-info">
+          <h3>Chainsaw Man</h3>
+          <div class="card-meta">
+            <span class="genre-tag">Korku</span>
+            <span class="chapter-count">168 Bölüm</span>
+          </div>
+          <div class="card-rating">⭐ 9.3</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AD BANNER MID -->
+  <div class="ad-banner">
+    <span>Reklam</span>
+  </div>
+
+  <!-- WEBTOON BÖLÜMÜ -->
+  <section class="section">
+    <div class="section-header">
+      <h2>📱 Öne Çıkan Webtoonlar</h2>
+      <a href="webtoon.html" class="see-all">Tümünü Gör →</a>
+    </div>
+    <div class="webtoon-grid">
+      <div class="webtoon-card" onclick="window.location='manga-detay.html?manga=solo'">
+        <div class="webtoon-cover solo-wc">
+          <span>Solo Leveling</span>
+        </div>
+        <div class="webtoon-rank">#1</div>
+      </div>
+      <div class="webtoon-card" onclick="window.location='manga-detay.html?manga=ow'">
+        <div class="webtoon-cover ow-wc">
+          <span>Omniscient Reader</span>
+        </div>
+        <div class="webtoon-rank">#2</div>
+      </div>
+      <div class="webtoon-card" onclick="window.location='manga-detay.html?manga=tower'">
+        <div class="webtoon-cover tower-wc">
+          <span>Tower of God</span>
+        </div>
+        <div class="webtoon-rank">#3</div>
+      </div>
+      <div class="webtoon-card" onclick="window.location='manga-detay.html?manga=noblesse'">
+        <div class="webtoon-cover noblesse-wc">
+          <span>Noblesse</span>
+        </div>
+        <div class="webtoon-rank">#4</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TÜR FİLTRE -->
+  <section class="section">
+    <div class="section-header">
+      <h2>🎭 Türe Göre Keşfet</h2>
+    </div>
+    <div class="genre-grid">
+      <a href="tur.html?tur=aksiyon" class="genre-btn aksiyon">⚔️ Aksiyon</a>
+      <a href="tur.html?tur=romantik" class="genre-btn romantik">💕 Romantik</a>
+      <a href="tur.html?tur=fantastik" class="genre-btn fantastik">🔮 Fantastik</a>
+      <a href="tur.html?tur=korku" class="genre-btn korku">👻 Korku</a>
+      <a href="tur.html?tur=komedi" class="genre-btn komedi">😂 Komedi</a>
+      <a href="tur.html?tur=dram" class="genre-btn dram">🎭 Dram</a>
+      <a href="tur.html?tur=spor" class="genre-btn spor">⚽ Spor</a>
+      <a href="tur.html?tur=doğaüstü" class="genre-btn dogaustu">✨ Doğaüstü</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-manga">Manga</span><span class="logo-turk">Türk</span>
+        <p>Türkiye'nin en kaliteli manga ve webtoon platformu.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Keşfet</h4>
+          <a href="manga.html">Manga</a>
+          <a href="webtoon.html">Webtoon</a>
+          <a href="popular.html">Popüler</a>
+          <a href="new.html">Yeni Bölümler</a>
+        </div>
+        <div class="footer-col">
+          <h4>Türler</h4>
+          <a href="tur.html?tur=aksiyon">Aksiyon</a>
+          <a href="tur.html?tur=romantik">Romantik</a>
+          <a href="tur.html?tur=fantastik">Fantastik</a>
+          <a href="tur.html?tur=komedi">Komedi</a>
+        </div>
+        <div class="footer-col">
+          <h4>Hakkımızda</h4>
+          <a href="hakkimizda.html">Hakkımızda</a>
+          <a href="iletisim.html">İletişim</a>
+          <a href="gizlilik.html">Gizlilik Politikası</a>
+          <a href="kvkk.html">KVKK</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 MangaTürk. Tüm hakları saklıdır.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
