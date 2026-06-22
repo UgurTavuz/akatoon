@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İletişim – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    nav { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; }
+    .logo { font-family: 'Bebas Neue'; font-size: 26px; } .logo span { color: var(--red); }
+    .container { max-width: 800px; margin: 60px auto; padding: 0 24px; }
+    h1 { font-family: 'Bebas Neue'; font-size: 40px; margin-bottom: 8px; }
+    .subtitle { color: var(--muted); margin-bottom: 40px; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+    .contact-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+    .contact-icon { font-size: 32px; margin-bottom: 12px; }
+    .contact-label { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
+    .contact-value { font-size: 16px; font-weight: 600; }
+    .contact-value a { color: var(--red); }
+    .form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+    .form-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    .form-group input, .form-group textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--red); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .btn { background: var(--red); color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+    @media (max-width: 600px) { .contact-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+    <span style="color:var(--muted);font-size:14px">/ İletişim</span>
+  </nav>
+  <div class="container">
+    <h1>İletişim</h1>
+    <p class="subtitle">Bize ulaşmak için aşağıdaki iletişim bilgilerini kullanabilirsiniz.</p>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">📞</div>
+        <div class="contact-label">TELEFON</div>
+        <div class="contact-value"><a href="tel:05301013618">0530 101 36 18</a></div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">✉️</div>
+        <div class="contact-label">E-POSTA</div>
+        <div class="contact-value"><a href="mailto:akatoon003@gmail.com">akatoon003@gmail.com</a></div>
+      </div>
+    </div>
+    <div class="form-card">
+      <h2>📩 Bize Mesaj Gönder</h2>
+      <div class="form-group">
+        <label>Adınız</label>
+        <input type="text" placeholder="Adınız Soyadınız" />
+      </div>
+      <div class="form-group">
+        <label>E-posta</label>
+        <input type="email" placeholder="ornek@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Konu</label>
+        <input type="text" placeholder="Mesajınızın konusu" />
+      </div>
+      <div class="form-group">
+        <label>Mesajınız</label>
+        <textarea placeholder="Mesajınızı buraya yazın..."></textarea>
+      </div>
+      <button class="btn" onclick="alert('Mesajınız alındı! En kısa sürede dönüş yapacağız.')">Gönder</button>
+    </div>
+  </div>
+</body>
+</html>
