@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manga İstekleri – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --red-dark: #b01020; --gold: #f5c842; --green: #22c55e; --text: #e8e8f0; --muted: #888899; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    nav { background: rgba(13,13,15,0.96); border-bottom: 1px solid var(--border); padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
+    .logo { font-family: 'Bebas Neue'; font-size: 26px; } .logo span { color: var(--red); }
+    .nav-right { margin-left: auto; }
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 24px 60px; }
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 { font-family: 'Bebas Neue'; font-size: 40px; margin-bottom: 8px; }
+    .page-header p { color: var(--muted); font-size: 14px; }
+    .istek-form { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+    .istek-form h2 { font-size: 16px; font-weight: 700; margin-bottom: 18px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group.full { grid-column: 1/-1; }
+    .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--red); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--red); color: #fff; } .btn-primary:hover { background: var(--red-dark); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 12px; display: none; }
+    .msg.error { background: rgba(232,25,44,0.1); border: 1px solid rgba(232,25,44,0.3); color: #ff6b7a; display: block; }
+    .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; display: block; }
+    .filtre-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filtre-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .2s; }
+    .filtre-btn:hover, .filtre-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .istek-list { display: flex; flex-direction: column; gap: 10px; }
+    .istek-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; display: flex; gap: 16px; align-items: flex-start; transition: border-color .2s; }
+    .istek-card:hover { border-color: rgba(232,25,44,0.3); }
+    .istek-card.tamamlandi { border-color: rgba(34,197,94,0.3); }
+    .oy-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; cursor: pointer; transition: all .2s; flex-shrink: 0; min-width: 56px; }
+    .oy-btn:hover { border-color: var(--red); }
+    .oy-btn.oyladim { background: rgba(232,25,44,0.1); border-color: var(--red); }
+    .oy-icon { font-size: 18px; }
+    .oy-sayi { font-family: 'Bebas Neue'; font-size: 22px; color: var(--red); line-height: 1; }
+    .oy-text { font-size: 10px; color: var(--muted); }
+    .istek-content { flex: 1; }
+    .istek-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+    .istek-baslik { font-size: 16px; font-weight: 700; }
+    .istek-tur { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+    .istek-durum { padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .durum-beklemede { background: rgba(245,200,66,0.15); color: var(--gold); }
+    .durum-inceleniyor { background: rgba(96,96,255,0.15); color: #9090ff; }
+    .durum-tamamlandi { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .istek-aciklama { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 8px; }
+    .istek-footer { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+    .empty { text-align: center; padding: 60px; color: var(--muted); font-size: 14px; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .istek-card { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+    <span style="color:var(--muted);font-size:14px">/ Manga İstekleri</span>
+    <div class="nav-right">
+      <div id="navAuth"></div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>📋 Manga İstekleri</h1>
+      <p>Görmek istediğin mangayı öner, diğer kullanıcılar oylasın! En çok oy alan mangalar önce eklenir.</p>
+    </div>
+
+    <!-- İSTEK FORMU -->
+    <div class="istek-form" id="istekForm">
+      <h2>➕ Yeni İstek Ekle</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Manga/Webtoon Adı *</label>
+          <input type="text" id="istekAdi" placeholder="Örn: Solo Leveling" />
+        </div>
+        <div class="form-group">
+          <label>Tür</label>
+          <select id="istekTur">
+            <option value="">Seçiniz...</option>
+            <option value="manga">Manga</option>
+            <option value="webtoon">Webtoon</option>
+            <option value="manhua">Manhua</option>
+            <option value="manhwa">Manhwa</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Açıklama (opsiyonel)</label>
+          <textarea id="istekAciklama" placeholder="Bu manga hakkında kısa bilgi ver..."></textarea>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="istekGonder()">📤 İsteği Gönder</button>
+      <div class="msg" id="istekMsg"></div>
+    </div>
+
+    <!-- GİRİŞ YAPMAYAN MESAJI -->
+    <div id="girisMsg" style="display:none; background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:32px; text-align:center;">
+      <p style="color:var(--muted);margin-bottom:12px">İstek göndermek için giriş yapmalısın.</p>
+      <a href="giris.html" class="btn btn-primary">Giriş Yap</a>
+    </div>
+
+    <!-- FİLTRE -->
+    <div class="filtre-bar">
+      <button class="filtre-btn active" onclick="filtrele('hepsi', this)">🔥 En Çok Oylanan</button>
+      <button class="filtre-btn" onclick="filtrele('yeni', this)">🆕 En Yeni</button>
+      <button class="filtre-btn" onclick="filtrele('beklemede', this)">⏳ Beklemede</button>
+      <button class="filtre-btn" onclick="filtrele('inceleniyor', this)">🔍 İnceleniyor</button>
+      <button class="filtre-btn" onclick="filtrele('tamamlandi', this)">✅ Eklendi</button>
+    </div>
+
+    <div id="istekList" class="istek-list">
+      <div style="color:var(--muted);text-align:center;padding:40px">Yükleniyor...</div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://wxfmatafacdjhiurowut.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    let currentUser = null, mevcutFiltre = 'hepsi', oyladigim = new Set();
+
+    async function init() {
+      const { data: { user } } = await sb.auth.getUser();
+      currentUser = user;
+      if (currentUser) {
+        document.getElementById('navAuth').innerHTML = `<a href="ayarlar.html" style="background:var(--red);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${(currentUser.user_metadata?.username||currentUser.email)[0].toUpperCase()}</a>`;
+        await loadOyladigim();
+      } else {
+        document.getElementById('navAuth').innerHTML = `<a href="giris.html" style="background:var(--red);color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600">Giriş Yap</a>`;
+        document.getElementById('istekForm').style.display = 'none';
+        document.getElementById('girisMsg').style.display = 'block';
+      }
+      loadIstekler();
+    }
+
+    async function loadOyladigim() {
+      if (!currentUser) return;
+      const { data } = await sb.from('istek_oylar').select('istek_id').eq('user_id', currentUser.id);
+      if (data) data.forEach(o => oyladigim.add(o.istek_id));
+    }
+
+    async function loadIstekler() {
+      let q = sb.from('manga_istekleri').select('*');
+      if (mevcutFiltre === 'yeni') q = q.order('created_at', { ascending: false });
+      else if (mevcutFiltre === 'hepsi') q = q.order('oy_sayisi', { ascending: false });
+      else q = q.eq('durum', mevcutFiltre).order('oy_sayisi', { ascending: false });
+
+      const { data } = await q;
+      const el = document.getElementById('istekList');
+
+      if (!data || !data.length) {
+        el.innerHTML = '<div class="empty">Henüz istek yok. İlk isteği sen gönder! 🚀</div>';
+        return;
+      }
+
+      el.innerHTML = data.map(i => `
+        <div class="istek-card ${i.durum === 'tamamlandi' ? 'tamamlandi' : ''}">
+          <button class="oy-btn ${oyladigim.has(i.id) ? 'oyladim' : ''}" onclick="oy('${i.id}')">
+            <span class="oy-icon">${oyladigim.has(i.id) ? '❤️' : '🤍'}</span>
+            <span class="oy-sayi">${i.oy_sayisi}</span>
+            <span class="oy-text">oy</span>
+          </button>
+          <div class="istek-content">
+            <div class="istek-header">
+              <span class="istek-baslik">${i.manga_adi}</span>
+              ${i.tur ? `<span class="istek-tur">${i.tur}</span>` : ''}
+              <span class="istek-durum durum-${i.durum}">${durumText(i.durum)}</span>
+            </div>
+            ${i.aciklama ? `<div class="istek-aciklama">${i.aciklama}</div>` : ''}
+            <div class="istek-footer">
+              <span>👤 ${i.kullanici_adi || 'Anonim'}</span>
+              <span>${timeAgo(i.created_at)}</span>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    async function oy(istekId) {
+      if (!currentUser) { window.location.href = 'giris.html'; return; }
+
+      if (oyladigim.has(istekId)) {
+        await sb.from('istek_oylar').delete().eq('user_id', currentUser.id).eq('istek_id', istekId);
+        await sb.rpc('istek_oy_azalt', { istek_id: istekId });
+        oyladigim.delete(istekId);
+      } else {
+        const { error } = await sb.from('istek_oylar').insert([{ user_id: currentUser.id, istek_id: istekId }]);
+        if (!error) {
+          await sb.rpc('istek_oy_artir', { istek_id: istekId });
+          oyladigim.add(istekId);
+        }
+      }
+      loadIstekler();
+    }
+
+    async function istekGonder() {
+      if (!currentUser) { window.location.href = 'giris.html'; return; }
+      const adi = document.getElementById('istekAdi').value.trim();
+      if (!adi) { showMsg('istekMsg', 'error', 'Manga adı zorunlu!'); return; }
+
+      const btn = document.querySelector('#istekForm .btn-primary');
+      btn.disabled = true; btn.textContent = 'Gönderiliyor...';
+
+      const username = currentUser.user_metadata?.username || currentUser.email.split('@')[0];
+      const { error } = await sb.from('manga_istekleri').insert([{
+        user_id: currentUser.id,
+        kullanici_adi: username,
+        manga_adi: adi,
+        tur: document.getElementById('istekTur').value || null,
+        aciklama: document.getElementById('istekAciklama').value.trim() || null
+      }]);
+
+      if (error) {
+        showMsg('istekMsg', 'error', 'Hata: ' + error.message);
+      } else {
+        showMsg('istekMsg', 'success', '✅ İsteğin gönderildi! Admin inceleyecek.');
+        document.getElementById('istekAdi').value = '';
+        document.getElementById('istekAciklama').value = '';
+        document.getElementById('istekTur').value = '';
+        loadIstekler();
+      }
+      btn.disabled = false; btn.textContent = '📤 İsteği Gönder';
+    }
+
+    function filtrele(f, btn) {
+      mevcutFiltre = f;
+      document.querySelectorAll('.filtre-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadIstekler();
+    }
+
+    function durumText(d) {
+      const m = { beklemede: '⏳ Beklemede', inceleniyor: '🔍 İnceleniyor', tamamlandi: '✅ Eklendi' };
+      return m[d] || d;
+    }
+
+    function timeAgo(d) { const s=(Date.now()-new Date(d))/1000; if(s<3600) return Math.floor(s/60)+' dk önce'; if(s<86400) return Math.floor(s/3600)+' saat önce'; return Math.floor(s/86400)+' gün önce'; }
+    function showMsg(id, tip, text) { const el=document.getElementById(id); el.className='msg '+tip; el.textContent=text; setTimeout(()=>el.className='msg',5000); }
+
+    init();
+  </script>
+</body>
+</html>
