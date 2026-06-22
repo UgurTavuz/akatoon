@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hakkımızda – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    nav { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; }
+    .logo { font-family: 'Bebas Neue'; font-size: 26px; } .logo span { color: var(--red); }
+    .container { max-width: 860px; margin: 60px auto; padding: 0 24px 80px; }
+    .hero-section { text-align: center; margin-bottom: 64px; }
+    .hero-section h1 { font-family: 'Bebas Neue'; font-size: 56px; letter-spacing: 2px; margin-bottom: 16px; }
+    .hero-section h1 span { color: var(--red); }
+    .hero-section p { color: var(--muted); font-size: 17px; max-width: 560px; margin: 0 auto; line-height: 1.7; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 64px; }
+    .stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 28px; text-align: center; }
+    .stat-num { font-family: 'Bebas Neue'; font-size: 48px; color: var(--red); }
+    .stat-label { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .section { margin-bottom: 48px; }
+    .section h2 { font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 1px; margin-bottom: 16px; color: var(--red); }
+    .section p { color: var(--muted); font-size: 15px; line-height: 1.8; margin-bottom: 12px; }
+    .values { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 24px; }
+    .value-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .value-icon { font-size: 28px; margin-bottom: 12px; }
+    .value-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .value-card p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+    @media (max-width: 600px) { .stats { grid-template-columns: 1fr; } .values { grid-template-columns: 1fr; } .hero-section h1 { font-size: 40px; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+    <span style="color:var(--muted);font-size:14px">/ Hakkımızda</span>
+  </nav>
+  <div class="container">
+    <div class="hero-section">
+      <h1>Biz <span>AkaToon</span>'uz</h1>
+      <p>Türkiye'nin manga ve webtoon tutkunları için kurulmuş, tamamen ücretsiz, kalite odaklı platformu. Her okuyucu en iyisini hak eder.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">%100</div>
+        <div class="stat-label">Ücretsiz İçerik</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">EN</div>
+        <div class="stat-label">Kaliteli Çeviriler</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">7/24</div>
+        <div class="stat-label">Erişilebilir</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Hikayemiz</h2>
+      <p>AkaToon, Türkiye'deki manga ve webtoon okuyucularının kaliteli Türkçe içeriğe erişememesi sorununu çözmek amacıyla kuruldu. Yıllarca farklı platformlarda dağınık, düşük kaliteli çevirilerle karşılaşan okuyucular için tek, güvenilir ve kaliteli bir platform oluşturmayı hedefledik.</p>
+      <p>Türkiye'de milyonlarca manga ve webtoon tutkunu var. Bu tutkuyu paylaşan ekibimiz, en sevilen yapıtları en kaliteli şekilde Türkçeye kazandırmak için çalışıyor. Her çeviri titizlikle incelenir, her bölüm okuyucu deneyimi gözetilerek hazırlanır.</p>
+    </div>
+
+    <div class="section">
+      <h2>Misyonumuz</h2>
+      <p>Türkiye'deki her manga ve webtoon okuyucusuna ücretsiz, hızlı ve kaliteli içerik sunmak. Hiçbir ücret talep etmeden, en popüler ve en kaliteli yapıtları Türkçe okumanın keyfini yaşatmak.</p>
+    </div>
+
+    <div class="section">
+      <h2>Neden AkaToon?</h2>
+      <div class="values">
+        <div class="value-card">
+          <div class="value-icon">⚡</div>
+          <h3>En Hızlı Güncellemeler</h3>
+          <p>Yeni bölümler çıkar çıkmaz Türkçe çevirisi ile sitemizde yayınlanır. Bekletmeyiz.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">💎</div>
+          <h3>Sadece En Kalitelisi</h3>
+          <p>Her içerik kalite kontrolünden geçer. Düşük kaliteli çeviriye ve içeriğe yer vermiyoruz.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🆓</div>
+          <h3>Tamamen Ücretsiz</h3>
+          <p>Hiçbir içerik için ücret talep etmiyoruz. Tüm manga ve webtoonlar sonsuza kadar ücretsiz.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">📱</div>
+          <h3>Her Cihazda Mükemmel</h3>
+          <p>Telefon, tablet veya bilgisayardan fark etmez. Her cihazda kusursuz okuma deneyimi.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>İletişim</h2>
+      <p>Öneri, şikayet veya iş birliği için bize ulaşabilirsiniz.</p>
+      <p>📞 <strong>0530 101 36 18</strong></p>
+      <p>✉️ <strong>akatoon003@gmail.com</strong></p>
+    </div>
+  </div>
+</body>
+</html>
