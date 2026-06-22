@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22;
+      --border: #2a2a35; --red: #e8192c; --red-dark: #b01020;
+      --text: #e8e8f0; --muted: #888899; --gold: #f5c842;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+    .topbar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-family: 'Bebas Neue'; font-size: 24px; }
+    .logo span { color: var(--red); }
+    .admin-badge {
+      background: rgba(232,25,44,0.15); color: var(--red);
+      border: 1px solid rgba(232,25,44,0.3);
+      padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+    }
+    .btn-logout {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); padding: 7px 16px; border-radius: 6px;
+      font-size: 13px; cursor: pointer; transition: all .2s;
+    }
+    .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+    .layout { display: flex; min-height: calc(100vh - 57px); }
+
+    .sidebar {
+      width: 220px; background: var(--bg2); border-right: 1px solid var(--border);
+      padding: 24px 0; flex-shrink: 0;
+    }
+    .sidebar-title {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      letter-spacing: 1px; padding: 0 20px; margin-bottom: 8px;
+    }
+    .sidebar a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; color: var(--muted); font-size: 14px;
+      font-weight: 500; transition: all .2s; cursor: pointer; text-decoration: none;
+    }
+    .sidebar a:hover, .sidebar a.active { color: var(--text); background: var(--bg3); }
+    .sidebar a.active { border-right: 2px solid var(--red); }
+
+    .main { flex: 1; padding: 32px; overflow-y: auto; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    h2 { font-size: 22px; font-weight: 700; margin-bottom: 24px; }
+
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px;
+    }
+    .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 700; font-family: 'Bebas Neue'; }
+    .stat-value.red { color: var(--red); }
+    .stat-value.gold { color: var(--gold); }
+
+    /* FORM */
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; margin-bottom: 24px;
+    }
+    .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 14px; border-radius: 8px;
+      font-size: 14px; outline: none; transition: border-color .2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--red); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    .btn { padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-primary:hover { background: var(--red-dark); }
+    .btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: rgba(232,25,44,0.1); color: var(--red); border: 1px solid rgba(232,25,44,0.3); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 600; padding: 10px 14px; border-bottom: 1px solid var(--border); letter-spacing: .5px; }
+    td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 14px; }
+    tr:hover td { background: var(--bg3); }
+
+    .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .badge-manga { background: rgba(96,96,255,0.15); color: #9090ff; }
+    .badge-webtoon { background: rgba(34,197,94,0.15); color: #4ade80; }
+
+    .msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 12px; display: none; }
+    .msg.error { background: rgba(232,25,44,0.1); border: 1px solid rgba(232,25,44,0.3); color: #ff6b7a; display: block; }
+    .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; display: block; }
+
+    #loading { text-align: center; padding: 60px; color: var(--muted); }
+
+    @media (max-width: 700px) {
+      .sidebar { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading">Yükleniyor...</div>
+
+<div id="adminPanel" style="display:none">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="logo"><span>Aka</span>Toon</div>
+      <span class="admin-badge">⚡ Admin Panel</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="index.html" class="btn-logout">← Siteye Dön</a>
+      <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-title">YÖNETİM</div>
+      <a class="active" onclick="showPage('dashboard')">📊 Dashboard</a>
+      <a onclick="showPage('manga-ekle')">➕ Manga/Webtoon Ekle</a>
+      <a onclick="showPage('manga-listesi')">📚 İçerik Listesi</a>
+      <a onclick="showPage('bolum-ekle')">📖 Bölüm Ekle</a>
+      <a onclick="showPage('kullanicilar')">👥 Kullanıcılar</a>
+    </div>
+
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <h2>📊 Dashboard</h2>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-label">Toplam Manga</div>
+            <div class="stat-value red" id="statManga">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Toplam Bölüm</div>
+            <div class="stat-value gold" id="statBolum">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Kullanıcılar</div>
+            <div class="stat-value" id="statKullanici">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Bu Ay Eklenen</div>
+            <div class="stat-value red" id="statAy">0</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🚀 Hızlı İşlemler</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="showPage('manga-ekle')">➕ Yeni Manga Ekle</button>
+            <button class="btn btn-secondary" onclick="showPage('bolum-ekle')">📖 Bölüm Ekle</button>
+            <button class="btn btn-secondary" onclick="showPage('manga-listesi')">📚 Listeyi Gör</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MANGA EKLE -->
+      <div class="page" id="page-manga-ekle">
+        <h2>➕ Yeni Manga / Webtoon Ekle</h2>
+        <div class="card">
+          <h3>İçerik Bilgileri</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Başlık *</label>
+              <input type="text" id="mangaBaslik" placeholder="Örn: Jujutsu Kaisen" />
+            </div>
+            <div class="form-group">
+              <label>Tür *</label>
+              <select id="mangaTur">
+                <option value="manga">Manga</option>
+                <option value="webtoon">Webtoon</option>
+                <option value="manhua">Manhua</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Durum</label>
+              <select id="mangaDurum">
+                <option value="devam">Devam Ediyor</option>
+                <option value="tamamlandi">Tamamlandı</option>
+                <option value="beklemede">Beklemede</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Kategori</label>
+              <input type="text" id="mangaKategori" placeholder="Aksiyon, Fantastik, Shounen..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Açıklama</label>
+            <textarea id="mangaAciklama" placeholder="Manga hakkında kısa açıklama..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Kapak Görseli URL</label>
+              <input type="text" id="mangaKapak" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+              <label>Puan (1-10)</label>
+              <input type="number" id="mangaPuan" min="1" max="10" step="0.1" placeholder="9.4" />
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="mangaEkle()">✅ Manga Ekle</button>
+          <div class="msg" id="mangaMsg"></div>
+        </div>
+      </div>
+
+      <!-- MANGA LİSTESİ -->
+      <div class="page" id="page-manga-listesi">
+        <h2>📚 İçerik Listesi</h2>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>BAŞLIK</th>
+                  <th>TÜR</th>
+                  <th>DURUM</th>
+                  <th>PUAN</th>
+                  <th>İŞLEM</th>
+                </tr>
+              </thead>
+              <tbody id="mangaTabloBody">
+                <tr><td colspan="5" style="text-align:center;color:var(--muted)">Yükleniyor...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BÖLÜM EKLE -->
+      <div class="page" id="page-bolum-ekle">
+        <h2>📖 Bölüm Ekle</h2>
+        <div class="card">
+          <h3>Bölüm Bilgileri</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Manga Seç *</label>
+              <select id="bolumManga">
+                <option value="">Manga seçin...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Bölüm Numarası *</label>
+              <input type="number" id="bolumNo" placeholder="1" min="1" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Bölüm Başlığı</label>
+            <input type="text" id="bolumBaslik" placeholder="Örn: Ryomen Sukuna" />
+          </div>
+          <div class="form-group">
+            <label>Sayfa Görselleri (Her satıra bir URL)</label>
+            <textarea id="bolumSayfalar" style="min-height:120px" placeholder="https://cdn.site.com/jjk/1/01.jpg&#10;https://cdn.site.com/jjk/1/02.jpg&#10;..."></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="bolumEkle()">✅ Bölüm Ekle</button>
+          <div class="msg" id="bolumMsg"></div>
+        </div>
+      </div>
+
+      <!-- KULLANICILAR -->
+      <div class="page" id="page-kullanicilar">
+        <h2>👥 Kullanıcılar</h2>
+        <div class="card">
+          <p style="color:var(--muted);font-size:14px">Kullanıcı listesi Supabase Authentication panelinden yönetilir.</p>
+          <br>
+          <a href="https://supabase.com/dashboard" target="_blank" class="btn btn-secondary">Supabase'i Aç →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://wxfmatafacdjhiurowut.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+  const ADMIN_EMAIL = 'tavuzugur@gmail.com';
+
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  async function init() {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user || user.email !== ADMIN_EMAIL) {
+      window.location.href = 'giris.html';
+      return;
+    }
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadStats();
+    loadMangaListesi();
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    event.target.classList.add('active');
+    if (id === 'manga-listesi') loadMangaListesi();
+    if (id === 'bolum-ekle') loadMangaSelect();
+  }
+
+  async function loadStats() {
+    const { count: mangaCount } = await sb.from('manga').select('*', { count: 'exact', head: true });
+    const { count: bolumCount } = await sb.from('bolumler').select('*', { count: 'exact', head: true });
+    document.getElementById('statManga').textContent = mangaCount || 0;
+    document.getElementById('statBolum').textContent = bolumCount || 0;
+  }
+
+  async function loadMangaListesi() {
+    const { data, error } = await sb.from('manga').select('*').order('created_at', { ascending: false });
+    const tbody = document.getElementById('mangaTabloBody');
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Henüz manga eklenmedi.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(m => `
+      <tr>
+        <td><strong>${m.baslik}</strong></td>
+        <td><span class="badge badge-${m.tur}">${m.tur}</span></td>
+        <td>${m.durum}</td>
+        <td>⭐ ${m.puan || '-'}</td>
+        <td><button class="btn btn-danger" style="padding:5px 12px;font-size:12px" onclick="mangaSil('${m.id}')">Sil</button></td>
+      </tr>
+    `).join('');
+  }
+
+  async function loadMangaSelect() {
+    const { data } = await sb.from('manga').select('id, baslik').order('baslik');
+    const sel = document.getElementById('bolumManga');
+    sel.innerHTML = '<option value="">Manga seçin...</option>';
+    if (data) data.forEach(m => {
+      sel.innerHTML += `<option value="${m.id}">${m.baslik}</option>`;
+    });
+  }
+
+  async function mangaEkle() {
+    const baslik = document.getElementById('mangaBaslik').value.trim();
+    const tur = document.getElementById('mangaTur').value;
+    const durum = document.getElementById('mangaDurum').value;
+    const kategori = document.getElementById('mangaKategori').value.trim();
+    const aciklama = document.getElementById('mangaAciklama').value.trim();
+    const kapak = document.getElementById('mangaKapak').value.trim();
+    const puan = document.getElementById('mangaPuan').value;
+
+    if (!baslik) { showMsg('mangaMsg', 'error', 'Başlık zorunlu!'); return; }
+
+    const btn = document.querySelector('#page-manga-ekle .btn-primary');
+    btn.disabled = true; btn.textContent = 'Ekleniyor...';
+
+    const { error } = await sb.from('manga').insert([{ baslik, tur, durum, kategori, aciklama, kapak_url: kapak, puan: puan || null }]);
+
+    if (error) {
+      showMsg('mangaMsg', 'error', 'Hata: ' + error.message);
+    } else {
+      showMsg('mangaMsg', 'success', '✅ Manga başarıyla eklendi!');
+      document.getElementById('mangaBaslik').value = '';
+      document.getElementById('mangaAciklama').value = '';
+      document.getElementById('mangaKapak').value = '';
+      document.getElementById('mangaPuan').value = '';
+    }
+    btn.disabled = false; btn.textContent = '✅ Manga Ekle';
+  }
+
+  async function bolumEkle() {
+    const manga_id = document.getElementById('bolumManga').value;
+    const no = document.getElementById('bolumNo').value;
+    const baslik = document.getElementById('bolumBaslik').value.trim();
+    const sayfalarRaw = document.getElementById('bolumSayfalar').value.trim();
+
+    if (!manga_id || !no) { showMsg('bolumMsg', 'error', 'Manga ve bölüm numarası zorunlu!'); return; }
+
+    const sayfalar = sayfalarRaw ? sayfalarRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+
+    const btn = document.querySelector('#page-bolum-ekle .btn-primary');
+    btn.disabled = true; btn.textContent = 'Ekleniyor...';
+
+    const { error } = await sb.from('bolumler').insert([{ manga_id, bolum_no: parseInt(no), baslik, sayfalar }]);
+
+    if (error) {
+      showMsg('bolumMsg', 'error', 'Hata: ' + error.message);
+    } else {
+      showMsg('bolumMsg', 'success', '✅ Bölüm başarıyla eklendi!');
+      document.getElementById('bolumNo').value = '';
+      document.getElementById('bolumBaslik').value = '';
+      document.getElementById('bolumSayfalar').value = '';
+    }
+    btn.disabled = false; btn.textContent = '✅ Bölüm Ekle';
+  }
+
+  async function mangaSil(id) {
+    if (!confirm('Bu mangayı silmek istediğinize emin misiniz?')) return;
+    await sb.from('manga').delete().eq('id', id);
+    loadMangaListesi();
+  }
+
+  function showMsg(id, tip, text) {
+    const el = document.getElementById(id);
+    el.className = 'msg ' + tip;
+    el.textContent = text;
+    setTimeout(() => el.className = 'msg', 4000);
+  }
+
+  async function cikisYap() {
+    await sb.auth.signOut();
+    window.location.href = 'giris.html';
+  }
+
+  init();
+</script>
+</body>
+</html>
