@@ -9,7 +9,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --text: #e8e8f0; --muted: #888899; }
-    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding-bottom: 70px; }
     a { color: inherit; text-decoration: none; }
     .reader-nav { position: sticky; top: 0; z-index: 100; background: rgba(13,13,15,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .logo { font-family: 'Bebas Neue'; font-size: 22px; } .logo span { color: var(--red); }
@@ -28,6 +28,115 @@
     .progress { color: var(--muted); font-size: 13px; }
     .kaldigim-kaydedildi { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; animation: fadeIn .3s; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* === READER TOOLBAR === */
+    .reader-toolbar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(18,18,22,0.97);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 200;
+    }
+    .toolbar-group { display: flex; align-items: center; gap: 8px; }
+    .tb-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 20px;
+      transition: color .2s, background .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+    }
+    .tb-btn:hover { color: var(--text); background: var(--bg3); }
+    .tb-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .tb-btn.active { color: var(--red); }
+    .speed-slider {
+      -webkit-appearance: none;
+      width: 100px;
+      height: 4px;
+      border-radius: 4px;
+      background: var(--border);
+      outline: none;
+    }
+    .speed-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--red);
+      cursor: pointer;
+    }
+    .speed-label { color: var(--muted); font-size: 11px; min-width: 55px; text-align: center; }
+    .bolum-listesi-panel {
+      position: fixed;
+      bottom: 62px; right: 16px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 260px;
+      max-height: 400px;
+      overflow-y: auto;
+      z-index: 300;
+      display: none;
+      box-shadow: 0 8px 30px rgba(0,0,0,.5);
+    }
+    .bolum-listesi-panel.open { display: block; }
+    .bolum-panel-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; }
+    .bolum-panel-item { padding: 10px 16px; font-size: 13px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background .15s; display: flex; align-items: center; justify-content: space-between; }
+    .bolum-panel-item:hover { background: var(--bg3); }
+    .bolum-panel-item.aktif { color: var(--red); font-weight: 600; }
+    .scroll-top-reader {
+      position: fixed;
+      bottom: 76px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(232,25,44,0.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .3s, transform .3s;
+      z-index: 199;
+    }
+    .scroll-top-reader.visible { opacity: 1; transform: translateY(0); }
+    .scroll-top-reader:hover { background: var(--red-dark); }
+    .tooltip {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg3);
+      color: var(--text);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s;
+      border: 1px solid var(--border);
+    }
+    .tb-btn:hover .tooltip { opacity: 1; }
   </style>
 </head>
 <body>
@@ -43,16 +152,112 @@
   <div class="reader-container" id="readerContainer"><div style="color:var(--muted);text-align:center;padding:60px">Yükleniyor...</div></div>
   <div class="ad-reader">Reklam</div>
 
-  <div class="reader-bottom">
-    <button class="nav-btn" id="prevBtn2" onclick="prevChapter()" disabled>← Önceki Bölüm</button>
-    <span class="progress" id="progressText"></span>
-    <button class="nav-btn" id="nextBtn2" onclick="nextChapter()" disabled>Sonraki Bölüm →</button>
+  <!-- YUKARI ÇIK -->
+  <button class="scroll-top-reader" id="scrollTopReader" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Yukarı Çık">↑</button>
+
+  <!-- BÖLÜM LİSTESİ PANELİ -->
+  <div class="bolum-listesi-panel" id="bolumPanel">
+    <div class="bolum-panel-header">📚 Bölümler</div>
+    <div id="bolumPanelList"></div>
+  </div>
+
+  <!-- ALT TOOLBAR -->
+  <div class="reader-toolbar">
+    <div class="toolbar-group">
+      <a href="index.html" style="position:relative">
+        <button class="tb-btn" title="Ana Sayfa">🏠<span class="tooltip">Ana Sayfa</span></button>
+      </a>
+      <button class="tb-btn" onclick="toggleBolumPanel()" title="Bölümler" id="bolumPanelBtn">
+        ☰<span class="tooltip">Bölümler</span>
+      </button>
+    </div>
+
+    <div class="toolbar-group">
+      <button class="tb-btn" id="prevBtn2" onclick="prevChapter()" disabled title="Önceki">
+        ‹<span class="tooltip">Önceki</span>
+      </button>
+      <button class="tb-btn" id="nextBtn2" onclick="nextChapter()" disabled title="Sonraki">
+        ›<span class="tooltip">Sonraki</span>
+      </button>
+    </div>
+
+    <div class="toolbar-group">
+      <button class="tb-btn" id="autoScrollBtn" onclick="toggleAutoScroll()" title="Otomatik Kaydır">
+        ▷<span class="tooltip">Otomatik Kaydır</span>
+      </button>
+      <input type="range" class="speed-slider" id="speedSlider" min="50" max="500" value="180" oninput="updateSpeed(this.value)" />
+      <span class="speed-label" id="speedLabel">180 px/s</span>
+    </div>
+
+    <div class="toolbar-group">
+      <button class="tb-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Yukarı">
+        ↑<span class="tooltip">Yukarı</span>
+      </button>
+      <button class="tb-btn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})" title="Aşağı">
+        ↓<span class="tooltip">Aşağı</span>
+      </button>
+    </div>
   </div>
 
   <script>
     const SUPABASE_URL='https://wxfmatafacdjhiurowut.supabase.co';
     const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
     const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+
+    // === TOOLBAR JS ===
+    let autoScrolling = false, autoScrollInterval = null, scrollSpeed = 180;
+
+    function toggleAutoScroll() {
+      autoScrolling = !autoScrolling;
+      const btn = document.getElementById('autoScrollBtn');
+      if (autoScrolling) {
+        btn.textContent = '⏸';
+        btn.classList.add('active');
+        autoScrollInterval = setInterval(() => {
+          window.scrollBy(0, scrollSpeed / 60);
+          if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+            toggleAutoScroll();
+          }
+        }, 16);
+      } else {
+        btn.textContent = '▷';
+        btn.classList.remove('active');
+        clearInterval(autoScrollInterval);
+      }
+    }
+
+    function updateSpeed(val) {
+      scrollSpeed = parseInt(val);
+      document.getElementById('speedLabel').textContent = val + ' px/s';
+    }
+
+    function toggleBolumPanel() {
+      const panel = document.getElementById('bolumPanel');
+      panel.classList.toggle('open');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#bolumPanel') && !e.target.closest('#bolumPanelBtn')) {
+        document.getElementById('bolumPanel').classList.remove('open');
+      }
+    });
+
+    // Yukarı çık butonu
+    const scrollReaderBtn = document.getElementById('scrollTopReader');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) scrollReaderBtn.classList.add('visible');
+      else scrollReaderBtn.classList.remove('visible');
+    });
+
+    // Bölüm panelini doldur
+    function doldurBolumPanel() {
+      const list = document.getElementById('bolumPanelList');
+      list.innerHTML = tumBolumler.map(b => `
+        <div class="bolum-panel-item ${b.bolum_no==bolumNo?'aktif':''}" onclick="bolumDegistir(${b.bolum_no});toggleBolumPanel()">
+          <span>Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</span>
+          ${b.bolum_no==bolumNo?'<span style="color:var(--red);font-size:11px">▶</span>':''}
+        </div>`).join('');
+    }
     const params=new URLSearchParams(window.location.search);
     const mangaId=params.get('manga');
     let bolumNo=parseInt(params.get('bolum'))||1;
@@ -80,6 +285,7 @@
     }
 
     function renderBolum(){
+      if(tumBolumler.length) doldurBolumPanel();
       const bolum=tumBolumler.find(b=>b.bolum_no==bolumNo);
       const idx=tumBolumler.findIndex(b=>b.bolum_no==bolumNo);
 
