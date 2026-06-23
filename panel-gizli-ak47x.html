@@ -57,14 +57,26 @@
     .kategori-item{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:7px 10px;cursor:pointer;transition:all .2s;}
     .kategori-item:hover,.kategori-item.checked{border-color:var(--red);background:rgba(232,25,44,0.08);}
     .kategori-item span{font-size:11px;font-weight:500;}
-    .sayfalar-container{border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg3);}
-    .sayfa-url-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:350px;overflow-y:auto;}
-    .sayfa-url-item{display:flex;gap:8px;align-items:center;}
-    .sayfa-no{color:var(--muted);font-size:11px;min-width:22px;font-weight:600;}
-    .btn-sayfa-ekle{background:var(--bg2);border:1px dashed var(--border);color:var(--muted);padding:7px;border-radius:6px;cursor:pointer;font-size:12px;width:100%;transition:all .2s;}
-    .btn-sayfa-ekle:hover{border-color:var(--red);color:var(--red);}
-    .btn-sayfa-sil{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:3px;border-radius:4px;}
-    .btn-sayfa-sil:hover{color:var(--red);}
+
+    /* ── YENİ: Resim Yükleme Alanı ── */
+    .upload-drop-zone{border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg3);position:relative;}
+    .upload-drop-zone:hover,.upload-drop-zone.dragover{border-color:var(--red);background:rgba(232,25,44,0.05);}
+    .upload-drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .upload-drop-icon{font-size:40px;margin-bottom:10px;}
+    .upload-drop-text{font-size:15px;font-weight:600;margin-bottom:4px;}
+    .upload-drop-sub{font-size:12px;color:var(--muted);}
+    .upload-progress-bar{height:6px;background:var(--border);border-radius:4px;overflow:hidden;margin:8px 0;}
+    .upload-progress-fill{height:100%;background:var(--red);border-radius:4px;transition:width .3s;}
+    .pages-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:14px;}
+    .page-thumb{position:relative;border-radius:8px;overflow:hidden;background:var(--bg3);border:1px solid var(--border);aspect-ratio:2/3;}
+    .page-thumb img{width:100%;height:100%;object-fit:cover;}
+    .page-thumb-num{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.75);color:#fff;font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;}
+    .page-thumb-del{position:absolute;top:4px;right:4px;background:rgba(232,25,44,.85);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;padding:2px 6px;line-height:1;}
+    .page-thumb-del:hover{background:var(--red);}
+    .page-thumb-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);font-size:22px;}
+    .upload-status{font-size:13px;color:var(--muted);margin-top:8px;min-height:20px;}
+    /* ── / ── */
+
     .toplu-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:13px;outline:none;font-family:monospace;resize:vertical;min-height:200px;line-height:1.6;}
     .toplu-textarea:focus{border-color:var(--red);}
     .table-wrap{overflow-x:auto;}
@@ -111,6 +123,7 @@
       .form-grid{grid-template-columns:1fr;}
       .kategori-grid{grid-template-columns:repeat(2,1fr);}
       .tur-secim{grid-template-columns:1fr 1fr;}
+      .pages-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr));}
     }
   </style>
 </head>
@@ -204,7 +217,7 @@
       <div class="page" id="page-ziyaretci">
         <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>👁️ Ziyaretçi Takibi</h2></div>
         <div class="card">
-          <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Detaylı ziyaretçi istatistikleri için ücretsiz <strong>Google Analytics</strong> veya <strong>Cloudflare Analytics</strong> kullanabilirsin. Aşağıdaki kodu sitenin &lt;head&gt; bölümüne ekle.</p>
+          <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Detaylı ziyaretçi istatistikleri için ücretsiz <strong>Google Analytics</strong> veya <strong>Cloudflare Analytics</strong> kullanabilirsin.</p>
           <div class="form-group"><label>Google Analytics ID (UA- veya G-)</label><input type="text" id="gaId" placeholder="G-XXXXXXXXXX" /></div>
           <button class="btn btn-primary" onclick="gaKoduGoster()">📋 Kodu Göster</button>
           <div id="gaKoduArea" style="display:none;margin-top:16px">
@@ -307,7 +320,6 @@
         </div>
       </div>
 
-
       <!-- MANGA DÜZENLE -->
       <div class="page" id="page-manga-duzenle">
         <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>✏️ İçerik Düzenle</h2></div>
@@ -320,7 +332,6 @@
             </select>
           </div>
         </div>
-
         <div id="duzenleForm" style="display:none">
           <div class="card">
             <div class="card-header"><h3>📝 Bilgileri Düzenle</h3></div>
@@ -344,8 +355,6 @@
               </div>
               <div class="form-group full"><label>Açıklama</label><textarea id="dAciklama" style="min-height:80px"></textarea></div>
             </div>
-
-            <!-- KAPAK -->
             <div class="form-group">
               <label>Kapak Görseli</label>
               <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
@@ -360,8 +369,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- KATEGORİLER -->
             <div class="form-group">
               <label>Kategoriler</label>
               <div class="kategori-grid" id="dKategoriGrid">
@@ -389,19 +396,14 @@
                 <div class="kategori-item" onclick="toggleKategoriD(this,'Dedektif')"><span>🔍 Dedektif</span></div>
               </div>
             </div>
-
-            <!-- SEO -->
             <div class="form-group"><label>SEO Başlık</label><input type="text" id="dSeoBaslik" placeholder="Manga adı – Türkçe Oku | AkaToon" /></div>
             <div class="form-group"><label>SEO Açıklama</label><textarea id="dSeoAciklama" style="min-height:60px" placeholder="Arama motorları için açıklama..."></textarea></div>
-
             <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
               <button class="btn btn-primary" onclick="duzenleKaydet()">💾 Değişiklikleri Kaydet</button>
               <button class="btn btn-danger" onclick="duzenleSecilenSil()">🗑️ Bu İçeriği Sil</button>
             </div>
             <div class="msg" id="duzenleMsg"></div>
           </div>
-
-          <!-- BÖLÜM YÖNETİMİ -->
           <div class="card">
             <div class="card-header">
               <h3>📖 Bölüm Yönetimi</h3>
@@ -417,7 +419,7 @@
         </div>
       </div>
 
-      <!-- BÖLÜM EKLE -->
+      <!-- BÖLÜM EKLE — YENİ RESİM YÜKLEME SİSTEMİ -->
       <div class="page" id="page-bolum-ekle">
         <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>📖 Bölüm Ekle</h2></div>
         <div class="card">
@@ -426,14 +428,36 @@
             <div class="form-group"><label>Bölüm No *</label><input type="number" id="bolumNo" placeholder="1" min="1" /></div>
             <div class="form-group full"><label>Başlık (opsiyonel)</label><input type="text" id="bolumBaslik" placeholder="Örn: Başlangıç" /></div>
           </div>
+
           <div class="form-group">
-            <label>Sayfalar — Sınırsız!</label>
-            <div class="sayfalar-container"><div class="sayfa-url-list" id="sayfaList"></div><button class="btn-sayfa-ekle" onclick="sayfaEkle()">+ Sayfa Ekle</button></div>
-            <div style="margin-top:6px;color:var(--muted);font-size:11px">💡 imgbb.com ile yükle, URL yapıştır. Sayfa limiti yok!</div>
+            <label>Sayfalar — Resimleri Sürükle Bırak veya Seç</label>
+
+            <!-- Sürükle-Bırak Alanı -->
+            <div class="upload-drop-zone" id="dropZone">
+              <input type="file" id="sayfaFiles" accept="image/*" multiple onchange="sayfaSecildi(this.files)" />
+              <div class="upload-drop-icon">🖼️</div>
+              <div class="upload-drop-text">Resimleri buraya sürükle veya tıkla</div>
+              <div class="upload-drop-sub">PNG, JPG, WEBP — Çoklu seçim desteklenir — Sınır yok</div>
+            </div>
+
+            <!-- Progress -->
+            <div id="uploadProgressWrap" style="display:none;margin-top:10px">
+              <div class="upload-status" id="uploadStatusText">Yükleniyor...</div>
+              <div class="upload-progress-bar"><div class="upload-progress-fill" id="uploadProgressFill" style="width:0%"></div></div>
+            </div>
+
+            <!-- Önizleme Grid -->
+            <div id="pagesGrid" class="pages-grid"></div>
+
+            <!-- Sayfa sayısı bilgisi -->
+            <div id="pageCountInfo" style="margin-top:10px;font-size:13px;color:var(--muted);display:none">
+              📄 <span id="pageCountNum">0</span> sayfa hazır
+              <button class="btn btn-danger" style="padding:3px 10px;font-size:11px;margin-left:10px" onclick="sayfaTemizle()">🗑️ Hepsini Sil</button>
+            </div>
           </div>
+
           <div style="display:flex;gap:10px;margin-top:14px">
-            <button class="btn btn-primary" onclick="bolumEkle()">✅ Ekle</button>
-            <button class="btn btn-secondary" onclick="sayfaListTemizle()">🗑️ Temizle</button>
+            <button class="btn btn-primary" onclick="bolumEkle()" id="bolumEkleBtn">✅ Bölümü Ekle</button>
           </div>
           <div class="msg" id="bolumMsg"></div>
         </div>
@@ -454,13 +478,6 @@
     "sayfalar": [
       "https://i.ibb.co/sayfa1.jpg",
       "https://i.ibb.co/sayfa2.jpg"
-    ]
-  },
-  {
-    "bolum_no": 2,
-    "baslik": "İkinci Bölüm",
-    "sayfalar": [
-      "https://i.ibb.co/sayfa3.jpg"
     ]
   }
 ]'></textarea>
@@ -569,11 +586,11 @@
         <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>🔔 Bildirim Gönder</h2></div>
         <div class="card">
           <div class="card-header"><h3>Duyuru Olarak Bildirim</h3></div>
-          <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Bildirim, site içi duyuru olarak tüm kullanıcılara gösterilir. Push notification için OneSignal entegrasyonu gerekir.</p>
+          <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Bildirim, site içi duyuru olarak tüm kullanıcılara gösterilir.</p>
           <div class="form-group"><label>Bildirim Başlığı</label><input type="text" id="bildBaslik" placeholder="🆕 Yeni Bölüm Eklendi!" /></div>
           <div class="form-group"><label>Mesaj</label><textarea id="bildMesaj" style="min-height:80px" placeholder="Solo Leveling 200. bölüm yayınlandı!"></textarea></div>
           <div class="bildirim-preview" id="bildPreview">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:8px">ÖNIZLEME</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px">ÖNİZLEME</div>
             <div style="font-weight:700;font-size:14px" id="bildPreviewBaslik">Bildirim başlığı</div>
             <div style="color:var(--muted);font-size:13px;margin-top:4px" id="bildPreviewMesaj">Mesaj buraya gelecek</div>
           </div>
@@ -616,157 +633,140 @@ const SUPABASE_URL='https://wxfmatafacdjhiurowut.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
 const ADMIN_EMAIL='tavuzugur@gmail.com';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
-let seciliTur='',seciliKategoriler=[],sayfaSayaci=0,chartTur=null,chartDag=null;
+let seciliTur='',seciliKategoriler=[],chartTur=null,chartDag=null;
+let duzenleId=null,duzenleKategoriler=[];
 
-let duzenleId = null;
-let duzenleKategoriler = [];
+// ── YENİ: Bölüm sayfa yönetimi ──
+let yuklenmisSayfalar = []; // [{url, file, yuklendi}]
 
-async function loadDuzenleSelect() {
-  try {
-    const { data, error } = await sb.from('manga').select('id,baslik,tur').order('baslik');
-    const sel = document.getElementById('duzenleSelect');
-    if (!sel) return;
-    if (error) { sel.innerHTML = '<option value="">Hata: ' + error.message + '</option>'; return; }
-    sel.innerHTML = '<option value="">Seçiniz...</option>';
-    if (data && data.length) {
-      data.forEach(m => { sel.innerHTML += '<option value="' + m.id + '">[' + m.tur + '] ' + m.baslik + '</option>'; });
-    } else {
-      sel.innerHTML = '<option value="">Henüz içerik eklenmedi</option>';
-    }
-  } catch(e) { console.error('loadDuzenleSelect hata:', e); }
+function sayfaTemizle() {
+  yuklenmisSayfalar = [];
+  document.getElementById('pagesGrid').innerHTML = '';
+  document.getElementById('pageCountInfo').style.display = 'none';
+  document.getElementById('sayfaFiles').value = '';
 }
 
-async function duzenleYukle() {
-  const id = document.getElementById('duzenleSelect').value;
-  if (!id) { document.getElementById('duzenleForm').style.display = 'none'; return; }
-  duzenleId = id;
-
-  const { data: m } = await sb.from('manga').select('*').eq('id', id).single();
-  if (!m) return;
-
-  document.getElementById('dBaslik').value = m.baslik || '';
-  document.getElementById('dDurum').value = m.durum || 'devam';
-  document.getElementById('dTur').value = m.tur || 'manga';
-  document.getElementById('dPuan').value = m.puan || '';
-  document.getElementById('dAciklama').value = m.aciklama || '';
-  document.getElementById('dKapak').value = m.kapak_url || '';
-  document.getElementById('dSeoBaslik').value = m.seo_baslik || '';
-  document.getElementById('dSeoAciklama').value = m.seo_aciklama || '';
-
-  // Kapak önizleme
-  if (m.kapak_url) {
-    document.getElementById('dKapakOnizleme').innerHTML = `<img src="${m.kapak_url}" style="width:100%;height:100%;object-fit:cover" />`;
+function sayfaGridGuncelle() {
+  const grid = document.getElementById('pagesGrid');
+  grid.innerHTML = yuklenmisSayfalar.map((s, i) => `
+    <div class="page-thumb" id="thumb-${i}">
+      ${s.previewUrl ? `<img src="${s.previewUrl}" />` : '<div class="page-thumb-loading">⏳</div>'}
+      <span class="page-thumb-num">${i + 1}</span>
+      <button class="page-thumb-del" onclick="sayfaSil(${i})">✕</button>
+    </div>
+  `).join('');
+  const sayac = document.getElementById('pageCountInfo');
+  if (yuklenmisSayfalar.length > 0) {
+    sayac.style.display = 'block';
+    document.getElementById('pageCountNum').textContent = yuklenmisSayfalar.length;
   } else {
-    document.getElementById('dKapakOnizleme').innerHTML = m.baslik.substring(0,3).toUpperCase();
+    sayac.style.display = 'none';
   }
+}
 
-  // Kategoriler
-  duzenleKategoriler = m.kategori ? m.kategori.split(',').map(k => k.trim()) : [];
-  document.querySelectorAll('#dKategoriGrid .kategori-item').forEach(el => {
-    const kat = el.querySelector('span').textContent.replace(/^[^\s]+ /, '');
-    if (duzenleKategoriler.includes(kat)) el.classList.add('checked');
-    else el.classList.remove('checked');
+function sayfaSil(i) {
+  yuklenmisSayfalar.splice(i, 1);
+  sayfaGridGuncelle();
+}
+
+function sayfaSecildi(files) {
+  if (!files || !files.length) return;
+  const yeniDosyalar = Array.from(files);
+  yeniDosyalar.forEach(file => {
+    const reader = new FileReader();
+    const idx = yuklenmisSayfalar.length;
+    yuklenmisSayfalar.push({ file, previewUrl: null, url: null, yuklendi: false });
+    reader.onload = (e) => {
+      yuklenmisSayfalar[idx].previewUrl = e.target.result;
+      sayfaGridGuncelle();
+    };
+    reader.readAsDataURL(file);
+  });
+  sayfaGridGuncelle();
+  // input sıfırla ki aynı dosyaları tekrar seçebilsin
+  document.getElementById('sayfaFiles').value = '';
+}
+
+// Sürükle-bırak
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('dropZone');
+  if (!zone) return;
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length) sayfaSecildi(files);
   });
 
-  // Bölümler
-  await loadDunzeleBolumler(id);
+  // Bildirim önizleme
+  const baslik = document.getElementById('bildBaslik');
+  const mesaj = document.getElementById('bildMesaj');
+  if (baslik) baslik.addEventListener('input', () => { document.getElementById('bildPreviewBaslik').textContent = baslik.value || 'Bildirim başlığı'; });
+  if (mesaj) mesaj.addEventListener('input', () => { document.getElementById('bildPreviewMesaj').textContent = mesaj.value || 'Mesaj buraya gelecek'; });
+});
 
-  document.getElementById('duzenleForm').style.display = 'block';
-}
+async function bolumEkle() {
+  const mid = document.getElementById('bolumManga').value;
+  const no = document.getElementById('bolumNo').value;
+  if (!mid || !no) { showMsg('bolumMsg', 'error', 'İçerik ve bölüm no zorunlu!'); return; }
+  if (!yuklenmisSayfalar.length) { showMsg('bolumMsg', 'error', 'En az 1 resim seçmelisin!'); return; }
 
-async function loadDunzeleBolumler(mangaId) {
-  const { data } = await sb.from('bolumler').select('*').eq('manga_id', mangaId).order('bolum_no');
-  const tbody = document.getElementById('dunzeleBolumTable');
-  if (!data || !data.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Henüz bölüm yok</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.map(b => `
-    <tr>
-      <td><strong>Bölüm ${b.bolum_no}</strong></td>
-      <td>${b.baslik || '—'}</td>
-      <td>${b.sayfalar?.length || 0} sayfa</td>
-      <td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td>
-      <td style="display:flex;gap:6px">
-        <button class="btn btn-secondary" style="padding:4px 8px;font-size:11px" onclick="bolumDuzenleAc('${b.id}',${b.bolum_no})">✏️ Düzenle</button>
-        <button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSilD('${b.id}',${b.bolum_no})">Sil</button>
-      </td>
-    </tr>`).join('');
-}
+  const btn = document.getElementById('bolumEkleBtn');
+  btn.disabled = true;
 
-function toggleKategoriD(el, k) {
-  el.classList.toggle('checked');
-  if (el.classList.contains('checked')) duzenleKategoriler.push(k);
-  else duzenleKategoriler = duzenleKategoriler.filter(x => x !== k);
-}
+  // Resimleri Supabase'e yükle
+  const progWrap = document.getElementById('uploadProgressWrap');
+  const progText = document.getElementById('uploadStatusText');
+  const progFill = document.getElementById('uploadProgressFill');
+  progWrap.style.display = 'block';
 
-async function duzenleKapakYukle(input) {
-  const file = input.files[0];
-  if (!file) return;
-  document.getElementById('dKapakDurum').textContent = '⏳ Yükleniyor...';
-  const ext = file.name.split('.').pop();
-  const path = 'kapaklar/' + Date.now() + '.' + ext;
-  const { error } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
-  if (error) { document.getElementById('dKapakDurum').textContent = '❌ Hata!'; return; }
-  const { data } = sb.storage.from('avatars').getPublicUrl(path);
-  document.getElementById('dKapak').value = data.publicUrl;
-  document.getElementById('dKapakOnizleme').innerHTML = `<img src="${data.publicUrl}" style="width:100%;height:100%;object-fit:cover" />`;
-  document.getElementById('dKapakDurum').textContent = '✅ Yüklendi!';
-  document.getElementById('dKapakDurum').style.color = 'var(--green)';
-}
+  const yuklenenURLler = [];
+  for (let i = 0; i < yuklenmisSayfalar.length; i++) {
+    const s = yuklenmisSayfalar[i];
+    progText.textContent = `Yükleniyor: ${i + 1} / ${yuklenmisSayfalar.length}`;
+    progFill.style.width = ((i / yuklenmisSayfalar.length) * 100) + '%';
 
-async function duzenleKaydet() {
-  if (!duzenleId) return;
-  const btn = document.querySelector('#page-manga-duzenle .btn-primary');
-  btn.disabled = true; btn.textContent = 'Kaydediliyor...';
+    // Eğer zaten URL varsa (daha önce yüklendiyse) direkt ekle
+    if (s.url) { yuklenenURLler.push(s.url); continue; }
 
-  const { error } = await sb.from('manga').update({
-    baslik: document.getElementById('dBaslik').value.trim(),
-    durum: document.getElementById('dDurum').value,
-    tur: document.getElementById('dTur').value,
-    puan: document.getElementById('dPuan').value ? parseFloat(document.getElementById('dPuan').value) : null,
-    aciklama: document.getElementById('dAciklama').value.trim(),
-    kapak_url: document.getElementById('dKapak').value.trim(),
-    kategori: duzenleKategoriler.join(', '),
-    seo_baslik: document.getElementById('dSeoBaslik').value.trim(),
-    seo_aciklama: document.getElementById('dSeoAciklama').value.trim()
-  }).eq('id', duzenleId);
-
-  if (error) showMsg('duzenleMsg', 'error', 'Hata: ' + error.message);
-  else showMsg('duzenleMsg', 'success', '✅ Değişiklikler kaydedildi!');
-  btn.disabled = false; btn.textContent = '💾 Değişiklikleri Kaydet';
-}
-
-async function duzenleSecilenSil() {
-  if (!duzenleId) return;
-  const baslik = document.getElementById('dBaslik').value;
-  if (!confirm('"' + baslik + '" silinsin mi? Bu işlem geri alınamaz!')) return;
-  await sb.from('manga').delete().eq('id', duzenleId);
-  showMsg('duzenleMsg', 'success', '✅ Silindi!');
-  document.getElementById('duzenleForm').style.display = 'none';
-  document.getElementById('duzenleSelect').value = '';
-  duzenleId = null;
-  loadDuzenleSelect();
-}
-
-async function bolumSilD(id, no) {
-  if (!confirm('Bölüm ' + no + ' silinsin mi?')) return;
-  await sb.from('bolumler').delete().eq('id', id);
-  loadDunzeleBolumler(duzenleId);
-}
-
-function bolumDuzenleAc(id, no) {
-  // Bölüm düzenleme için bölüm listesi sayfasına yönlendir
-  showPage('bolum-listesi');
-  setTimeout(() => {
-    if (duzenleId) {
-      document.getElementById('bolumFilterManga').value = duzenleId;
-      loadBolumListesi();
+    const ext = s.file.name.split('.').pop();
+    const path = `bolumler/${mid}/bolum-${no}/${Date.now()}-${i}.${ext}`;
+    const { error } = await sb.storage.from('avatars').upload(path, s.file, { upsert: true });
+    if (error) {
+      showMsg('bolumMsg', 'error', `Resim ${i + 1} yüklenemedi: ${error.message}`);
+      btn.disabled = false;
+      progWrap.style.display = 'none';
+      return;
     }
-  }, 300);
+    const { data } = sb.storage.from('avatars').getPublicUrl(path);
+    yuklenenURLler.push(data.publicUrl);
+  }
+
+  progFill.style.width = '100%';
+  progText.textContent = 'Veritabanına kaydediliyor...';
+
+  const { error } = await sb.from('bolumler').insert([{
+    manga_id: mid,
+    bolum_no: parseInt(no),
+    baslik: document.getElementById('bolumBaslik').value.trim(),
+    sayfalar: yuklenenURLler
+  }]);
+
+  progWrap.style.display = 'none';
+
+  if (error) {
+    showMsg('bolumMsg', 'error', 'Hata: ' + error.message);
+  } else {
+    showMsg('bolumMsg', 'success', `✅ Bölüm ${no} eklendi! (${yuklenenURLler.length} sayfa)`);
+    document.getElementById('bolumNo').value = '';
+    document.getElementById('bolumBaslik').value = '';
+    sayfaTemizle();
+  }
+  btn.disabled = false;
 }
-
-
+// ── / YENİ ──
 
 function toggleSidebar(){
   const s=document.getElementById('adminSidebar');
@@ -780,8 +780,7 @@ async function init(){
   if(!user||user.email!==ADMIN_EMAIL){window.location.href='giris.html';return;}
   document.getElementById('loadingScreen').style.display='none';
   document.getElementById('adminPanel').style.display='block';
-  loadDashboard(); loadMangaSelect();
-  sayfaEkle();
+  loadDashboard();loadMangaSelect();
 }
 
 function showPage(id){
@@ -791,6 +790,7 @@ function showPage(id){
   const pages={
     'istatistik':loadIstatistik,
     'manga-listesi':loadMangaListesi,
+    'manga-duzenle':loadDuzenleSelect,
     'bolum-listesi':()=>{loadBolumFilterSelect();loadBolumListesi();},
     'yorumlar':()=>loadYorumlar('hepsi'),
     'duyurular':loadDuyurular,
@@ -799,6 +799,7 @@ function showPage(id){
     'ziyaretci':loadZiyaretci,
     'seo':loadSeoSelect,
     'toplu-bolum':loadTopluMangaSelect,
+    'bolum-ekle':loadMangaSelect,
     'yedekleme':()=>{}
   };
   if(pages[id]) pages[id]();
@@ -858,15 +859,8 @@ async function loadZiyaretci(){
 
 function gaKoduGoster(){
   const id=document.getElementById('gaId').value.trim();
-  if(!id){return;}
-  const kod=`<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=${id}"><\/script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', '${id}');
-<\/script>`;
+  if(!id) return;
+  const kod=`<!-- Google Analytics -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=${id}"><\/script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', '${id}');\n<\/script>`;
   document.getElementById('gaKodu').value=kod;
   document.getElementById('gaKoduArea').style.display='block';
 }
@@ -875,6 +869,7 @@ function turSec(t){seciliTur=t;document.querySelectorAll('.tur-card').forEach(c=
 function adimIleri(){if(!seciliTur)return;document.getElementById('adim1').style.display='none';document.getElementById('adim2').style.display='block';}
 function adimGeri(){document.getElementById('adim2').style.display='none';document.getElementById('adim1').style.display='block';}
 function toggleKategori(el,k){el.classList.toggle('checked');if(el.classList.contains('checked'))seciliKategoriler.push(k);else seciliKategoriler=seciliKategoriler.filter(x=>x!==k);}
+function toggleKategoriD(el,k){el.classList.toggle('checked');if(el.classList.contains('checked'))duzenleKategoriler.push(k);else duzenleKategoriler=duzenleKategoriler.filter(x=>x!==k);}
 
 async function mangaEkle(){
   const b=document.getElementById('mangaBaslik').value.trim();
@@ -885,6 +880,20 @@ async function mangaEkle(){
   if(error){showMsg('mangaMsg','error','Hata: '+error.message);}
   else{showMsg('mangaMsg','success','✅ '+b+' eklendi!');['mangaBaslik','mangaAciklama','mangaKapak','mangaPuan','mangaSeoBaslik','mangaSeoAciklama'].forEach(id=>document.getElementById(id).value='');seciliKategoriler=[];document.querySelectorAll('.kategori-item').forEach(k=>k.classList.remove('checked'));loadMangaSelect();}
   btn.disabled=false;btn.textContent='✅ Ekle';
+}
+
+async function kapakYukle(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){alert('Maksimum 5MB!');return;}
+  document.getElementById('kapakDurum').textContent='⏳ Yükleniyor...';
+  document.getElementById('kapakOnizleme').style.display='block';
+  const reader=new FileReader();reader.onload=(e)=>{document.getElementById('kapakImg').src=e.target.result;};reader.readAsDataURL(file);
+  const ext=file.name.split('.').pop();const path='kapaklar/'+Date.now()+'.'+ext;
+  const{error:upErr}=await sb.storage.from('avatars').upload(path,file,{upsert:true});
+  if(upErr){document.getElementById('kapakDurum').textContent='❌ '+upErr.message;document.getElementById('kapakDurum').style.color='var(--red)';return;}
+  const{data}=sb.storage.from('avatars').getPublicUrl(path);
+  document.getElementById('mangaKapak').value=data.publicUrl;
+  document.getElementById('kapakDurum').textContent='✅ Yüklendi!';document.getElementById('kapakDurum').style.color='var(--green)';
 }
 
 async function loadMangaListesi(){
@@ -903,54 +912,100 @@ async function loadMangaSelect(){
   });
 }
 
-function sayfaEkle(){sayfaSayaci++;const l=document.getElementById('sayfaList');const d=document.createElement('div');d.className='sayfa-url-item';d.id='s'+sayfaSayaci;const n=l.children.length+1;d.innerHTML=`<span class="sayfa-no">${n}</span><input type="text" placeholder="https://i.ibb.co/sayfa-${n}.jpg" /><button class="btn-sayfa-sil" onclick="document.getElementById('s${sayfaSayaci}').remove();numaraGuncelle()">✕</button>`;l.appendChild(d);}
-function sayfaListTemizle(){document.getElementById('sayfaList').innerHTML='';sayfaSayaci=0;sayfaEkle();}
-function numaraGuncelle(){document.querySelectorAll('.sayfa-url-item').forEach((item,i)=>item.querySelector('.sayfa-no').textContent=i+1);}
-
-async function bolumEkle(){
-  const mid=document.getElementById('bolumManga').value,no=document.getElementById('bolumNo').value;
-  if(!mid||!no){showMsg('bolumMsg','error','İçerik ve bölüm no zorunlu!');return;}
-  const inputs=document.querySelectorAll('#sayfaList input');
-  const sayfalar=Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
-  if(!sayfalar.length){showMsg('bolumMsg','error','En az 1 sayfa ekleyin!');return;}
-  const btn=document.querySelector('#page-bolum-ekle .btn-primary');btn.disabled=true;btn.textContent='Ekleniyor...';
-  const{error}=await sb.from('bolumler').insert([{manga_id:mid,bolum_no:parseInt(no),baslik:document.getElementById('bolumBaslik').value.trim(),sayfalar}]);
-  if(error){showMsg('bolumMsg','error','Hata: '+error.message);}
-  else{showMsg('bolumMsg','success',`✅ Bölüm ${no} eklendi! (${sayfalar.length} sayfa)`);document.getElementById('bolumNo').value='';document.getElementById('bolumBaslik').value='';sayfaListTemizle();}
-  btn.disabled=false;btn.textContent='✅ Ekle';
+async function loadDuzenleSelect(){
+  try{
+    const{data,error}=await sb.from('manga').select('id,baslik,tur').order('baslik');
+    const sel=document.getElementById('duzenleSelect');if(!sel)return;
+    if(error){sel.innerHTML='<option value="">Hata: '+error.message+'</option>';return;}
+    sel.innerHTML='<option value="">Seçiniz...</option>';
+    if(data&&data.length)data.forEach(m=>{sel.innerHTML+=`<option value="${m.id}">[${m.tur}] ${m.baslik}</option>`;});
+    else sel.innerHTML='<option value="">Henüz içerik yok</option>';
+  }catch(e){console.error(e);}
 }
 
-// TOPLU BÖLÜM
+async function duzenleYukle(){
+  const id=document.getElementById('duzenleSelect').value;
+  if(!id){document.getElementById('duzenleForm').style.display='none';return;}
+  duzenleId=id;
+  const{data:m}=await sb.from('manga').select('*').eq('id',id).single();
+  if(!m)return;
+  document.getElementById('dBaslik').value=m.baslik||'';
+  document.getElementById('dDurum').value=m.durum||'devam';
+  document.getElementById('dTur').value=m.tur||'manga';
+  document.getElementById('dPuan').value=m.puan||'';
+  document.getElementById('dAciklama').value=m.aciklama||'';
+  document.getElementById('dKapak').value=m.kapak_url||'';
+  document.getElementById('dSeoBaslik').value=m.seo_baslik||'';
+  document.getElementById('dSeoAciklama').value=m.seo_aciklama||'';
+  if(m.kapak_url)document.getElementById('dKapakOnizleme').innerHTML=`<img src="${m.kapak_url}" style="width:100%;height:100%;object-fit:cover" />`;
+  else document.getElementById('dKapakOnizleme').innerHTML=m.baslik.substring(0,3).toUpperCase();
+  duzenleKategoriler=m.kategori?m.kategori.split(',').map(k=>k.trim()):[];
+  document.querySelectorAll('#dKategoriGrid .kategori-item').forEach(el=>{
+    const kat=el.querySelector('span').textContent.replace(/^[^\s]+ /,'');
+    if(duzenleKategoriler.includes(kat))el.classList.add('checked');else el.classList.remove('checked');
+  });
+  await loadDunzeleBolumler(id);
+  document.getElementById('duzenleForm').style.display='block';
+}
+
+async function loadDunzeleBolumler(mangaId){
+  const{data}=await sb.from('bolumler').select('*').eq('manga_id',mangaId).order('bolum_no');
+  const tbody=document.getElementById('dunzeleBolumTable');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Henüz bölüm yok</td></tr>';return;}
+  tbody.innerHTML=data.map(b=>`<tr><td><strong>Bölüm ${b.bolum_no}</strong></td><td>${b.baslik||'—'}</td><td>${b.sayfalar?.length||0} sayfa</td><td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td><td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSilD('${b.id}',${b.bolum_no})">Sil</button></td></tr>`).join('');
+}
+
+async function duzenleKapakYukle(input){
+  const file=input.files[0];if(!file)return;
+  document.getElementById('dKapakDurum').textContent='⏳ Yükleniyor...';
+  const ext=file.name.split('.').pop();const path='kapaklar/'+Date.now()+'.'+ext;
+  const{error}=await sb.storage.from('avatars').upload(path,file,{upsert:true});
+  if(error){document.getElementById('dKapakDurum').textContent='❌ Hata!';return;}
+  const{data}=sb.storage.from('avatars').getPublicUrl(path);
+  document.getElementById('dKapak').value=data.publicUrl;
+  document.getElementById('dKapakOnizleme').innerHTML=`<img src="${data.publicUrl}" style="width:100%;height:100%;object-fit:cover" />`;
+  document.getElementById('dKapakDurum').textContent='✅ Yüklendi!';document.getElementById('dKapakDurum').style.color='var(--green)';
+}
+
+async function duzenleKaydet(){
+  if(!duzenleId)return;
+  const btn=document.querySelector('#page-manga-duzenle .btn-primary');btn.disabled=true;btn.textContent='Kaydediliyor...';
+  const{error}=await sb.from('manga').update({baslik:document.getElementById('dBaslik').value.trim(),durum:document.getElementById('dDurum').value,tur:document.getElementById('dTur').value,puan:document.getElementById('dPuan').value?parseFloat(document.getElementById('dPuan').value):null,aciklama:document.getElementById('dAciklama').value.trim(),kapak_url:document.getElementById('dKapak').value.trim(),kategori:duzenleKategoriler.join(', '),seo_baslik:document.getElementById('dSeoBaslik').value.trim(),seo_aciklama:document.getElementById('dSeoAciklama').value.trim()}).eq('id',duzenleId);
+  if(error)showMsg('duzenleMsg','error','Hata: '+error.message);else showMsg('duzenleMsg','success','✅ Kaydedildi!');
+  btn.disabled=false;btn.textContent='💾 Değişiklikleri Kaydet';
+}
+
+async function duzenleSecilenSil(){
+  if(!duzenleId)return;
+  const baslik=document.getElementById('dBaslik').value;
+  if(!confirm('"'+baslik+'" silinsin mi?'))return;
+  await sb.from('manga').delete().eq('id',duzenleId);
+  showMsg('duzenleMsg','success','✅ Silindi!');
+  document.getElementById('duzenleForm').style.display='none';
+  document.getElementById('duzenleSelect').value='';
+  duzenleId=null;loadDuzenleSelect();
+}
+
+async function bolumSilD(id,no){if(!confirm('Bölüm '+no+' silinsin mi?'))return;await sb.from('bolumler').delete().eq('id',id);loadDunzeleBolumler(duzenleId);}
+
 async function loadTopluMangaSelect(){await loadMangaSelect();}
 function topluOrnek(){document.getElementById('topluData').value=JSON.stringify([{bolum_no:1,baslik:"Başlangıç",sayfalar:["https://i.ibb.co/xxx/01.jpg","https://i.ibb.co/xxx/02.jpg"]},{bolum_no:2,baslik:"İkinci Bölüm",sayfalar:["https://i.ibb.co/xxx/03.jpg"]}],null,2);}
 async function topluBolumEkle(){
   const mid=document.getElementById('topluManga').value;
   if(!mid){showMsg('topluMsg','error','İçerik seçin!');return;}
-  let bolumler;
-  try{bolumler=JSON.parse(document.getElementById('topluData').value);}
-  catch(e){showMsg('topluMsg','error','Geçersiz JSON! Format kontrolü yapın.');return;}
+  let bolumler;try{bolumler=JSON.parse(document.getElementById('topluData').value);}catch(e){showMsg('topluMsg','error','Geçersiz JSON!');return;}
   if(!Array.isArray(bolumler)||!bolumler.length){showMsg('topluMsg','error','Boş liste!');return;}
-  const prog=document.getElementById('topluProgress');
-  const progText=document.getElementById('topluProgressText');
-  const progFill=document.getElementById('topluProgressFill');
-  prog.style.display='block';
-  let basarili=0,hatali=0;
-  for(let i=0;i<bolumler.length;i++){
-    const b=bolumler[i];
-    progText.textContent=`İşleniyor: Bölüm ${b.bolum_no} (${i+1}/${bolumler.length})`;
-    progFill.style.width=((i+1)/bolumler.length*100)+'%';
-    const{error}=await sb.from('bolumler').insert([{manga_id:mid,bolum_no:b.bolum_no,baslik:b.baslik||'',sayfalar:b.sayfalar||[]}]);
-    if(error) hatali++; else basarili++;
-  }
+  const prog=document.getElementById('topluProgress');const progText=document.getElementById('topluProgressText');const progFill=document.getElementById('topluProgressFill');
+  prog.style.display='block';let basarili=0,hatali=0;
+  for(let i=0;i<bolumler.length;i++){const b=bolumler[i];progText.textContent=`İşleniyor: Bölüm ${b.bolum_no} (${i+1}/${bolumler.length})`;progFill.style.width=((i+1)/bolumler.length*100)+'%';const{error}=await sb.from('bolumler').insert([{manga_id:mid,bolum_no:b.bolum_no,baslik:b.baslik||'',sayfalar:b.sayfalar||[]}]);if(error)hatali++;else basarili++;}
   progText.textContent=`Tamamlandı! ✅ ${basarili} eklendi, ❌ ${hatali} hata`;
-  showMsg('topluMsg','success',`✅ ${basarili} bölüm eklendi! ${hatali} hata.`);
+  showMsg('topluMsg','success',`✅ ${basarili} bölüm eklendi!`);
 }
 
 async function loadBolumFilterSelect(){const{data}=await sb.from('manga').select('id,baslik').order('baslik');const sel=document.getElementById('bolumFilterManga');sel.innerHTML='<option value="">Tüm içerikler</option>';if(data)data.forEach(m=>sel.innerHTML+=`<option value="${m.id}">${m.baslik}</option>`);}
 async function loadBolumListesi(){const f=document.getElementById('bolumFilterManga')?.value;let q=sb.from('bolumler').select('*,manga(baslik)').order('created_at',{ascending:false});if(f)q=q.eq('manga_id',f);const{data}=await q;const tbody=document.getElementById('bolumTableBody');if(!data||!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">Bölüm bulunamadı.</td></tr>';return;}tbody.innerHTML=data.map(b=>`<tr><td>${b.manga?.baslik||'?'}</td><td><strong>Bölüm ${b.bolum_no}</strong></td><td>${b.baslik||'—'}</td><td>${b.sayfalar?.length||0}</td><td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td><td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSil('${b.id}',${b.bolum_no})">Sil</button></td></tr>`).join('');}
 async function bolumSil(id,no){if(!confirm(`Bölüm ${no} silinsin mi?`))return;await sb.from('bolumler').delete().eq('id',id);loadBolumListesi();}
 
-// SEO
 async function loadSeoSelect(){await loadMangaSelect();}
 async function loadSeoData(){
   const mid=document.getElementById('seoManga').value;
@@ -965,37 +1020,28 @@ async function loadSeoData(){
 function seoKarakter(id,max){const el=document.getElementById(id);const len=el.value.length;document.getElementById(id+'Say').textContent=len+'/'+max;document.getElementById(id+'Bar').style.width=Math.min(len/max*100,100)+'%';document.getElementById(id+'Bar').style.background=len>max?'#e8192c':len>max*0.8?'#f5c842':'#22c55e';}
 async function seoKaydet(){const mid=document.getElementById('seoManga').value;if(!mid)return;const{error}=await sb.from('manga').update({seo_baslik:document.getElementById('seoBaslik').value,seo_aciklama:document.getElementById('seoAciklama').value,seo_keywords:document.getElementById('seoKeywords').value}).eq('id',mid);if(error)showMsg('seoMsg','error','Hata: '+error.message);else showMsg('seoMsg','success','✅ SEO kaydedildi!');}
 
-// YORUMLAR
 async function loadYorumlar(f='hepsi'){let q=sb.from('yorumlar').select('*,manga(baslik)').order('created_at',{ascending:false});if(f==='bekleyen')q=q.eq('onaylandi',false);if(f==='onaylandi')q=q.eq('onaylandi',true);const{data}=await q;const el=document.getElementById('yorumlarList');if(!data||!data.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:30px">Yorum bulunamadı.</div>';return;}el.innerHTML=data.map(y=>`<div class="yorum-card"><div class="yorum-header"><div><strong>👤 ${y.kullanici_adi||'?'}</strong> → <span style="color:var(--red);font-size:12px">${y.manga?.baslik||'?'}${y.bolum_no?' Bölüm '+y.bolum_no:''}</span></div><div style="display:flex;gap:8px;align-items:center"><span style="color:var(--muted);font-size:11px">${timeAgo(y.created_at)}</span>${!y.onaylandi?`<button class="btn btn-success" style="padding:4px 8px;font-size:11px" onclick="yorumOnayla('${y.id}')">✅ Onayla</button>`:''}<button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="yorumSil('${y.id}')">Sil</button></div></div><div style="color:var(--muted);font-size:13px;margin-top:6px">${y.yorum}</div></div>`).join('');}
 function yorumFiltre(f){loadYorumlar(f);}
 async function yorumOnayla(id){await sb.from('yorumlar').update({onaylandi:true}).eq('id',id);loadYorumlar('hepsi');}
 async function yorumSil(id){if(!confirm('Yorum silinsin mi?'))return;await sb.from('yorumlar').delete().eq('id',id);loadYorumlar('hepsi');}
 
-// DUYURULAR
 async function duyuruEkle(){const b=document.getElementById('duyuruBaslik').value.trim(),ic=document.getElementById('duyuruIcerik').value.trim();if(!b||!ic){showMsg('duyuruMsg','error','Zorunlu alanları doldurun!');return;}const{error}=await sb.from('duyurular').insert([{baslik:b,icerik:ic,yazar:document.getElementById('duyuruYazar').value||'AkaToon',onemli:document.getElementById('duyuruOnemli').checked}]);if(error)showMsg('duyuruMsg','error','Hata: '+error.message);else{showMsg('duyuruMsg','success','✅ Yayınlandı!');document.getElementById('duyuruBaslik').value='';document.getElementById('duyuruIcerik').value='';loadDuyurular();}}
 async function loadDuyurular(){const{data}=await sb.from('duyurular').select('*').order('created_at',{ascending:false});const el=document.getElementById('duyuruList');if(!data||!data.length){el.innerHTML='<div style="color:var(--muted);text-align:center;padding:20px">Henüz yok.</div>';return;}el.innerHTML=data.map(d=>`<div class="duyuru-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><strong>${d.baslik}${d.onemli?' 🔴':''}</strong><div style="display:flex;gap:8px"><span style="color:var(--muted);font-size:11px">${timeAgo(d.created_at)}</span><button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="duyuruSil('${d.id}')">Sil</button></div></div><div style="color:var(--muted);font-size:13px">${d.icerik.substring(0,100)}...</div></div>`).join('');}
 async function duyuruSil(id){if(!confirm('Silinsin mi?'))return;await sb.from('duyurular').delete().eq('id',id);loadDuyurular();}
 
-// İSTEK YÖNETİM
 async function loadIstekYonetim(){
   const{data}=await sb.from('manga_istekleri').select('*').order('oy_sayisi',{ascending:false});
   const[{count:tc},{count:bc},{count:tmc}]=await Promise.all([sb.from('manga_istekleri').select('*',{count:'exact',head:true}),sb.from('manga_istekleri').select('*',{count:'exact',head:true}).eq('durum','beklemede'),sb.from('manga_istekleri').select('*',{count:'exact',head:true}).eq('durum','tamamlandi')]);
-  document.getElementById('istekToplam').textContent=tc||0;
-  document.getElementById('istekBekle').textContent=bc||0;
-  document.getElementById('istekTamam').textContent=tmc||0;
+  document.getElementById('istekToplam').textContent=tc||0;document.getElementById('istekBekle').textContent=bc||0;document.getElementById('istekTamam').textContent=tmc||0;
   document.getElementById('istekTableBody').innerHTML=data?.length?data.map(i=>`<tr><td><strong>${i.manga_adi}</strong>${i.aciklama?`<br><span style="color:var(--muted);font-size:11px">${i.aciklama.substring(0,50)}</span>`:''}</td><td>${i.tur||'—'}</td><td>❤️ ${i.oy_sayisi}</td><td style="color:var(--muted);font-size:12px">${i.kullanici_adi||'?'}</td><td><select onchange="istekDurum('${i.id}',this.value)" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:11px;outline:none"><option value="beklemede" ${i.durum==='beklemede'?'selected':''}>⏳ Beklemede</option><option value="inceleniyor" ${i.durum==='inceleniyor'?'selected':''}>🔍 İnceleniyor</option><option value="tamamlandi" ${i.durum==='tamamlandi'?'selected':''}>✅ Eklendi</option></select></td><td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="istekSil('${i.id}')">Sil</button></td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">Henüz istek yok.</td></tr>';
 }
 async function istekDurum(id,d){await sb.from('manga_istekleri').update({durum:d}).eq('id',id);}
 async function istekSil(id){if(!confirm('Silinsin mi?'))return;await sb.from('manga_istekleri').delete().eq('id',id);loadIstekYonetim();}
 
-// BANLAMA
 async function kullaniciBanla(){
   const email=document.getElementById('banEmail').value.trim(),sebep=document.getElementById('banSebep').value.trim();
-  if(!email){showMsg('banMsg','error','E-posta/kullanıcı adı zorunlu!');return;}
-  const{error}=await sb.from('banli_kullanicilar').insert([{email,sebep}]).catch(async()=>{
-    await sb.from('banli_kullanicilar').select('*').limit(1).catch(()=>{});
-    return{error:{message:'Tablo bulunamadı. SQL\'de CREATE TABLE banli_kullanicilar çalıştırın.'}};
-  });
+  if(!email){showMsg('banMsg','error','E-posta zorunlu!');return;}
+  const{error}=await sb.from('banli_kullanicilar').insert([{email,sebep}]).catch(async()=>{return{error:{message:'Tablo bulunamadı.'}};});
   if(error)showMsg('banMsg','error','Hata: '+error.message);
   else{showMsg('banMsg','success','✅ '+email+' banlandı!');document.getElementById('banEmail').value='';document.getElementById('banSebep').value='';loadBanList();}
 }
@@ -1007,81 +1053,32 @@ async function loadBanList(){
 }
 async function banKaldir(id){await sb.from('banli_kullanicilar').delete().eq('id',id).catch(()=>{});loadBanList();}
 
-// BİLDİRİM
-document.addEventListener('DOMContentLoaded',()=>{
-  const baslik=document.getElementById('bildBaslik');
-  const mesaj=document.getElementById('bildMesaj');
-  if(baslik){baslik.addEventListener('input',()=>{document.getElementById('bildPreviewBaslik').textContent=baslik.value||'Bildirim başlığı';});}
-  if(mesaj){mesaj.addEventListener('input',()=>{document.getElementById('bildPreviewMesaj').textContent=mesaj.value||'Mesaj buraya gelecek';});}
-});
 async function bildirimGonder(){
   const b=document.getElementById('bildBaslik').value.trim(),m=document.getElementById('bildMesaj').value.trim();
   if(!b||!m){showMsg('bildMsg','error','Başlık ve mesaj zorunlu!');return;}
   const{error}=await sb.from('duyurular').insert([{baslik:'🔔 '+b,icerik:m,yazar:'AkaToon',onemli:true}]);
-  if(error)showMsg('bildMsg','error','Hata: '+error.message);
-  else showMsg('bildMsg','success','✅ Bildirim tüm kullanıcılara gönderildi!');
+  if(error)showMsg('bildMsg','error','Hata: '+error.message);else showMsg('bildMsg','success','✅ Bildirim gönderildi!');
 }
 
-// YEDEKLEME
 async function yedekle(tablo){
   const{data}=await sb.from(tablo).select('*');
   if(!data){showMsg('yedekMsg','error','Veri alınamadı!');return;}
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`akatoon_${tablo}_${new Date().toISOString().split('T')[0]}.json`;a.click();
-  URL.revokeObjectURL(url);showMsg('yedekMsg','success','✅ '+tablo+' indirildi!');
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`akatoon_${tablo}_${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(url);
+  showMsg('yedekMsg','success','✅ '+tablo+' indirildi!');
 }
 async function tumYedekle(){
   const[{data:m},{data:b},{data:y},{data:d}]=await Promise.all([sb.from('manga').select('*'),sb.from('bolumler').select('*'),sb.from('yorumlar').select('*'),sb.from('duyurular').select('*')]);
-  const tumVeri={manga:m,bolumler:b,yorumlar:y,duyurular:d,tarih:new Date().toISOString()};
-  const blob=new Blob([JSON.stringify(tumVeri,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`akatoon_tam_yedek_${new Date().toISOString().split('T')[0]}.json`;a.click();
-  URL.revokeObjectURL(url);showMsg('yedekMsg','success','✅ Tam yedek indirildi!');
+  const blob=new Blob([JSON.stringify({manga:m,bolumler:b,yorumlar:y,duyurular:d,tarih:new Date().toISOString()},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`akatoon_tam_yedek_${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(url);
+  showMsg('yedekMsg','success','✅ Tam yedek indirildi!');
 }
 async function veriYukle(){
   let data;try{data=JSON.parse(document.getElementById('yukleData').value);}catch(e){showMsg('yukleMsg','error','Geçersiz JSON!');return;}
   const tablo=document.getElementById('yukleTablo').value;
   if(!confirm(`${data.length} kayıt "${tablo}" tablosuna eklensin mi?`))return;
   const{error}=await sb.from(tablo).insert(data);
-  if(error)showMsg('yukleMsg','error','Hata: '+error.message);
-  else showMsg('yukleMsg','success','✅ '+data.length+' kayıt yüklendi!');
-}
-
-
-async function kapakYukle(input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    alert('Maksimum 5MB yükleyebilirsiniz!');
-    return;
-  }
-
-  document.getElementById('kapakDurum').textContent = '⏳ Yükleniyor...';
-  document.getElementById('kapakOnizleme').style.display = 'block';
-
-  // Önizleme göster
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    document.getElementById('kapakImg').src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-
-  // Supabase Storage'a yükle
-  const ext = file.name.split('.').pop();
-  const path = 'kapaklar/' + Date.now() + '.' + ext;
-
-  const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
-  if (upErr) {
-    document.getElementById('kapakDurum').textContent = '❌ Hata: ' + upErr.message;
-    document.getElementById('kapakDurum').style.color = 'var(--red)';
-    return;
-  }
-
-  const { data } = sb.storage.from('avatars').getPublicUrl(path);
-  document.getElementById('mangaKapak').value = data.publicUrl;
-  document.getElementById('kapakDurum').textContent = '✅ Yüklendi!';
-  document.getElementById('kapakDurum').style.color = 'var(--green)';
+  if(error)showMsg('yukleMsg','error','Hata: '+error.message);else showMsg('yukleMsg','success','✅ '+data.length+' kayıt yüklendi!');
 }
 
 function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<3600)return Math.floor(s/60)+'dk';if(s<86400)return Math.floor(s/3600)+'sa';return Math.floor(s/86400)+'g';}
