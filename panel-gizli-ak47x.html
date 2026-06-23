@@ -430,23 +430,40 @@
           </div>
 
           <div class="form-group">
-            <label>Sayfalar — Resimleri Sürükle Bırak veya Seç</label>
+            <label>Sayfalar</label>
 
-            <!-- Sürükle-Bırak Alanı -->
-            <div class="upload-drop-zone" id="dropZone">
-              <input type="file" id="sayfaFiles" accept="image/*" multiple onchange="sayfaSecildi(this.files)" />
-              <div class="upload-drop-icon">🖼️</div>
-              <div class="upload-drop-text">Resimleri buraya sürükle veya tıkla</div>
-              <div class="upload-drop-sub">PNG, JPG, WEBP — Çoklu seçim desteklenir — Sınır yok</div>
+            <!-- Tab Seçici -->
+            <div style="display:flex;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden;width:fit-content">
+              <button id="tabResim" onclick="sayfaTab('resim')" style="padding:8px 18px;font-size:13px;font-weight:600;background:var(--red);color:#fff;border:none;cursor:pointer;transition:all .2s">🖼️ Resim Yükle</button>
+              <button id="tabUrl" onclick="sayfaTab('url')" style="padding:8px 18px;font-size:13px;font-weight:600;background:var(--bg3);color:var(--muted);border:none;cursor:pointer;transition:all .2s">🔗 URL Ekle</button>
             </div>
 
-            <!-- Progress -->
+            <!-- Resim Yükleme Paneli -->
+            <div id="panelResim">
+              <div class="upload-drop-zone" id="dropZone">
+                <input type="file" id="sayfaFiles" accept="image/*" multiple onchange="sayfaSecildi(this.files)" />
+                <div class="upload-drop-icon">🖼️</div>
+                <div class="upload-drop-text">Resimleri buraya sürükle veya tıkla</div>
+                <div class="upload-drop-sub">PNG, JPG, WEBP — Çoklu seçim desteklenir — Sınır yok</div>
+              </div>
+            </div>
+
+            <!-- URL Ekleme Paneli -->
+            <div id="panelUrl" style="display:none">
+              <div class="sayfalar-container" style="border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg3)">
+                <div id="urlList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:350px;overflow-y:auto"></div>
+                <button class="btn-sayfa-ekle" onclick="urlSatirEkle()" style="background:var(--bg2);border:1px dashed var(--border);color:var(--muted);padding:7px;border-radius:6px;cursor:pointer;font-size:12px;width:100%;transition:all .2s">+ URL Ekle</button>
+              </div>
+              <div style="margin-top:6px;color:var(--muted);font-size:11px">💡 Her satıra bir sayfa URL'si. imgbb.com, imgur vb. kullanabilirsin.</div>
+            </div>
+
+            <!-- Progress (resim yükleme için) -->
             <div id="uploadProgressWrap" style="display:none;margin-top:10px">
               <div class="upload-status" id="uploadStatusText">Yükleniyor...</div>
               <div class="upload-progress-bar"><div class="upload-progress-fill" id="uploadProgressFill" style="width:0%"></div></div>
             </div>
 
-            <!-- Önizleme Grid -->
+            <!-- Önizleme Grid (resim yükleme için) -->
             <div id="pagesGrid" class="pages-grid"></div>
 
             <!-- Sayfa sayısı bilgisi -->
@@ -637,7 +654,36 @@ let seciliTur='',seciliKategoriler=[],chartTur=null,chartDag=null;
 let duzenleId=null,duzenleKategoriler=[];
 
 // ── YENİ: Bölüm sayfa yönetimi ──
-let yuklenmisSayfalar = []; // [{url, file, yuklendi}]
+let yuklenmisSayfalar = [];
+let aktifTab = 'resim';
+
+function sayfaTab(tab) {
+  aktifTab = tab;
+  document.getElementById('panelResim').style.display = tab === 'resim' ? 'block' : 'none';
+  document.getElementById('panelUrl').style.display = tab === 'url' ? 'block' : 'none';
+  document.getElementById('tabResim').style.background = tab === 'resim' ? 'var(--red)' : 'var(--bg3)';
+  document.getElementById('tabResim').style.color = tab === 'resim' ? '#fff' : 'var(--muted)';
+  document.getElementById('tabUrl').style.background = tab === 'url' ? 'var(--red)' : 'var(--bg3)';
+  document.getElementById('tabUrl').style.color = tab === 'url' ? '#fff' : 'var(--muted)';
+}
+
+let urlSayaci = 0;
+function urlSatirEkle() {
+  urlSayaci++;
+  const list = document.getElementById('urlList');
+  const d = document.createElement('div');
+  d.id = 'urlRow-' + urlSayaci;
+  d.style.cssText = 'display:flex;gap:8px;align-items:center';
+  const n = list.children.length + 1;
+  d.innerHTML = `<span style="color:var(--muted);font-size:11px;min-width:22px;font-weight:600">${n}</span><input type="text" placeholder="https://i.ibb.co/sayfa-${n}.jpg" style="flex:1;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px;outline:none" /><button onclick="document.getElementById('urlRow-${urlSayaci}').remove();urlNumaraGuncelle()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:3px 6px;border-radius:4px">✕</button>`;
+  list.appendChild(d);
+}
+function urlNumaraGuncelle() {
+  document.querySelectorAll('#urlList > div').forEach((row, i) => {
+    row.querySelector('span').textContent = i + 1;
+  });
+}
+// ──
 
 function sayfaTemizle() {
   yuklenmisSayfalar = [];
@@ -711,41 +757,42 @@ async function bolumEkle() {
   const mid = document.getElementById('bolumManga').value;
   const no = document.getElementById('bolumNo').value;
   if (!mid || !no) { showMsg('bolumMsg', 'error', 'İçerik ve bölüm no zorunlu!'); return; }
-  if (!yuklenmisSayfalar.length) { showMsg('bolumMsg', 'error', 'En az 1 resim seçmelisin!'); return; }
 
   const btn = document.getElementById('bolumEkleBtn');
   btn.disabled = true;
+  let yuklenenURLler = [];
 
-  // Resimleri Supabase'e yükle
-  const progWrap = document.getElementById('uploadProgressWrap');
-  const progText = document.getElementById('uploadStatusText');
-  const progFill = document.getElementById('uploadProgressFill');
-  progWrap.style.display = 'block';
-
-  const yuklenenURLler = [];
-  for (let i = 0; i < yuklenmisSayfalar.length; i++) {
-    const s = yuklenmisSayfalar[i];
-    progText.textContent = `Yükleniyor: ${i + 1} / ${yuklenmisSayfalar.length}`;
-    progFill.style.width = ((i / yuklenmisSayfalar.length) * 100) + '%';
-
-    // Eğer zaten URL varsa (daha önce yüklendiyse) direkt ekle
-    if (s.url) { yuklenenURLler.push(s.url); continue; }
-
-    const ext = s.file.name.split('.').pop();
-    const path = `bolumler/${mid}/bolum-${no}/${Date.now()}-${i}.${ext}`;
-    const { error } = await sb.storage.from('avatars').upload(path, s.file, { upsert: true });
-    if (error) {
-      showMsg('bolumMsg', 'error', `Resim ${i + 1} yüklenemedi: ${error.message}`);
-      btn.disabled = false;
-      progWrap.style.display = 'none';
-      return;
+  if (aktifTab === 'url') {
+    // URL modunda: tüm dolu input'ları topla
+    const inputs = document.querySelectorAll('#urlList input');
+    yuklenenURLler = Array.from(inputs).map(i => i.value.trim()).filter(Boolean);
+    if (!yuklenenURLler.length) { showMsg('bolumMsg', 'error', 'En az 1 URL girmelisin!'); btn.disabled = false; return; }
+  } else {
+    // Resim modunda: dosyaları yükle
+    if (!yuklenmisSayfalar.length) { showMsg('bolumMsg', 'error', 'En az 1 resim seçmelisin!'); btn.disabled = false; return; }
+    const progWrap = document.getElementById('uploadProgressWrap');
+    const progText = document.getElementById('uploadStatusText');
+    const progFill = document.getElementById('uploadProgressFill');
+    progWrap.style.display = 'block';
+    for (let i = 0; i < yuklenmisSayfalar.length; i++) {
+      const s = yuklenmisSayfalar[i];
+      progText.textContent = `Yükleniyor: ${i + 1} / ${yuklenmisSayfalar.length}`;
+      progFill.style.width = ((i / yuklenmisSayfalar.length) * 100) + '%';
+      if (s.url) { yuklenenURLler.push(s.url); continue; }
+      const ext = s.file.name.split('.').pop();
+      const path = `bolumler/${mid}/bolum-${no}/${Date.now()}-${i}.${ext}`;
+      const { error } = await sb.storage.from('avatars').upload(path, s.file, { upsert: true });
+      if (error) {
+        showMsg('bolumMsg', 'error', `Resim ${i + 1} yüklenemedi: ${error.message}`);
+        btn.disabled = false; progWrap.style.display = 'none'; return;
+      }
+      const { data } = sb.storage.from('avatars').getPublicUrl(path);
+      yuklenenURLler.push(data.publicUrl);
     }
-    const { data } = sb.storage.from('avatars').getPublicUrl(path);
-    yuklenenURLler.push(data.publicUrl);
+    progFill.style.width = '100%';
+    document.getElementById('uploadStatusText').textContent = 'Kaydediliyor...';
+    setTimeout(() => { document.getElementById('uploadProgressWrap').style.display = 'none'; }, 800);
   }
-
-  progFill.style.width = '100%';
-  progText.textContent = 'Veritabanına kaydediliyor...';
 
   const { error } = await sb.from('bolumler').insert([{
     manga_id: mid,
@@ -754,8 +801,6 @@ async function bolumEkle() {
     sayfalar: yuklenenURLler
   }]);
 
-  progWrap.style.display = 'none';
-
   if (error) {
     showMsg('bolumMsg', 'error', 'Hata: ' + error.message);
   } else {
@@ -763,6 +808,9 @@ async function bolumEkle() {
     document.getElementById('bolumNo').value = '';
     document.getElementById('bolumBaslik').value = '';
     sayfaTemizle();
+    // URL listesini de temizle
+    document.getElementById('urlList').innerHTML = '';
+    urlSayaci = 0;
   }
   btn.disabled = false;
 }
