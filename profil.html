@@ -14,17 +14,14 @@
     nav { background: rgba(13,13,15,0.96); border-bottom: 1px solid var(--border); padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
     .logo { font-family: 'Bebas Neue'; font-size: 26px; } .logo span { color: var(--red); }
     .nav-right { margin-left: auto; }
-
     .container { max-width: 900px; margin: 0 auto; padding: 32px 24px 60px; }
 
-    /* PROFIL HEADER */
     .profil-header { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 24px; display: flex; gap: 28px; align-items: flex-start; }
     .avatar-wrap { position: relative; flex-shrink: 0; }
     .avatar-big { width: 100px; height: 100px; border-radius: 50%; background: var(--red); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; border: 3px solid var(--border); overflow: hidden; cursor: pointer; transition: opacity .2s; }
     .avatar-big:hover { opacity: .85; }
     .avatar-big img { width: 100%; height: 100%; object-fit: cover; }
     .avatar-edit { position: absolute; bottom: 0; right: 0; background: var(--red); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; border: 2px solid var(--bg); }
-    .avatar-input { display: none; }
     .profil-info { flex: 1; }
     .profil-name { font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 1px; margin-bottom: 4px; }
     .profil-email { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
@@ -36,26 +33,22 @@
     .profil-bio { color: var(--muted); font-size: 14px; line-height: 1.6; }
     .uye-tarihi { color: var(--muted); font-size: 12px; margin-top: 8px; }
 
-    /* İSTATİSTİKLER */
     .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
     .stat-mini { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
     .stat-mini-val { font-family: 'Bebas Neue'; font-size: 30px; color: var(--red); }
     .stat-mini-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    /* SEKMELER */
-    .tabs { display: flex; gap: 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 20px; }
-    .tab { flex: 1; padding: 8px; border: none; background: none; color: var(--muted); font-size: 13px; font-weight: 600; border-radius: 7px; cursor: pointer; transition: all .2s; }
+    /* SEKMELER - scroll edilebilir mobilde */
+    .tabs { display: flex; gap: 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 20px; overflow-x: auto; }
+    .tab { flex-shrink: 0; padding: 8px 14px; border: none; background: none; color: var(--muted); font-size: 12px; font-weight: 600; border-radius: 7px; cursor: pointer; transition: all .2s; white-space: nowrap; }
     .tab.active { background: var(--red); color: #fff; }
 
-    /* SEKME İÇERİKLERİ */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* KART */
     .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 16px; }
     .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 
-    /* FORM */
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
     .form-group input, .form-group textarea, .form-group select { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; transition: border-color .2s; }
@@ -63,44 +56,50 @@
     .form-group textarea { resize: vertical; min-height: 80px; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-    /* BUTON */
     .btn { padding: 9px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; display: inline-flex; align-items: center; gap: 6px; }
     .btn-primary { background: var(--red); color: #fff; } .btn-primary:hover { background: var(--red-dark); }
     .btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
     .btn-danger { background: rgba(232,25,44,0.1); color: var(--red); border: 1px solid rgba(232,25,44,0.3); }
 
-    /* MSG */
     .msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 10px; display: none; }
     .msg.error { background: rgba(232,25,44,0.1); border: 1px solid rgba(232,25,44,0.3); color: #ff6b7a; display: block; }
     .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; display: block; }
 
-    /* OKUMA GEÇMİŞİ */
     .gecmis-list { display: flex; flex-direction: column; gap: 6px; }
     .gecmis-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--bg3); border-radius: 8px; cursor: pointer; transition: background .2s; }
     .gecmis-item:hover { background: rgba(232,25,44,0.08); }
-    .gecmis-cover { width: 40px; height: 40px; border-radius: 6px; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--red); overflow: hidden; flex-shrink: 0; }
+    .gecmis-cover { width: 40px; height: 56px; border-radius: 6px; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--red); overflow: hidden; flex-shrink: 0; }
     .gecmis-cover img { width: 100%; height: 100%; object-fit: cover; }
     .gecmis-info { flex: 1; }
     .gecmis-baslik { font-size: 14px; font-weight: 600; }
     .gecmis-bolum { color: var(--muted); font-size: 12px; }
 
-    /* İSTEK LİSTESİ */
-    .istek-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-    .istek-card { background: var(--bg3); border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform .2s; }
-    .istek-card:hover { transform: translateY(-3px); }
-    .istek-cover { height: 180px; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: var(--red); overflow: hidden; }
-    .istek-cover img { width: 100%; height: 100%; object-fit: cover; }
-    .istek-info { padding: 8px 10px; }
-    .istek-baslik { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
-    .istek-durum { font-size: 11px; color: var(--muted); }
+    /* OKUMA LİSTESİ FİLTRE */
+    .liste-filtre { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filtre-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; }
+    .filtre-btn:hover { border-color: var(--red); color: var(--text); }
+    .filtre-btn.active { background: rgba(232,25,44,0.12); border-color: var(--red); color: var(--red); }
 
-    /* FAVORİ TÜR */
-    .tur-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .tur-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; font-size: 12px; font-weight: 500; }
-    .tur-item.selected { border-color: var(--red); background: rgba(232,25,44,0.08); color: var(--red); }
+    /* OKUMA LİSTESİ GRID */
+    .okuma-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .okuma-card { background: var(--bg3); border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform .2s; position: relative; }
+    .okuma-card:hover { transform: translateY(-3px); }
+    .okuma-cover { height: 180px; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue'; font-size: 28px; color: var(--red); overflow: hidden; }
+    .okuma-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .okuma-durum-badge { position: absolute; top: 6px; left: 6px; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .okuma-info { padding: 8px 10px; }
+    .okuma-baslik { font-size: 12px; font-weight: 600; margin-bottom: 3px; line-height: 1.3; }
+    .okuma-durum-text { font-size: 11px; }
+
+    /* Durum renkleri */
+    .d-okuyorum { background: rgba(96,96,255,0.2); color: #9090ff; }
+    .d-okuyacagim { background: rgba(245,200,66,0.2); color: var(--gold); }
+    .d-biraktim { background: rgba(232,25,44,0.2); color: var(--red); }
+    .d-bitirdim { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .d-tavsiye { background: rgba(255,150,50,0.2); color: #ff9632; }
+    .d-tekrar { background: rgba(139,92,246,0.2); color: #a78bfa; }
 
     .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
-
     #loading { text-align: center; padding: 60px; color: var(--muted); }
 
     @media (max-width: 600px) {
@@ -108,349 +107,323 @@
       .profil-badges { justify-content: center; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       .form-grid { grid-template-columns: 1fr; }
-      .tur-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
-    <a href="index.html" style="color:var(--muted);font-size:13px">← Ana Sayfa</a>
-    <div class="nav-right">
-      <a href="ayarlar.html" style="color:var(--muted);font-size:13px">⚙️ Ayarlar</a>
+<nav>
+  <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+  <a href="index.html" style="color:var(--muted);font-size:13px">← Ana Sayfa</a>
+  <div class="nav-right">
+    <a href="ayarlar.html" style="color:var(--muted);font-size:13px">⚙️ Ayarlar</a>
+  </div>
+</nav>
+
+<div id="loading">Yükleniyor...</div>
+
+<div class="container" id="content" style="display:none">
+
+  <div class="profil-header">
+    <div class="avatar-wrap">
+      <div class="avatar-big" id="avatarEl" onclick="document.getElementById('avatarInput').click()">
+        <span id="avatarInitial">?</span>
+      </div>
+      <div class="avatar-edit" onclick="document.getElementById('avatarInput').click()">✎</div>
+      <input type="file" style="display:none" id="avatarInput" accept="image/*" onchange="avatarYukle(this)" />
     </div>
-  </nav>
-
-  <div id="loading">Yükleniyor...</div>
-
-  <div class="container" id="content" style="display:none">
-
-    <!-- PROFİL HEADER -->
-    <div class="profil-header">
-      <div class="avatar-wrap">
-        <div class="avatar-big" id="avatarEl" onclick="document.getElementById('avatarInput').click()">
-          <span id="avatarInitial">?</span>
-        </div>
-        <div class="avatar-edit" onclick="document.getElementById('avatarInput').click()">✎</div>
-        <input type="file" class="avatar-input" id="avatarInput" accept="image/*" onchange="avatarYukle(this)" />
-      </div>
-      <div class="profil-info">
-        <div class="profil-name" id="profilName">Kullanıcı</div>
-        <div class="profil-email" id="profilEmail"></div>
-        <div class="profil-badges" id="profilBadges"></div>
-        <div class="profil-bio" id="profilBio"></div>
-        <div class="uye-tarihi" id="uyeTarihi"></div>
-      </div>
+    <div class="profil-info">
+      <div class="profil-name" id="profilName">Kullanıcı</div>
+      <div class="profil-email" id="profilEmail"></div>
+      <div class="profil-badges" id="profilBadges"></div>
+      <div class="profil-bio" id="profilBio"></div>
+      <div class="uye-tarihi" id="uyeTarihi"></div>
     </div>
-
-    <!-- İSTATİSTİKLER -->
-    <div class="stats-row">
-      <div class="stat-mini"><div class="stat-mini-val" id="statOkuma">0</div><div class="stat-mini-label">Okunan Manga</div></div>
-      <div class="stat-mini"><div class="stat-mini-val" id="statIstek">0</div><div class="stat-mini-label">İstek Listesi</div></div>
-      <div class="stat-mini"><div class="stat-mini-val" id="statYorum">0</div><div class="stat-mini-label">Yapılan Yorum</div></div>
-      <div class="stat-mini"><div class="stat-mini-val" id="statGun">0</div><div class="stat-mini-label">Üyelik Günü</div></div>
-    </div>
-
-    <!-- SEKMELER -->
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('gecmis')">📖 Okuma Geçmişi</button>
-      <button class="tab" onclick="switchTab('liste')">❤️ İstek Listesi</button>
-      <button class="tab" onclick="switchTab('profil-duzenle')">✏️ Profili Düzenle</button>
-      <button class="tab" onclick="switchTab('guvenlik')">🔒 Güvenlik</button>
-    </div>
-
-    <!-- OKUMA GEÇMİŞİ -->
-    <div class="tab-content active" id="tab-gecmis">
-      <div class="card">
-        <h3>📖 Okuma Geçmişim</h3>
-        <div class="gecmis-list" id="gecmisList">
-          <div class="empty">Yükleniyor...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- İSTEK LİSTESİ -->
-    <div class="tab-content" id="tab-liste">
-      <div class="card">
-        <h3>❤️ İstek Listem</h3>
-        <div class="istek-grid" id="istekGrid">
-          <div class="empty" style="grid-column:1/-1">Yükleniyor...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PROFİL DÜZENLE -->
-    <div class="tab-content" id="tab-profil-duzenle">
-      <div class="card">
-        <h3>✏️ Profil Bilgileri</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Kullanıcı Adı</label>
-            <input type="text" id="editUsername" placeholder="kullaniciadi" />
-          </div>
-          <div class="form-group">
-            <label>Görünen Ad</label>
-            <input type="text" id="editDisplayName" placeholder="Görünen adınız" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Hakkımda</label>
-          <textarea id="editBio" placeholder="Kendiniz hakkında kısa bir şey yazın..."></textarea>
-        </div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Favori Tür</label>
-            <select id="editFavoriTur">
-              <option value="">Seçiniz...</option>
-              <option value="Aksiyon">⚔️ Aksiyon</option>
-              <option value="Romantik">💕 Romantik</option>
-              <option value="Fantastik">🔮 Fantastik</option>
-              <option value="Korku">👻 Korku</option>
-              <option value="Komedi">😂 Komedi</option>
-              <option value="Dram">🎭 Dram</option>
-              <option value="Shounen">🔥 Shounen</option>
-              <option value="Isekai">🌀 Isekai</option>
-              <option value="Psikolojik">🧠 Psikolojik</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Konum (opsiyonel)</label>
-            <input type="text" id="editKonum" placeholder="İstanbul, Türkiye" />
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="profilKaydet()">💾 Kaydet</button>
-        <div class="msg" id="profilMsg"></div>
-      </div>
-
-      <div class="card">
-        <h3>🖼️ Profil Fotoğrafı</h3>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Fotoğrafına tıklayarak veya aşağıdan yükleyebilirsin.</p>
-        <div style="display:flex;align-items:center;gap:16px">
-          <div class="avatar-big" style="width:70px;height:70px;font-size:28px" id="avatarPreview"></div>
-          <div>
-            <input type="file" id="avatarInput2" accept="image/*" style="display:none" onchange="avatarYukle(this)" />
-            <button class="btn btn-secondary" onclick="document.getElementById('avatarInput2').click()">📷 Fotoğraf Seç</button>
-            <button class="btn btn-danger" style="margin-top:8px" onclick="avatarSil()">🗑️ Kaldır</button>
-          </div>
-        </div>
-        <div class="msg" id="avatarMsg"></div>
-      </div>
-    </div>
-
-    <!-- GÜVENLİK -->
-    <div class="tab-content" id="tab-guvenlik">
-      <div class="card">
-        <h3>🔒 Şifre Değiştir</h3>
-        <div class="form-group">
-          <label>Yeni Şifre</label>
-          <input type="password" id="yeniSifre" placeholder="En az 6 karakter" />
-        </div>
-        <div class="form-group">
-          <label>Şifre Tekrar</label>
-          <input type="password" id="yeniSifreTekrar" placeholder="Şifreyi tekrar girin" />
-        </div>
-        <button class="btn btn-primary" onclick="sifreDegistir()">🔐 Şifreyi Güncelle</button>
-        <div class="msg" id="sifreMsg"></div>
-      </div>
-      <div class="card">
-        <h3>📧 E-posta Bilgisi</h3>
-        <div class="form-group">
-          <label>Mevcut E-posta</label>
-          <input type="email" id="mevcutEmail" disabled />
-        </div>
-        <p style="color:var(--muted);font-size:13px">E-posta değişikliği için bizimle iletişime geç: <a href="mailto:akatoon003@gmail.com" style="color:var(--red)">akatoon003@gmail.com</a></p>
-      </div>
-      <div class="card">
-        <h3 style="color:var(--red)">⚠️ Hesabı Sil</h3>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Hesabını silmek istersen bizimle iletişime geç. Bu işlem geri alınamaz.</p>
-        <a href="mailto:akatoon003@gmail.com?subject=Hesap Silme Talebi" class="btn btn-danger">✉️ Silme Talebi Gönder</a>
-      </div>
-    </div>
-
   </div>
 
-  <script>
-    const SUPABASE_URL = 'https://wxfmatafacdjhiurowut.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
-    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-    let currentUser = null;
+  <div class="stats-row">
+    <div class="stat-mini"><div class="stat-mini-val" id="statOkuma">0</div><div class="stat-mini-label">Okunan Manga</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" id="statIstek">0</div><div class="stat-mini-label">Listemde</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" id="statYorum">0</div><div class="stat-mini-label">Yapılan Yorum</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" id="statGun">0</div><div class="stat-mini-label">Üyelik Günü</div></div>
+  </div>
 
-    async function init() {
-      const { data: { user } } = await sb.auth.getUser();
-      if (!user) { window.location.href = 'giris.html'; return; }
-      currentUser = user;
-      await loadProfil();
-      await loadIstatistikler();
-      await loadGecmis();
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('content').style.display = 'block';
-    }
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('gecmis', this)">📖 Okuma Geçmişi</button>
+    <button class="tab" onclick="switchTab('okuma-listesi', this)">📚 Okuma Listem</button>
+    <button class="tab" onclick="switchTab('profil-duzenle', this)">✏️ Profili Düzenle</button>
+    <button class="tab" onclick="switchTab('guvenlik', this)">🔒 Güvenlik</button>
+  </div>
 
-    async function loadProfil() {
-      const meta = currentUser.user_metadata || {};
-      const username = meta.username || currentUser.email.split('@')[0];
-      const displayName = meta.display_name || username;
-      const bio = meta.bio || '';
-      const avatarUrl = meta.avatar_url || '';
-      const favoriTur = meta.favori_tur || '';
-      const konum = meta.konum || '';
+  <!-- OKUMA GEÇMİŞİ -->
+  <div class="tab-content active" id="tab-gecmis">
+    <div class="card">
+      <h3>📖 Okuma Geçmişim</h3>
+      <div class="gecmis-list" id="gecmisList"><div class="empty">Yükleniyor...</div></div>
+    </div>
+  </div>
 
-      document.getElementById('profilName').textContent = displayName;
-      document.getElementById('profilEmail').textContent = currentUser.email;
-      document.getElementById('mevcutEmail').value = currentUser.email;
-      document.getElementById('profilBio').textContent = bio;
-      document.getElementById('editUsername').value = username;
-      document.getElementById('editDisplayName').value = displayName;
-      document.getElementById('editBio').value = bio;
-      document.getElementById('editFavoriTur').value = favoriTur;
-      document.getElementById('editKonum').value = konum;
+  <!-- OKUMA LİSTESİ -->
+  <div class="tab-content" id="tab-okuma-listesi">
+    <div class="card">
+      <h3>📚 Okuma Listem</h3>
+      <!-- Filtreler -->
+      <div class="liste-filtre">
+        <button class="filtre-btn active" onclick="listeFiltre('hepsi', this)">🗂️ Tümü</button>
+        <button class="filtre-btn" onclick="listeFiltre('okuyorum', this)">📖 Okuyorum</button>
+        <button class="filtre-btn" onclick="listeFiltre('okuyacagim', this)">⏳ Okuyacağım</button>
+        <button class="filtre-btn" onclick="listeFiltre('bıraktım', this)">⏸ Bıraktım</button>
+        <button class="filtre-btn" onclick="listeFiltre('bitirdim', this)">✅ Bitirdim</button>
+        <button class="filtre-btn" onclick="listeFiltre('tavsiye', this)">⭐ Tavsiye</button>
+        <button class="filtre-btn" onclick="listeFiltre('tekrar', this)">🔁 Tekrar Oku</button>
+      </div>
+      <div class="okuma-grid" id="okumaGrid"><div class="empty" style="grid-column:1/-1">Yükleniyor...</div></div>
+    </div>
+  </div>
 
-      // Üyelik tarihi
-      const tarih = new Date(currentUser.created_at);
-      const gun = Math.floor((Date.now() - tarih) / (1000 * 60 * 60 * 24));
-      document.getElementById('uyeTarihi').textContent = `📅 Üye: ${tarih.toLocaleDateString('tr-TR')} (${gun} gün)`;
-      document.getElementById('statGun').textContent = gun;
+  <!-- PROFİL DÜZENLE -->
+  <div class="tab-content" id="tab-profil-duzenle">
+    <div class="card">
+      <h3>✏️ Profil Bilgileri</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Kullanıcı Adı</label><input type="text" id="editUsername" /></div>
+        <div class="form-group"><label>Görünen Ad</label><input type="text" id="editDisplayName" /></div>
+      </div>
+      <div class="form-group"><label>Hakkımda</label><textarea id="editBio" placeholder="Kendiniz hakkında..."></textarea></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Favori Tür</label>
+          <select id="editFavoriTur">
+            <option value="">Seçiniz...</option>
+            <option value="Aksiyon">⚔️ Aksiyon</option>
+            <option value="Romantik">💕 Romantik</option>
+            <option value="Fantastik">🔮 Fantastik</option>
+            <option value="Korku">👻 Korku</option>
+            <option value="Komedi">😂 Komedi</option>
+            <option value="Dram">🎭 Dram</option>
+            <option value="Shounen">🔥 Shounen</option>
+            <option value="Isekai">🌀 Isekai</option>
+            <option value="Psikolojik">🧠 Psikolojik</option>
+            <option value="Gerilim">😰 Gerilim</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Konum (opsiyonel)</label><input type="text" id="editKonum" placeholder="İstanbul, Türkiye" /></div>
+      </div>
+      <button class="btn btn-primary" onclick="profilKaydet()">💾 Kaydet</button>
+      <div class="msg" id="profilMsg"></div>
+    </div>
+    <div class="card">
+      <h3>🖼️ Profil Fotoğrafı</h3>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div class="avatar-big" style="width:70px;height:70px;font-size:28px" id="avatarPreview"></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <input type="file" id="avatarInput2" accept="image/*" style="display:none" onchange="avatarYukle(this)" />
+          <button class="btn btn-secondary" onclick="document.getElementById('avatarInput2').click()">📷 Fotoğraf Seç</button>
+          <button class="btn btn-danger" onclick="avatarSil()">🗑️ Kaldır</button>
+        </div>
+      </div>
+      <div class="msg" id="avatarMsg"></div>
+    </div>
+  </div>
 
-      // Rozet
-      const badges = [`<span class="profil-badge badge-uye">👤 Üye</span>`];
-      if (currentUser.email === 'tavuzugur@gmail.com') badges.push(`<span class="profil-badge badge-admin">⚡ Admin</span>`);
-      if (gun < 30) badges.push(`<span class="profil-badge badge-yeni">🌟 Yeni Üye</span>`);
-      if (favoriTur) badges.push(`<span class="profil-badge" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted)">${favoriTur}</span>`);
-      document.getElementById('profilBadges').innerHTML = badges.join('');
+  <!-- GÜVENLİK -->
+  <div class="tab-content" id="tab-guvenlik">
+    <div class="card">
+      <h3>🔒 Şifre Değiştir</h3>
+      <div class="form-group"><label>Yeni Şifre</label><input type="password" id="yeniSifre" placeholder="En az 6 karakter" /></div>
+      <div class="form-group"><label>Şifre Tekrar</label><input type="password" id="yeniSifreTekrar" /></div>
+      <button class="btn btn-primary" onclick="sifreDegistir()">🔐 Güncelle</button>
+      <div class="msg" id="sifreMsg"></div>
+    </div>
+    <div class="card">
+      <h3>📧 E-posta</h3>
+      <div class="form-group"><label>Mevcut E-posta</label><input type="email" id="mevcutEmail" disabled /></div>
+      <p style="color:var(--muted);font-size:13px">E-posta değişikliği için: <a href="mailto:akatoon003@gmail.com" style="color:var(--red)">akatoon003@gmail.com</a></p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--red)">⚠️ Hesabı Sil</h3>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Bu işlem geri alınamaz. Silmek için bizimle iletişime geç.</p>
+      <a href="mailto:akatoon003@gmail.com?subject=Hesap Silme Talebi" class="btn btn-danger">✉️ Silme Talebi</a>
+    </div>
+  </div>
 
-      // Avatar
-      setAvatar(avatarUrl, username);
-    }
+</div>
 
-    function setAvatar(url, username) {
-      const initial = (username || '?')[0].toUpperCase();
-      const avatarEl = document.getElementById('avatarEl');
-      const avatarPreview = document.getElementById('avatarPreview');
-      if (url) {
-        avatarEl.innerHTML = `<img src="${url}" alt="Avatar" />`;
-        if (avatarPreview) avatarPreview.innerHTML = `<img src="${url}" alt="Avatar" />`;
-      } else {
-        avatarEl.innerHTML = `<span id="avatarInitial">${initial}</span>`;
-        if (avatarPreview) avatarPreview.innerHTML = `<span>${initial}</span>`;
-      }
-    }
+<script>
+const SUPABASE_URL = 'https://wxfmatafacdjhiurowut.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let currentUser = null;
+let tumOkumaListesi = [];
 
-    async function avatarYukle(input) {
-      const file = input.files[0];
-      if (!file) return;
-      if (file.size > 2 * 1024 * 1024) { showMsg('avatarMsg', 'error', 'Maksimum 2MB!'); return; }
+const durumConfig = {
+  okuyorum:   { label: '📖 Okuyorum',    cls: 'd-okuyorum' },
+  okuyacagim: { label: '⏳ Okuyacağım',  cls: 'd-okuyacagim' },
+  'bıraktım': { label: '⏸ Bıraktım',    cls: 'd-biraktim' },
+  bitirdim:   { label: '✅ Bitirdim',    cls: 'd-bitirdim' },
+  tavsiye:    { label: '⭐ Tavsiye',     cls: 'd-tavsiye' },
+  tekrar:     { label: '🔁 Tekrar Oku', cls: 'd-tekrar' },
+};
 
-      showMsg('avatarMsg', 'success', '⏳ Yükleniyor...');
-      const ext = file.name.split('.').pop();
-      const path = `${currentUser.id}/avatar.${ext}`;
+async function init() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) { window.location.href = 'giris.html'; return; }
+  currentUser = user;
+  await loadProfil();
+  await loadIstatistikler();
+  await loadGecmis();
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+}
 
-      const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
-      if (upErr) { showMsg('avatarMsg', 'error', 'Yükleme hatası: ' + upErr.message); return; }
+async function loadProfil() {
+  const meta = currentUser.user_metadata || {};
+  const username = meta.username || currentUser.email.split('@')[0];
+  const displayName = meta.display_name || username;
+  document.getElementById('profilName').textContent = displayName;
+  document.getElementById('profilEmail').textContent = currentUser.email;
+  document.getElementById('mevcutEmail').value = currentUser.email;
+  document.getElementById('profilBio').textContent = meta.bio || '';
+  document.getElementById('editUsername').value = username;
+  document.getElementById('editDisplayName').value = displayName;
+  document.getElementById('editBio').value = meta.bio || '';
+  document.getElementById('editFavoriTur').value = meta.favori_tur || '';
+  document.getElementById('editKonum').value = meta.konum || '';
 
-      const { data } = sb.storage.from('avatars').getPublicUrl(path);
-      const url = data.publicUrl + '?t=' + Date.now();
+  const tarih = new Date(currentUser.created_at);
+  const gun = Math.floor((Date.now() - tarih) / 86400000);
+  document.getElementById('uyeTarihi').textContent = `📅 Üye: ${tarih.toLocaleDateString('tr-TR')} (${gun} gün)`;
+  document.getElementById('statGun').textContent = gun;
 
-      const { error } = await sb.auth.updateUser({ data: { avatar_url: url } });
-      if (error) { showMsg('avatarMsg', 'error', 'Güncelleme hatası!'); return; }
+  const badges = [`<span class="profil-badge badge-uye">👤 Üye</span>`];
+  if (currentUser.email === 'tavuzugur@gmail.com') badges.push(`<span class="profil-badge badge-admin">⚡ Admin</span>`);
+  if (gun < 30) badges.push(`<span class="profil-badge badge-yeni">🌟 Yeni Üye</span>`);
+  if (meta.favori_tur) badges.push(`<span class="profil-badge" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted)">${meta.favori_tur}</span>`);
+  document.getElementById('profilBadges').innerHTML = badges.join('');
+  setAvatar(meta.avatar_url || '', username);
+}
 
-      setAvatar(url, currentUser.user_metadata?.username || '');
-      showMsg('avatarMsg', 'success', '✅ Fotoğraf güncellendi!');
-    }
+function setAvatar(url, username) {
+  const initial = (username || '?')[0].toUpperCase();
+  ['avatarEl','avatarPreview'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = url ? `<img src="${url}" alt="Avatar" />` : `<span>${initial}</span>`;
+  });
+}
 
-    async function avatarSil() {
-      const { error } = await sb.auth.updateUser({ data: { avatar_url: '' } });
-      if (!error) {
-        const username = currentUser.user_metadata?.username || currentUser.email.split('@')[0];
-        setAvatar('', username);
-        showMsg('avatarMsg', 'success', '✅ Fotoğraf kaldırıldı!');
-      }
-    }
+async function avatarYukle(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showMsg('avatarMsg','error','Maksimum 2MB!'); return; }
+  showMsg('avatarMsg','success','⏳ Yükleniyor...');
+  const ext = file.name.split('.').pop();
+  const path = `${currentUser.id}/avatar.${ext}`;
+  const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+  if (upErr) { showMsg('avatarMsg','error','Hata: '+upErr.message); return; }
+  const { data } = sb.storage.from('avatars').getPublicUrl(path);
+  const url = data.publicUrl + '?t=' + Date.now();
+  await sb.auth.updateUser({ data: { avatar_url: url } });
+  setAvatar(url, currentUser.user_metadata?.username || '');
+  showMsg('avatarMsg','success','✅ Fotoğraf güncellendi!');
+}
 
-    async function loadIstatistikler() {
-      const [{ count: oc }, { count: ic }, { count: yc }] = await Promise.all([
-        sb.from('okuma_gecmisi').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id),
-        sb.from('istek_listesi').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id),
-        sb.from('yorumlar').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id)
-      ]);
-      document.getElementById('statOkuma').textContent = oc || 0;
-      document.getElementById('statIstek').textContent = ic || 0;
-      document.getElementById('statYorum').textContent = yc || 0;
-    }
+async function avatarSil() {
+  await sb.auth.updateUser({ data: { avatar_url: '' } });
+  setAvatar('', currentUser.user_metadata?.username || '');
+  showMsg('avatarMsg','success','✅ Kaldırıldı!');
+}
 
-    async function loadGecmis() {
-      const { data } = await sb.from('okuma_gecmisi').select('*, manga(baslik, kapak_url)').eq('user_id', currentUser.id).order('updated_at', { ascending: false }).limit(20);
-      const el = document.getElementById('gecmisList');
-      if (!data || !data.length) { el.innerHTML = '<div class="empty">Henüz manga okumadınız.</div>'; return; }
-      el.innerHTML = data.map(g => `
-        <div class="gecmis-item" onclick="window.location.href='detay.html?manga=${g.manga_id}'">
-          <div class="gecmis-cover">
-            ${g.manga?.kapak_url ? `<img src="${g.manga.kapak_url}" />` : (g.manga?.baslik?.substring(0,3) || '?')}
-          </div>
-          <div class="gecmis-info">
-            <div class="gecmis-baslik">${g.manga?.baslik || '?'}</div>
-            <div class="gecmis-bolum">📌 Bölüm ${g.bolum_no} kaldı</div>
-          </div>
-          <a href="oku.html?manga=${g.manga_id}&bolum=${g.bolum_no}" onclick="event.stopPropagation()" style="background:var(--red);color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;flex-shrink:0">Devam Et</a>
-        </div>`).join('');
-    }
+async function loadIstatistikler() {
+  const [{ count: oc },{ count: ic },{ count: yc }] = await Promise.all([
+    sb.from('okuma_gecmisi').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id),
+    sb.from('istek_listesi').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id),
+    sb.from('yorumlar').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id)
+  ]);
+  document.getElementById('statOkuma').textContent = oc||0;
+  document.getElementById('statIstek').textContent = ic||0;
+  document.getElementById('statYorum').textContent = yc||0;
+}
 
-    async function loadIstekListesi() {
-      const { data } = await sb.from('istek_listesi').select('*, manga(id, baslik, kapak_url, puan)').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-      const el = document.getElementById('istekGrid');
-      if (!data || !data.length) { el.innerHTML = '<div class="empty" style="grid-column:1/-1">İstek listeniz boş.</div>'; return; }
-      el.innerHTML = data.map(d => {
-        const m = d.manga;
-        const durumMap = { okuyorum: '📖 Okuyorum', okuyacagim: '⏳ Okuyacağım', 'bıraktım': '⏸ Bıraktım', bitirdim: '✅ Bitirdim', tavsiye: '⭐ Tavsiye' };
-        return `
-          <div class="istek-card" onclick="window.location.href='detay.html?manga=${m?.id}'">
-            <div class="istek-cover">${m?.kapak_url ? `<img src="${m.kapak_url}" />` : (m?.baslik?.substring(0,3) || '?')}</div>
-            <div class="istek-info">
-              <div class="istek-baslik">${m?.baslik || '?'}</div>
-              <div class="istek-durum">${durumMap[d.durum] || '❤️ Listede'}</div>
-            </div>
-          </div>`;
-      }).join('');
-    }
+async function loadGecmis() {
+  const { data } = await sb.from('okuma_gecmisi').select('*, manga(baslik,kapak_url)').eq('user_id',currentUser.id).order('updated_at',{ascending:false}).limit(20);
+  const el = document.getElementById('gecmisList');
+  if (!data||!data.length) { el.innerHTML='<div class="empty">Henüz manga okumadınız.</div>'; return; }
+  el.innerHTML = data.map(g=>`
+    <div class="gecmis-item" onclick="window.location.href='detay.html?manga=${g.manga_id}'">
+      <div class="gecmis-cover">${g.manga?.kapak_url?`<img src="${g.manga.kapak_url}"/>`:(g.manga?.baslik?.substring(0,3)||'?')}</div>
+      <div class="gecmis-info">
+        <div class="gecmis-baslik">${g.manga?.baslik||'?'}</div>
+        <div class="gecmis-bolum">📌 Bölüm ${g.bolum_no} kaldı</div>
+      </div>
+      <a href="oku.html?manga=${g.manga_id}&bolum=${g.bolum_no}" onclick="event.stopPropagation()" style="background:var(--red);color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;flex-shrink:0">Devam Et</a>
+    </div>`).join('');
+}
 
-    function switchTab(id) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.getElementById('tab-' + id).classList.add('active');
-      event.target.classList.add('active');
-      if (id === 'liste') loadIstekListesi();
-    }
+// ── OKUMA LİSTESİ ──
+async function loadOkumaListesi() {
+  const { data } = await sb.from('istek_listesi').select('*, manga(id,baslik,kapak_url,puan,tur)').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  tumOkumaListesi = data || [];
+  listeFiltre('hepsi', document.querySelector('.filtre-btn'));
+}
 
-    async function profilKaydet() {
-      const username = document.getElementById('editUsername').value.trim();
-      const display_name = document.getElementById('editDisplayName').value.trim();
-      const bio = document.getElementById('editBio').value.trim();
-      const favori_tur = document.getElementById('editFavoriTur').value;
-      const konum = document.getElementById('editKonum').value.trim();
+function listeFiltre(durum, el) {
+  document.querySelectorAll('.filtre-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const filtred = durum === 'hepsi' ? tumOkumaListesi : tumOkumaListesi.filter(d=>d.durum===durum);
+  renderOkumaGrid(filtred);
+}
 
-      if (!username) { showMsg('profilMsg', 'error', 'Kullanıcı adı zorunlu!'); return; }
+function renderOkumaGrid(liste) {
+  const el = document.getElementById('okumaGrid');
+  if (!liste.length) { el.innerHTML='<div class="empty" style="grid-column:1/-1">Bu kategoride manga yok.</div>'; return; }
+  el.innerHTML = liste.map(d => {
+    const m = d.manga;
+    const cfg = durumConfig[d.durum] || { label:'❤️ Listede', cls:'' };
+    return `
+      <div class="okuma-card" onclick="window.location.href='detay.html?manga=${m?.id}'">
+        <div class="okuma-cover">${m?.kapak_url?`<img src="${m.kapak_url}"/>`:(m?.baslik?.substring(0,3)||'?')}</div>
+        <div class="okuma-durum-badge ${cfg.cls}">${cfg.label}</div>
+        <div class="okuma-info">
+          <div class="okuma-baslik">${m?.baslik||'?'}</div>
+          ${m?.puan?`<div style="color:var(--gold);font-size:11px">⭐ ${m.puan}</div>`:''}
+        </div>
+      </div>`;
+  }).join('');
+}
 
-      const { error } = await sb.auth.updateUser({ data: { username, display_name, bio, favori_tur, konum } });
-      if (error) { showMsg('profilMsg', 'error', 'Hata: ' + error.message); }
-      else {
-        showMsg('profilMsg', 'success', '✅ Profil güncellendi!');
-        document.getElementById('profilName').textContent = display_name || username;
-        document.getElementById('profilBio').textContent = bio;
-      }
-    }
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  if (id==='okuma-listesi') loadOkumaListesi();
+}
 
-    async function sifreDegistir() {
-      const sifre = document.getElementById('yeniSifre').value;
-      const tekrar = document.getElementById('yeniSifreTekrar').value;
-      if (sifre.length < 6) { showMsg('sifreMsg', 'error', 'Şifre en az 6 karakter olmalı!'); return; }
-      if (sifre !== tekrar) { showMsg('sifreMsg', 'error', 'Şifreler eşleşmiyor!'); return; }
-      const { error } = await sb.auth.updateUser({ password: sifre });
-      if (error) { showMsg('sifreMsg', 'error', 'Hata: ' + error.message); }
-      else { showMsg('sifreMsg', 'success', '✅ Şifre güncellendi!'); document.getElementById('yeniSifre').value = ''; document.getElementById('yeniSifreTekrar').value = ''; }
-    }
+async function profilKaydet() {
+  const username = document.getElementById('editUsername').value.trim();
+  const display_name = document.getElementById('editDisplayName').value.trim();
+  const bio = document.getElementById('editBio').value.trim();
+  const favori_tur = document.getElementById('editFavoriTur').value;
+  const konum = document.getElementById('editKonum').value.trim();
+  if (!username) { showMsg('profilMsg','error','Kullanıcı adı zorunlu!'); return; }
+  const { error } = await sb.auth.updateUser({ data: { username,display_name,bio,favori_tur,konum } });
+  if (error) showMsg('profilMsg','error','Hata: '+error.message);
+  else { showMsg('profilMsg','success','✅ Profil güncellendi!'); document.getElementById('profilName').textContent=display_name||username; document.getElementById('profilBio').textContent=bio; }
+}
 
-    function showMsg(id, tip, text) { const el = document.getElementById(id); el.className = 'msg ' + tip; el.textContent = text; setTimeout(() => el.className = 'msg', 5000); }
+async function sifreDegistir() {
+  const sifre = document.getElementById('yeniSifre').value;
+  const tekrar = document.getElementById('yeniSifreTekrar').value;
+  if (sifre.length<6) { showMsg('sifreMsg','error','En az 6 karakter!'); return; }
+  if (sifre!==tekrar) { showMsg('sifreMsg','error','Şifreler eşleşmiyor!'); return; }
+  const { error } = await sb.auth.updateUser({ password: sifre });
+  if (error) showMsg('sifreMsg','error','Hata: '+error.message);
+  else { showMsg('sifreMsg','success','✅ Şifre güncellendi!'); document.getElementById('yeniSifre').value=''; document.getElementById('yeniSifreTekrar').value=''; }
+}
 
-    init();
-  </script>
+function showMsg(id,tip,text) { const el=document.getElementById(id); el.className='msg '+tip; el.textContent=text; setTimeout(()=>el.className='msg',5000); }
+
+init();
+</script>
 </body>
 </html>
