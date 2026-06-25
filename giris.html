@@ -11,120 +11,136 @@
     :root {
       --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22;
       --border: #2a2a35; --red: #e8192c; --red-dark: #b01020;
-      --text: #e8e8f0; --muted: #888899;
+      --text: #e8e8f0; --muted: #888899; --green: #22c55e;
     }
-    body {
-      background: var(--bg); color: var(--text);
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh; display: flex; flex-direction: column;
-    }
-    nav {
-      padding: 16px 24px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center;
-    }
-    .logo { font-family: 'Bebas Neue'; font-size: 26px; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+    nav { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: 'Bebas Neue'; font-size: 26px; text-decoration: none; color: var(--text); }
     .logo-aka { color: var(--red); }
+    .back-link { color: var(--muted); font-size: 13px; text-decoration: none; }
+    .back-link:hover { color: var(--text); }
 
-    .auth-container {
-      flex: 1; display: flex; align-items: center;
-      justify-content: center; padding: 40px 16px;
-    }
-    .auth-box {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 16px; padding: 40px 32px; width: 100%; max-width: 400px;
-    }
-    .auth-box h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-    .auth-box p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .auth-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
+    .auth-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px; width: 100%; max-width: 420px; }
 
-    .tabs {
-      display: flex; gap: 4px; margin-bottom: 28px;
-      background: var(--bg3); border-radius: 8px; padding: 4px;
-    }
-    .tab {
-      flex: 1; padding: 8px; border: none; background: none;
-      color: var(--muted); font-size: 14px; font-weight: 600;
-      border-radius: 6px; cursor: pointer; transition: all .2s;
-    }
+    .auth-logo { text-align: center; margin-bottom: 24px; }
+    .auth-logo span { font-family: 'Bebas Neue'; font-size: 36px; }
+    .auth-logo .aka { color: var(--red); }
+    .auth-box h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; text-align: center; }
+    .auth-box .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 28px; text-align: center; }
+
+    .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg3); border-radius: 8px; padding: 4px; }
+    .tab { flex: 1; padding: 8px; border: none; background: none; color: var(--muted); font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all .2s; }
     .tab.active { background: var(--red); color: #fff; }
 
-    .form-group { margin-bottom: 16px; }
-    .form-group label {
-      display: block; font-size: 13px; font-weight: 600;
-      margin-bottom: 6px; color: var(--muted);
-    }
-    .form-group input {
-      width: 100%; background: var(--bg3); border: 1px solid var(--border);
-      color: var(--text); padding: 11px 14px; border-radius: 8px;
-      font-size: 14px; outline: none; transition: border-color .2s;
-    }
-    .form-group input:focus { border-color: var(--red); }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: var(--muted); font-size: 12px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-    .btn-submit {
-      width: 100%; background: var(--red); color: #fff;
-      border: none; padding: 13px; border-radius: 8px;
-      font-size: 15px; font-weight: 700; cursor: pointer;
-      transition: background .2s; margin-top: 8px;
-    }
+    .form-group { margin-bottom: 14px; position: relative; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+    .form-group input { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 11px 40px 11px 14px; border-radius: 8px; font-size: 14px; outline: none; transition: border-color .2s; font-family: 'Inter', sans-serif; }
+    .form-group input:focus { border-color: var(--red); }
+    .form-group input.valid { border-color: var(--green); }
+    .eye-btn { position: absolute; right: 12px; top: 34px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 2px; }
+
+    .forgot-link { text-align: right; margin-top: -8px; margin-bottom: 14px; }
+    .forgot-link a { color: var(--muted); font-size: 12px; text-decoration: none; }
+    .forgot-link a:hover { color: var(--red); }
+
+    .btn-submit { width: 100%; background: var(--red); color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .2s; margin-top: 6px; font-family: 'Inter', sans-serif; }
     .btn-submit:hover { background: var(--red-dark); }
     .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
 
-    .msg {
-      padding: 10px 14px; border-radius: 8px; font-size: 13px;
-      margin-top: 14px; display: none;
-    }
-    .msg.error { background: rgba(232,25,44,0.1); border: 1px solid rgba(232,25,44,0.3); color: #ff6b7a; }
-    .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; }
-    .msg.show { display: block; }
+    .msg { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 14px; display: none; }
+    .msg.error { background: rgba(232,25,44,0.1); border: 1px solid rgba(232,25,44,0.3); color: #ff6b7a; display: block; }
+    .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; display: block; }
 
-    .divider { text-align: center; color: var(--muted); font-size: 12px; margin: 16px 0; }
+    /* ŞIFREMI UNUTTUM MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 999; display: none; align-items: center; justify-content: center; padding: 16px; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 28px; width: 100%; max-width: 380px; }
+    .modal-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .modal-box p { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+    .modal-close { float: right; background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; margin-top: -4px; }
+
+    .strength-bar { height: 3px; border-radius: 4px; margin-top: 6px; transition: all .3s; background: var(--border); }
+    .strength-text { font-size: 11px; margin-top: 4px; }
+
+    @media (max-width: 480px) {
+      .auth-box { padding: 28px 20px; }
+    }
   </style>
 </head>
 <body>
   <nav>
     <a href="index.html" class="logo"><span class="logo-aka">Aka</span>Toon</a>
+    <a href="index.html" class="back-link">← Ana Sayfa</a>
   </nav>
 
   <div class="auth-container">
     <div class="auth-box">
-      <h1>Hoş Geldin!</h1>
-      <p>Türkiye'nin en kaliteli manga platformuna katıl.</p>
+      <div class="auth-logo">
+        <span class="aka">Aka</span><span>Toon</span>
+      </div>
+      <h1 id="authTitle">Hoş Geldin!</h1>
+      <p class="subtitle" id="authSubtitle">Türkiye'nin en kaliteli manga platformuna katıl.</p>
 
       <div class="tabs">
-        <button class="tab active" onclick="switchTab('giris')">Giriş Yap</button>
-        <button class="tab" onclick="switchTab('kayit')">Kayıt Ol</button>
+        <button class="tab active" onclick="switchTab('giris', this)">Giriş Yap</button>
+        <button class="tab" onclick="switchTab('kayit', this)">Kayıt Ol</button>
       </div>
 
       <!-- GİRİŞ FORMU -->
       <div id="girisForm">
         <div class="form-group">
           <label>E-posta</label>
-          <input type="email" id="girisEmail" placeholder="ornek@email.com" />
+          <input type="email" id="girisEmail" placeholder="ornek@email.com" oninput="validateEmail(this)" />
         </div>
         <div class="form-group">
           <label>Şifre</label>
-          <input type="password" id="girisPassword" placeholder="Şifreniz" />
+          <input type="password" id="girisPassword" placeholder="Şifreniz" onkeydown="if(event.key==='Enter')girisYap()" />
+          <button class="eye-btn" type="button" onclick="togglePass('girisPassword', this)">👁️</button>
         </div>
-        <button class="btn-submit" onclick="girisYap()">Giriş Yap</button>
+        <div class="forgot-link"><a href="#" onclick="acSifremiUnuttum()">Şifremi unuttum?</a></div>
+        <button class="btn-submit" id="girisBtn" onclick="girisYap()">Giriş Yap</button>
       </div>
 
       <!-- KAYIT FORMU -->
       <div id="kayitForm" style="display:none">
         <div class="form-group">
           <label>Kullanıcı Adı</label>
-          <input type="text" id="kayitUsername" placeholder="kullaniciadi" />
+          <input type="text" id="kayitUsername" placeholder="kullaniciadi" oninput="validateUsername(this)" />
         </div>
         <div class="form-group">
           <label>E-posta</label>
-          <input type="email" id="kayitEmail" placeholder="ornek@email.com" />
+          <input type="email" id="kayitEmail" placeholder="ornek@email.com" oninput="validateEmail(this)" />
         </div>
         <div class="form-group">
           <label>Şifre</label>
-          <input type="password" id="kayitPassword" placeholder="En az 6 karakter" />
+          <input type="password" id="kayitPassword" placeholder="En az 6 karakter" oninput="sifreGuc(this)" onkeydown="if(event.key==='Enter')kayitOl()" />
+          <button class="eye-btn" type="button" onclick="togglePass('kayitPassword', this)">👁️</button>
+          <div class="strength-bar" id="strengthBar"></div>
+          <div class="strength-text" id="strengthText"></div>
         </div>
-        <button class="btn-submit" onclick="kayitOl()">Kayıt Ol</button>
+        <button class="btn-submit" id="kayitBtn" onclick="kayitOl()">Kayıt Ol</button>
       </div>
 
       <div class="msg" id="mesaj"></div>
+    </div>
+  </div>
+
+  <!-- ŞİFREMİ UNUTTUM MODAL -->
+  <div class="modal-overlay" id="sifreModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="document.getElementById('sifreModal').classList.remove('open')">✕</button>
+      <h3>🔑 Şifremi Unuttum</h3>
+      <p>E-posta adresinize şifre sıfırlama bağlantısı göndereceğiz.</p>
+      <div class="form-group">
+        <label>E-posta</label>
+        <input type="email" id="resetEmail" placeholder="ornek@email.com" onkeydown="if(event.key==='Enter')sifreSifirla()" />
+      </div>
+      <button class="btn-submit" onclick="sifreSifirla()" id="resetBtn">Bağlantı Gönder</button>
+      <div class="msg" id="resetMsg"></div>
     </div>
   </div>
 
@@ -133,31 +149,83 @@
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    function switchTab(tab) {
+    // Zaten giriş yapmışsa ana sayfaya yönlendir
+    sb.auth.getUser().then(({ data: { user } }) => {
+      if (user) window.location.href = 'index.html';
+    });
+
+    // Giriş sonrası nereye dönecek
+    const returnUrl = new URLSearchParams(window.location.search).get('return') || 'index.html';
+
+    function switchTab(tab, el) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      event.target.classList.add('active');
+      el.classList.add('active');
       document.getElementById('girisForm').style.display = tab === 'giris' ? 'block' : 'none';
       document.getElementById('kayitForm').style.display = tab === 'kayit' ? 'block' : 'none';
+      document.getElementById('authTitle').textContent = tab === 'giris' ? 'Hoş Geldin!' : 'Hesap Oluştur';
+      document.getElementById('authSubtitle').textContent = tab === 'giris' ? 'Türkiye\'nin en kaliteli manga platformuna katıl.' : 'Ücretsiz üye ol, okumaya başla.';
       mesajGoster('', '');
     }
 
     function mesajGoster(tip, text) {
       const el = document.getElementById('mesaj');
       el.className = 'msg';
-      if (!text) { el.classList.remove('show'); return; }
-      el.classList.add('show', tip);
       el.textContent = text;
+      if (tip) el.classList.add(tip);
     }
 
+    function togglePass(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+      else { input.type = 'password'; btn.textContent = '👁️'; }
+    }
+
+    function validateEmail(input) {
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+      input.classList.toggle('valid', ok);
+    }
+
+    function validateUsername(input) {
+      input.classList.toggle('valid', input.value.length >= 3);
+    }
+
+    function sifreGuc(input) {
+      const v = input.value;
+      const bar = document.getElementById('strengthBar');
+      const txt = document.getElementById('strengthText');
+      let guc = 0;
+      if (v.length >= 6) guc++;
+      if (v.length >= 10) guc++;
+      if (/[A-Z]/.test(v)) guc++;
+      if (/[0-9]/.test(v)) guc++;
+      if (/[^A-Za-z0-9]/.test(v)) guc++;
+      const renkler = ['#e8192c', '#f59e0b', '#f5c842', '#22c55e', '#16a34a'];
+      const etiketler = ['Çok Zayıf', 'Zayıf', 'Orta', 'Güçlü', 'Çok Güçlü'];
+      bar.style.width = (guc / 5 * 100) + '%';
+      bar.style.background = renkler[guc - 1] || 'var(--border)';
+      txt.textContent = v.length ? etiketler[guc - 1] || '' : '';
+      txt.style.color = renkler[guc - 1] || 'var(--muted)';
+    }
+
+    // GOOGLE GİRİŞ
+    async function googleGiris() {
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/' + returnUrl }
+      });
+      if (error) mesajGoster('error', 'Google girişi başarısız: ' + error.message);
+    }
+
+    // E-POSTA GİRİŞ
     async function girisYap() {
       const email = document.getElementById('girisEmail').value.trim();
       const password = document.getElementById('girisPassword').value;
       if (!email || !password) { mesajGoster('error', 'Tüm alanları doldurun!'); return; }
 
-      const btn = document.querySelector('#girisForm .btn-submit');
+      const btn = document.getElementById('girisBtn');
       btn.disabled = true; btn.textContent = 'Giriş yapılıyor...';
 
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      const { error } = await sb.auth.signInWithPassword({ email, password });
 
       if (error) {
         mesajGoster('error', 'E-posta veya şifre hatalı!');
@@ -165,35 +233,77 @@
         return;
       }
 
-      mesajGoster('success', 'Giriş başarılı! Yönlendiriliyorsunuz...');
-      setTimeout(() => window.location.href = 'profil.html', 1000);
+      mesajGoster('success', '✅ Giriş başarılı! Yönlendiriliyorsunuz...');
+      setTimeout(() => window.location.href = returnUrl, 900);
     }
 
+    // KAYIT
     async function kayitOl() {
       const username = document.getElementById('kayitUsername').value.trim();
       const email = document.getElementById('kayitEmail').value.trim();
       const password = document.getElementById('kayitPassword').value;
 
       if (!username || !email || !password) { mesajGoster('error', 'Tüm alanları doldurun!'); return; }
+      if (username.length < 3) { mesajGoster('error', 'Kullanıcı adı en az 3 karakter olmalı!'); return; }
       if (password.length < 6) { mesajGoster('error', 'Şifre en az 6 karakter olmalı!'); return; }
 
-      const btn = document.querySelector('#kayitForm .btn-submit');
+      const btn = document.getElementById('kayitBtn');
       btn.disabled = true; btn.textContent = 'Kayıt yapılıyor...';
 
-      const { data, error } = await sb.auth.signUp({
+      const { error } = await sb.auth.signUp({
         email, password,
         options: { data: { username } }
       });
 
+      btn.disabled = false; btn.textContent = 'Kayıt Ol';
+
       if (error) {
-        mesajGoster('error', 'Kayıt başarısız: ' + error.message);
-        btn.disabled = false; btn.textContent = 'Kayıt Ol';
+        if (error.message.includes('already registered')) mesajGoster('error', 'Bu e-posta zaten kayıtlı!');
+        else mesajGoster('error', 'Kayıt başarısız: ' + error.message);
         return;
       }
 
-      mesajGoster('success', 'Kayıt başarılı! E-postanı doğrula ve giriş yap.');
-      btn.disabled = false; btn.textContent = 'Kayıt Ol';
+      mesajGoster('success', '✅ Kayıt başarılı! E-postanı doğrula ve giriş yap.');
     }
+
+    // ŞİFREMİ UNUTTUM
+    function acSifremiUnuttum() {
+      const email = document.getElementById('girisEmail').value.trim();
+      if (email) document.getElementById('resetEmail').value = email;
+      document.getElementById('sifreModal').classList.add('open');
+      document.getElementById('resetMsg').className = 'msg';
+    }
+
+    async function sifreSifirla() {
+      const email = document.getElementById('resetEmail').value.trim();
+      if (!email) {
+        document.getElementById('resetMsg').className = 'msg error';
+        document.getElementById('resetMsg').textContent = 'E-posta girin!';
+        return;
+      }
+      const btn = document.getElementById('resetBtn');
+      btn.disabled = true; btn.textContent = 'Gönderiliyor...';
+
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/giris.html'
+      });
+
+      btn.disabled = false; btn.textContent = 'Bağlantı Gönder';
+
+      const msgEl = document.getElementById('resetMsg');
+      if (error) {
+        msgEl.className = 'msg error';
+        msgEl.textContent = 'Hata: ' + error.message;
+      } else {
+        msgEl.className = 'msg success';
+        msgEl.textContent = '✅ E-posta gönderildi! Gelen kutunu kontrol et.';
+      }
+    }
+
+    // Modal dışına tıklayınca kapat
+    document.getElementById('sifreModal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
   </script>
 </body>
 </html>
