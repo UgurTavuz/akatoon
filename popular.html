@@ -8,62 +8,241 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{--bg:#0d0d0f;--bg2:#141418;--bg3:#1c1c22;--border:#2a2a35;--red:#e8192c;--text:#e8e8f0;--muted:#888899;--gold:#f5c842;}
+    :root{--bg:#0d0d0f;--bg2:#141418;--bg3:#1c1c22;--border:#2a2a35;--red:#e8192c;--red-dark:#b01020;--text:#e8e8f0;--muted:#888899;--gold:#f5c842;}
     body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
     a{color:inherit;text-decoration:none;}
     nav{background:rgba(13,13,15,0.96);border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
     .logo{font-family:'Bebas Neue';font-size:26px;}.logo span{color:var(--red);}
     .container{max-width:1280px;margin:0 auto;padding:32px 24px 60px;}
-    h1{font-family:'Bebas Neue';font-size:40px;letter-spacing:1px;margin-bottom:8px;}
-    .subtitle{color:var(--muted);font-size:14px;margin-bottom:24px;}
-    .top3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
-    .top-card{background:var(--bg2);border-radius:12px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:transform .2s;position:relative;}
-    .top-card:hover{transform:translateY(-4px);}
-    .top-num{position:absolute;top:12px;left:12px;font-family:'Bebas Neue';font-size:40px;color:var(--gold);text-shadow:0 2px 8px rgba(0,0,0,.8);z-index:1;}
-    .top-cover{height:280px;background:var(--bg3);display:flex;align-items:flex-end;padding:16px;overflow:hidden;position:relative;}
-    .top-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-    .top-cover-overlay{position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.8));}
-    .top-title{position:relative;z-index:1;font-weight:700;font-size:15px;}
-    .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;}
-    .card{background:var(--bg2);border-radius:10px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:transform .2s,border-color .2s;}
-    .card:hover{transform:translateY(-4px);border-color:var(--red);}
-    .card-cover{height:220px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:32px;color:rgba(255,255,255,0.3);overflow:hidden;position:relative;}
-    .card-cover img{width:100%;height:100%;object-fit:cover;}
-    .rank-badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);color:var(--gold);font-family:'Bebas Neue';font-size:18px;padding:2px 8px;border-radius:6px;}
-    .card-info{padding:10px 12px;}
-    .card-info h3{font-size:13px;font-weight:600;margin-bottom:4px;}
-    .card-rating{color:var(--gold);font-size:11px;}
-    .empty{text-align:center;padding:60px;color:var(--muted);grid-column:1/-1;}
-    .empty h2{font-family:'Bebas Neue';font-size:32px;margin-bottom:8px;}
-    .section-title{font-family:'Bebas Neue';font-size:26px;letter-spacing:1px;margin-bottom:16px;}
-    @media(max-width:600px){.top3{grid-template-columns:1fr;}}
+
+    /* BAŞLIK */
+    .page-header{margin-bottom:28px;}
+    .page-header h1{font-family:'Bebas Neue';font-size:44px;letter-spacing:1px;margin-bottom:6px;}
+    .page-header p{color:var(--muted);font-size:14px;}
+
+    /* PERIYOT SEKMELERİ */
+    .period-tabs{display:flex;gap:6px;margin-bottom:28px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:6px;flex-wrap:wrap;}
+    .period-tab{flex:1;min-width:100px;padding:10px 16px;border:none;background:none;color:var(--muted);font-size:13px;font-weight:700;border-radius:8px;cursor:pointer;transition:all .2s;text-align:center;}
+    .period-tab.active{background:var(--red);color:#fff;}
+    .period-tab:hover:not(.active){background:var(--bg3);color:var(--text);}
+
+    /* TOP 3 PODIUM */
+    .podium{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:12px;margin-bottom:36px;align-items:end;}
+    .podium-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;}
+    .podium-card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(232,25,44,0.2);}
+    .podium-card.rank-1{border-color:var(--gold);}
+    .podium-card.rank-2{border-color:#9090ff;}
+    .podium-card.rank-3{border-color:#ff9632;}
+    .podium-cover{height:260px;position:relative;overflow:hidden;background:var(--bg3);}
+    .podium-card.rank-1 .podium-cover{height:300px;}
+    .podium-cover img{width:100%;height:100%;object-fit:cover;}
+    .podium-cover-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:40px;color:rgba(255,255,255,.3);}
+    .podium-overlay{position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.85));}
+    .podium-rank{position:absolute;top:10px;left:10px;font-family:'Bebas Neue';font-size:48px;line-height:1;}
+    .rank-1 .podium-rank{color:var(--gold);text-shadow:0 2px 8px rgba(0,0,0,.8);}
+    .rank-2 .podium-rank{color:#9090ff;text-shadow:0 2px 8px rgba(0,0,0,.8);}
+    .rank-3 .podium-rank{color:#ff9632;text-shadow:0 2px 8px rgba(0,0,0,.8);}
+    .podium-info{position:absolute;bottom:0;left:0;right:0;padding:14px;}
+    .podium-title{font-weight:700;font-size:14px;color:#fff;margin-bottom:4px;}
+    .podium-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.7);}
+    .podium-score{font-weight:700;color:var(--gold);}
+
+    /* SIRALAMA LİSTESİ */
+    .section-title{font-family:'Bebas Neue';font-size:28px;letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+    .rank-list{display:flex;flex-direction:column;gap:6px;}
+    .rank-item{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--bg2);border-radius:10px;cursor:pointer;border:1px solid transparent;transition:all .2s;}
+    .rank-item:hover{background:var(--bg3);border-color:var(--border);}
+    .rank-item.top3{border-color:rgba(245,200,66,0.2);background:rgba(245,200,66,0.03);}
+    .rank-num{font-family:'Bebas Neue';font-size:24px;min-width:36px;text-align:center;}
+    .rank-num.gold{color:var(--gold);}
+    .rank-num.silver{color:#9090ff;}
+    .rank-num.bronze{color:#ff9632;}
+    .rank-num.normal{color:var(--muted);}
+    .rank-cover{width:48px;height:64px;border-radius:6px;background:var(--bg3);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:12px;color:var(--muted);}
+    .rank-cover img{width:100%;height:100%;object-fit:cover;}
+    .rank-info{flex:1;min-width:0;}
+    .rank-baslik{font-weight:700;font-size:14px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .rank-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+    .rank-tur{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:2px 8px;border-radius:4px;font-size:11px;}
+    .rank-puan{color:var(--gold);font-size:12px;font-weight:700;}
+    .rank-right{text-align:right;flex-shrink:0;}
+    .rank-skor{font-family:'Bebas Neue';font-size:22px;color:var(--red);}
+    .rank-skor-label{font-size:10px;color:var(--muted);}
+
+    /* TREND OKLAR */
+    .trend-up{color:#22c55e;font-size:12px;}
+    .trend-down{color:var(--red);font-size:12px;}
+    .trend-same{color:var(--muted);font-size:12px;}
+
+    .loading{text-align:center;padding:60px;color:var(--muted);}
+    .empty{text-align:center;padding:60px;color:var(--muted);}
+
+    @media(max-width:768px){
+      .podium{grid-template-columns:1fr;align-items:start;}
+      .podium-card.rank-1 .podium-cover,.podium-cover{height:200px;}
+      .period-tab{font-size:12px;padding:8px 10px;}
+    }
+    @media(max-width:480px){.period-tabs{gap:4px;}.period-tab{min-width:70px;}}
   </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html" class="logo"><span>Aka</span>Toon</a>
-    <span style="color:var(--muted);font-size:14px">/ Popüler</span>
-  </nav>
-  <div class="container">
-    <h1>🔥 Popüler</h1>
-    <p class="subtitle">En çok sevilen ve okunan içerikler</p>
-    <div id="top3Area"></div>
-    <div class="section-title">📊 Tüm Sıralama</div>
-    <div class="cards-grid" id="grid"><div class="empty"><h2>Yükleniyor...</h2></div></div>
+<nav>
+  <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+  <a href="index.html" style="color:var(--muted);font-size:13px">← Ana Sayfa</a>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <h1>🏆 Popülerlik Sıralaması</h1>
+    <p>En çok okunan ve sevilen içerikler</p>
   </div>
-  <script>
-    const sb=supabase.createClient('https://wxfmatafacdjhiurowut.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE');
-    async function load(){
-      const{data}=await sb.from('manga').select('*').order('puan',{ascending:false});
-      const grid=document.getElementById('grid');
-      if(!data||!data.length){grid.innerHTML='<div class="empty"><h2>😔 Henüz İçerik Yok</h2><p>Yakında eklenecek!</p></div>';return;}
-      // TOP 3
-      const top3=data.slice(0,3);
-      document.getElementById('top3Area').innerHTML=`<div class="top3">${top3.map((m,i)=>`<div class="top-card" onclick="location.href='detay.html?manga=${m.id}'"><span class="top-num">#${i+1}</span><div class="top-cover">${m.kapak_url?`<img src="${m.kapak_url}"/><div class="top-cover-overlay"></div>`:''}<span class="top-title">${m.baslik}</span></div></div>`).join('')}</div>`;
-      // TÜMÜ
-      grid.innerHTML=data.map((m,i)=>`<div class="card" onclick="location.href='detay.html?manga=${m.id}'"><div class="card-cover">${m.kapak_url?`<img src="${m.kapak_url}" loading="lazy"/>`:'<span>'+m.baslik.substring(0,3).toUpperCase()+'</span>'}<div class="rank-badge">#${i+1}</div></div><div class="card-info"><h3>${m.baslik}</h3>${m.puan?'<div class="card-rating">⭐ '+m.puan+'</div>':''}</div></div>`).join('');
-    }
-    load();
-  </script>
+
+  <!-- PERIYOT SEKMELERİ -->
+  <div class="period-tabs">
+    <button class="period-tab active" onclick="periyotSec('gunluk', this)">📅 Günlük</button>
+    <button class="period-tab" onclick="periyotSec('haftalik', this)">📆 Haftalık</button>
+    <button class="period-tab" onclick="periyotSec('aylik', this)">🗓️ Aylık</button>
+    <button class="period-tab" onclick="periyotSec('tum', this)">🏆 Tüm Zamanlar</button>
+  </div>
+
+  <!-- TOP 3 PODIUM -->
+  <div id="podiumArea"></div>
+
+  <!-- TAM SIRALAMA -->
+  <div class="section-title" id="listTitle">📊 Tam Sıralama</div>
+  <div id="rankList"><div class="loading">⏳ Yükleniyor...</div></div>
+</div>
+
+<script>
+const sb = supabase.createClient(
+  'https://wxfmatafacdjhiurowut.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE'
+);
+
+let aktifPeriyot = 'gunluk';
+
+const periyotLabels = {
+  gunluk: 'Bugünün En Popülerleri',
+  haftalik: 'Bu Haftanın En Popülerleri',
+  aylik: 'Bu Ayın En Popülerleri',
+  tum: 'Tüm Zamanların En Popülerleri'
+};
+
+function periyotSec(p, el) {
+  aktifPeriyot = p;
+  document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  load();
+}
+
+async function load() {
+  document.getElementById('rankList').innerHTML = '<div class="loading">⏳ Yükleniyor...</div>';
+  document.getElementById('podiumArea').innerHTML = '';
+  document.getElementById('listTitle').textContent = '📊 ' + periyotLabels[aktifPeriyot];
+
+  // Periyota göre tarih filtresi
+  const now = new Date();
+  let sinir = null;
+  if (aktifPeriyot === 'gunluk') {
+    sinir = new Date(now); sinir.setHours(0,0,0,0);
+  } else if (aktifPeriyot === 'haftalik') {
+    sinir = new Date(now); sinir.setDate(now.getDate() - 7);
+  } else if (aktifPeriyot === 'aylik') {
+    sinir = new Date(now); sinir.setMonth(now.getMonth() - 1);
+  }
+
+  // Okuma geçmişinden popülerlik hesapla
+  let okuma = [];
+  if (sinir) {
+    const { data } = await sb.from('okuma_gecmisi').select('manga_id, updated_at').gte('updated_at', sinir.toISOString());
+    okuma = data || [];
+  }
+
+  // Manga verilerini çek
+  const { data: mangalar } = await sb.from('manga').select('*');
+  if (!mangalar || !mangalar.length) {
+    document.getElementById('rankList').innerHTML = '<div class="empty">Henüz içerik yok.</div>';
+    return;
+  }
+
+  // Skor hesapla
+  const skorlar = {};
+  mangalar.forEach(m => { skorlar[m.id] = { manga: m, okuma: 0, puan: m.puan || 0 }; });
+
+  if (sinir) {
+    // Periyot modunda okuma sayısına göre
+    okuma.forEach(o => { if (skorlar[o.manga_id]) skorlar[o.manga_id].okuma++; });
+    mangalar.forEach(m => {
+      skorlar[m.id].skor = (skorlar[m.id].okuma * 10) + (m.puan || 0);
+    });
+  } else {
+    // Tüm zamanlar: puan bazlı
+    mangalar.forEach(m => { skorlar[m.id].skor = (m.puan || 0) * 10; });
+  }
+
+  const sirali = Object.values(skorlar).sort((a, b) => b.skor - a.skor);
+
+  if (!sirali.length) {
+    document.getElementById('rankList').innerHTML = '<div class="empty">Bu dönemde veri yok.</div>';
+    return;
+  }
+
+  // PODIUM (top 3)
+  const top3 = sirali.slice(0, 3);
+  const podiumSirasi = top3.length >= 3 ? [top3[1], top3[0], top3[2]] : top3; // 2-1-3 düzeni
+  document.getElementById('podiumArea').innerHTML = top3.length >= 1 ? `
+    <div class="podium" style="grid-template-columns:${top3.length >= 3 ? '1fr 1.1fr 1fr' : top3.map(()=>'1fr').join(' ')}">
+      ${podiumSirasi.map((s, idx) => {
+        const gercekRank = top3.indexOf(s) + 1;
+        const m = s.manga;
+        return `
+        <div class="podium-card rank-${gercekRank}" onclick="location.href='detay.html?manga=${m.id}'">
+          <div class="podium-cover">
+            ${m.kapak_url ? `<img src="${m.kapak_url}" loading="lazy"/>` : `<div class="podium-cover-placeholder">${m.baslik.substring(0,3).toUpperCase()}</div>`}
+            <div class="podium-overlay"></div>
+            <div class="podium-rank">#${gercekRank}</div>
+            <div class="podium-info">
+              <div class="podium-title">${m.baslik}</div>
+              <div class="podium-meta">
+                <span class="podium-score">⭐ ${m.puan || '-'}</span>
+                <span>${m.tur}</span>
+                ${sinir ? `<span>📖 ${s.okuma} okuma</span>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  // TAM LİSTE
+  const rankColors = ['gold','silver','bronze'];
+  document.getElementById('rankList').innerHTML = `<div class="rank-list">
+    ${sirali.map((s, i) => {
+      const m = s.manga;
+      const numClass = i < 3 ? ['gold','silver','bronze'][i] : 'normal';
+      return `
+      <div class="rank-item ${i<3?'top3':''}" onclick="location.href='detay.html?manga=${m.id}'">
+        <div class="rank-num ${numClass}">${i+1}</div>
+        <div class="rank-cover">
+          ${m.kapak_url ? `<img src="${m.kapak_url}" loading="lazy"/>` : m.baslik.substring(0,3).toUpperCase()}
+        </div>
+        <div class="rank-info">
+          <div class="rank-baslik">${m.baslik}</div>
+          <div class="rank-meta">
+            <span class="rank-tur">${m.tur}</span>
+            ${m.puan ? `<span class="rank-puan">⭐ ${m.puan}</span>` : ''}
+            ${m.durum ? `<span class="rank-tur">${m.durum === 'devam' ? '▶ Devam' : m.durum === 'tamamlandi' ? '✓ Bitti' : '⏸'}</span>` : ''}
+          </div>
+        </div>
+        <div class="rank-right">
+          ${sinir ? `<div class="rank-skor">${s.okuma}</div><div class="rank-skor-label">okuma</div>` : `<div class="rank-skor">${m.puan || '-'}</div><div class="rank-skor-label">puan</div>`}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+load();
+</script>
 </body>
 </html>
