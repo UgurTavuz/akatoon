@@ -118,6 +118,10 @@
     .liste-item:hover { background: var(--bg3); }
     .liste-item.selected { color: var(--red); font-weight: 600; }
 
+    .bolum-puan-btn { background: var(--bg3); border: 1px solid var(--border); font-size: 20px; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: transform .15s; }
+    .bolum-puan-btn:hover { transform: scale(1.2); }
+    .bolum-puan-btn.secili { background: rgba(245,200,66,0.2); border-color: var(--gold); transform: scale(1.15); }
+
     .msg { padding: 8px 14px; border-radius: 8px; font-size: 12px; display: none; margin-top: 8px; }
     .msg.error { background: rgba(232,25,44,0.1); border: 1px solid rgba(232,25,44,0.3); color: #ff6b7a; display: block; }
     .msg.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; display: block; }
@@ -160,6 +164,23 @@
 <div class="ad-reader">Reklam</div>
 
 <div class="bolum-yorumlar" id="bolumYorumlar" style="display:none">
+
+  <!-- BÖLÜM PUANLAMA -->
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:10px">⭐ Bu Bölümü Puanla</div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <div id="bolumPuanYildizlar" style="display:flex;gap:4px">
+        <button class="bolum-puan-btn" data-p="1" onclick="bolumPuanSec(1)">⭐</button>
+        <button class="bolum-puan-btn" data-p="2" onclick="bolumPuanSec(2)">⭐</button>
+        <button class="bolum-puan-btn" data-p="3" onclick="bolumPuanSec(3)">⭐</button>
+        <button class="bolum-puan-btn" data-p="4" onclick="bolumPuanSec(4)">⭐</button>
+        <button class="bolum-puan-btn" data-p="5" onclick="bolumPuanSec(5)">⭐</button>
+      </div>
+      <span id="bolumPuanOrtalama" style="color:var(--gold);font-size:13px;font-weight:600"></span>
+    </div>
+    <div id="bolumPuanMsg" style="font-size:12px;color:var(--muted);margin-top:6px"></div>
+  </div>
+
   <h3>💬 Bu Bölümün Yorumları</h3>
   <div class="yorum-form-mini" id="yorumFormBolum">
     <textarea class="yorum-input-mini" id="bolumYorumText" placeholder="Bu bölüm hakkında ne düşünüyorsunuz?"></textarea>
@@ -323,6 +344,9 @@ function renderBolum() {
 
   document.getElementById('bolumYorumlar').style.display = 'block';
   loadBolumYorumlari();
+  mevcutBolumPuan = 0;
+  guncelleYildizlar(0);
+  loadBolumPuan();
 }
 
 // ── MANGA MODU ──
@@ -488,6 +512,43 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('#bolumPanel') && !e.target.closest('#bolumPanelBtn')) document.getElementById('bolumPanel').classList.remove('open');
   if (!e.target.closest('#listeDropdown') && !e.target.closest('#listeBtn')) document.getElementById('listeDropdown').classList.remove('open');
 });
+
+// ── BÖLÜM PUANLAMA ──
+let mevcutBolumPuan = 0;
+
+async function loadBolumPuan() {
+  if (!mangaId || !bolumNo) return;
+  // Ortalama puan
+  const { data } = await sb.from('bolum_puanlar').select('puan').eq('manga_id', mangaId).eq('bolum_no', bolumNo);
+  if (data && data.length) {
+    const ort = (data.reduce((a, b) => a + b.puan, 0) / data.length).toFixed(1);
+    document.getElementById('bolumPuanOrtalama').textContent = `Ortalama: ${ort} (${data.length} oy)`;
+  } else {
+    document.getElementById('bolumPuanOrtalama').textContent = 'Henüz oy yok';
+  }
+  // Kullanıcının kendi puanı
+  if (currentUser) {
+    const { data: kulOy } = await sb.from('bolum_puanlar').select('puan').eq('manga_id', mangaId).eq('bolum_no', bolumNo).eq('user_id', currentUser.id).single();
+    if (kulOy) { mevcutBolumPuan = kulOy.puan; guncelleYildizlar(kulOy.puan); }
+  }
+}
+
+function guncelleYildizlar(p) {
+  document.querySelectorAll('.bolum-puan-btn').forEach((b, i) => {
+    if (i < p) b.classList.add('secili'); else b.classList.remove('secili');
+  });
+}
+
+async function bolumPuanSec(p) {
+  if (!currentUser) { window.location.href = 'giris.html'; return; }
+  mevcutBolumPuan = p;
+  guncelleYildizlar(p);
+  const { error } = await sb.from('bolum_puanlar').upsert([{ manga_id: mangaId, bolum_no: bolumNo, user_id: currentUser.id, puan: p }], { onConflict: 'manga_id,bolum_no,user_id' });
+  const msgEl = document.getElementById('bolumPuanMsg');
+  if (error) { msgEl.textContent = '❌ Hata: ' + error.message; msgEl.style.color = 'var(--red)'; }
+  else { msgEl.textContent = '✅ Puanın kaydedildi!'; msgEl.style.color = '#4ade80'; setTimeout(() => msgEl.textContent = '', 2000); }
+  await loadBolumPuan();
+}
 
 function timeAgo(d) { const s = (Date.now() - new Date(d)) / 1000; if (s < 3600) return Math.floor(s / 60) + ' dk önce'; if (s < 86400) return Math.floor(s / 3600) + ' sa önce'; return Math.floor(s / 86400) + ' gün önce'; }
 function showMsg(id, tip, text) { const el = document.getElementById(id); el.className = 'msg ' + tip; el.textContent = text; setTimeout(() => el.className = 'msg', 5000); }
