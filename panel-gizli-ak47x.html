@@ -164,6 +164,8 @@
       <div class="sidebar-item" onclick="showPage('kullanicilar')">👥 Kullanıcılar</div>
       <div class="sidebar-item" onclick="showPage('banlama')">🚫 Banlama</div>
       <div class="sidebar-item" onclick="showPage('bildirim')">🔔 Bildirim Gönder</div>
+      <div class="sidebar-title" style="margin-top:8px">Personel</div>
+      <div class="sidebar-item" onclick="showPage('personel')">👤 Personel Yönetimi</div>
       <div class="sidebar-title" style="margin-top:8px">Sistem</div>
       <div class="sidebar-item" onclick="showPage('yedekleme')">💾 Yedekleme</div>
     </div>
@@ -303,6 +305,19 @@
                 <div class="kategori-item" onclick="toggleKategori(this,'Vampir')"><span>🧛 Vampir</span></div>
                 <div class="kategori-item" onclick="toggleKategori(this,'Zombi')"><span>🧟 Zombi</span></div>
                 <div class="kategori-item" onclick="toggleKategori(this,'İntikam')"><span>😤 İntikam</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Yaşam Dilimi')"><span>☕ Yaşam Dilimi</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Gerilim')"><span>😰 Gerilim</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Post-Apokaliptik')"><span>💥 Post-Apokaliptik</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Distopya')"><span>🏚️ Distopya</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Oyun')"><span>🎮 Oyun</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Josei')"><span>💄 Josei</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Yemek')"><span>🍜 Yemek</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Hayatta Kalma')"><span>🏕️ Hayatta Kalma</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Mitoloji')"><span>⚡ Mitoloji</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Mecha')"><span>🤖 Mecha</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Şeytan')"><span>😈 Şeytan</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Ninja')"><span>🥷 Ninja</span></div>
+                <div class="kategori-item" onclick="toggleKategori(this,'Ağlatan')"><span>😭 Ağlatan</span></div>
               </div>
             </div>
             <div style="margin-top:14px"><button class="btn btn-primary" onclick="mangaEkle()">✅ Ekle</button></div>
@@ -394,6 +409,19 @@
                 <div class="kategori-item" onclick="toggleKategoriD(this,'Müzik')"><span>🎵 Müzik</span></div>
                 <div class="kategori-item" onclick="toggleKategoriD(this,'Dövüş Sanatları')"><span>🥋 Dövüş Sanatları</span></div>
                 <div class="kategori-item" onclick="toggleKategoriD(this,'Dedektif')"><span>🔍 Dedektif</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Yaşam Dilimi')"><span>☕ Yaşam Dilimi</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Gerilim')"><span>😰 Gerilim</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Post-Apokaliptik')"><span>💥 Post-Apokaliptik</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Distopya')"><span>🏚️ Distopya</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Oyun')"><span>🎮 Oyun</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Josei')"><span>💄 Josei</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Yemek')"><span>🍜 Yemek</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Hayatta Kalma')"><span>🏕️ Hayatta Kalma</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Mitoloji')"><span>⚡ Mitoloji</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Mecha')"><span>🤖 Mecha</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Şeytan')"><span>😈 Şeytan</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Ninja')"><span>🥷 Ninja</span></div>
+                <div class="kategori-item" onclick="toggleKategoriD(this,'Ağlatan')"><span>😭 Ağlatan</span></div>
               </div>
             </div>
             <div class="form-group"><label>SEO Başlık</label><input type="text" id="dSeoBaslik" placeholder="Manga adı – Türkçe Oku | AkaToon" /></div>
@@ -411,7 +439,7 @@
             </div>
             <div class="table-wrap">
               <table>
-                <thead><tr><th>Bölüm</th><th>Başlık</th><th>Sayfa</th><th>Eklenme</th><th>İşlem</th></tr></thead>
+                <thead><tr><th>Bölüm</th><th>Başlık</th><th>Sayfa</th><th>Durum</th><th>Eklenme</th><th>İşlem</th></tr></thead>
                 <tbody id="dunzeleBolumTable"></tbody>
               </table>
             </div>
@@ -517,7 +545,7 @@
         <div class="card">
           <div class="card-header"><h3>Bölümler</h3><button class="btn btn-primary btn-sm" onclick="showPage('bolum-ekle')">➕ Ekle</button></div>
           <div class="form-group" style="margin-bottom:14px"><select id="bolumFilterManga" onchange="loadBolumListesi()"><option value="">Tüm içerikler</option></select></div>
-          <div class="table-wrap"><table><thead><tr><th>Manga</th><th>Bölüm</th><th>Başlık</th><th>Sayfa</th><th>Eklenme</th><th>İşlem</th></tr></thead><tbody id="bolumTableBody"></tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>Manga</th><th>Bölüm</th><th>Başlık</th><th>Sayfa</th><th>Durum</th><th>Eklenme</th><th>İşlem</th></tr></thead><tbody id="bolumTableBody"></tbody></table></div>
         </div>
       </div>
 
@@ -613,6 +641,51 @@
           </div>
           <button class="btn btn-primary" style="margin-top:14px" onclick="bildirimGonder()">🔔 Gönder</button>
           <div class="msg" id="bildMsg"></div>
+        </div>
+      </div>
+
+      <!-- PERSONEL YÖNETİMİ -->
+      <div class="page" id="page-personel">
+        <div class="page-header"><button class="back-btn" onclick="showPage('dashboard')">← Geri</button><h2>👤 Personel Yönetimi</h2></div>
+        <div class="card">
+          <div class="card-header"><h3>Yeni Personel Ekle</h3></div>
+          <div class="form-grid">
+            <div class="form-group"><label>E-posta *</label><input type="text" id="persEmail" placeholder="yazar@email.com" /></div>
+            <div class="form-group"><label>Ad Soyad</label><input type="text" id="persAd" placeholder="Ahmet Yılmaz" /></div>
+            <div class="form-group"><label>Rol</label>
+              <select id="persRol">
+                <option value="yazar">✍️ Yazar</option>
+                <option value="cevirmmen">🌐 Çevirmen</option>
+                <option value="editor">✏️ Editör</option>
+                <option value="moderator">🛡️ Moderatör</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Şifre *</label><input type="password" id="persSifre" placeholder="Geçici şifre" /></div>
+          </div>
+          <div class="form-group"><label>İzinler — Bu kişi neleri görebilsin?</label>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_dashboard" /> Dashboard</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_istatistik" /> İstatistikler</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_manga_ekle" /> İçerik Ekle</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_manga_listesi" /> İçerik Listesi</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_bolum_ekle" /> Bölüm Ekle</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_bolum_listesi" /> Bölüm Listesi</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_yorumlar" /> Yorumlar</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_duyurular" /> Duyurular</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--text)"><input type="checkbox" id="izin_seo" /> SEO</label>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="personelEkle()">👤 Personel Ekle</button>
+          <div class="msg" id="persMsg"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Mevcut Personel</h3></div>
+          <div class="table-wrap"><table><thead><tr><th>Ad</th><th>E-posta</th><th>Rol</th><th>İzinler</th><th>Eklenme</th><th>İşlem</th></tr></thead><tbody id="personelTableBody"></tbody></table></div>
+        </div>
+        <div class="card" style="background:rgba(232,25,44,0.05);border-color:rgba(232,25,44,0.2)">
+          <div style="font-size:13px;color:var(--muted)">
+            ⚠️ <strong style="color:var(--text)">Not:</strong> Personel bu panele giris yaptiğinde yalnizca kendine verilen sayfaları görebilir. İstatistikler, kullanıcı listesi, banlama ve yedekleme gibi hassas bölümlere erişimi yoktur. Sadece sen (admin) tüm panele erişebilirsin.
+          </div>
         </div>
       </div>
 
@@ -848,6 +921,7 @@ function showPage(id){
     'seo':loadSeoSelect,
     'toplu-bolum':loadTopluMangaSelect,
     'bolum-ekle':loadMangaSelect,
+    'personel':loadPersonelList,
     'yedekleme':()=>{}
   };
   if(pages[id]) pages[id]();
@@ -999,9 +1073,20 @@ async function duzenleYukle(){
 async function loadDunzeleBolumler(mangaId){
   const{data}=await sb.from('bolumler').select('*').eq('manga_id',mangaId).order('bolum_no');
   const tbody=document.getElementById('dunzeleBolumTable');
-  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Henüz bölüm yok</td></tr>';return;}
-  tbody.innerHTML=data.map(b=>`<tr><td><strong>Bölüm ${b.bolum_no}</strong></td><td>${b.baslik||'—'}</td><td>${b.sayfalar?.length||0} sayfa</td><td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td><td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSilD('${b.id}',${b.bolum_no})">Sil</button></td></tr>`).join('');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px">Henüz bölüm yok</td></tr>';return;}
+  tbody.innerHTML=data.map(b=>`<tr>
+    <td><strong>Bölüm ${b.bolum_no}</strong></td>
+    <td>${b.baslik||'—'}</td>
+    <td>${b.sayfalar?.length||0} sayfa</td>
+    <td><span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;${b.gizli?'background:rgba(232,25,44,0.12);color:var(--red)':'background:rgba(34,197,94,0.12);color:#4ade80'}">${b.gizli?'🙈 Gizli':'👁️'}</span></td>
+    <td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td>
+    <td style="display:flex;gap:6px">
+      <button class="btn ${b.gizli?'btn-success':'btn-warning'}" style="padding:4px 8px;font-size:11px" onclick="bolumGizleD('${b.id}',${!b.gizli})">${b.gizli?'👁️ Göster':'🙈 Gizle'}</button>
+      <button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSilD('${b.id}',${b.bolum_no})">Sil</button>
+    </td>
+  </tr>`).join('');
 }
+async function bolumGizleD(id,gizli){await sb.from('bolumler').update({gizli}).eq('id',id);loadDunzeleBolumler(duzenleId);}
 
 async function duzenleKapakYukle(input){
   const file=input.files[0];if(!file)return;
@@ -1051,8 +1136,75 @@ async function topluBolumEkle(){
 }
 
 async function loadBolumFilterSelect(){const{data}=await sb.from('manga').select('id,baslik').order('baslik');const sel=document.getElementById('bolumFilterManga');sel.innerHTML='<option value="">Tüm içerikler</option>';if(data)data.forEach(m=>sel.innerHTML+=`<option value="${m.id}">${m.baslik}</option>`);}
-async function loadBolumListesi(){const f=document.getElementById('bolumFilterManga')?.value;let q=sb.from('bolumler').select('*,manga(baslik)').order('created_at',{ascending:false});if(f)q=q.eq('manga_id',f);const{data}=await q;const tbody=document.getElementById('bolumTableBody');if(!data||!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">Bölüm bulunamadı.</td></tr>';return;}tbody.innerHTML=data.map(b=>`<tr><td>${b.manga?.baslik||'?'}</td><td><strong>Bölüm ${b.bolum_no}</strong></td><td>${b.baslik||'—'}</td><td>${b.sayfalar?.length||0}</td><td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td><td><button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSil('${b.id}',${b.bolum_no})">Sil</button></td></tr>`).join('');}
+async function loadBolumListesi(){
+  const f=document.getElementById('bolumFilterManga')?.value;
+  let q=sb.from('bolumler').select('*,manga(baslik)').order('bolum_no',{ascending:true});
+  if(f)q=q.eq('manga_id',f);
+  const{data}=await q;
+  const tbody=document.getElementById('bolumTableBody');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">Bölüm bulunamadı.</td></tr>';return;}
+  tbody.innerHTML=data.map(b=>`<tr>
+    <td>${b.manga?.baslik||'?'}</td>
+    <td><strong>Bölüm ${b.bolum_no}</strong></td>
+    <td>${b.baslik||'—'}</td>
+    <td>${b.sayfalar?.length||0}</td>
+    <td><span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;${b.gizli?'background:rgba(232,25,44,0.12);color:var(--red)':'background:rgba(34,197,94,0.12);color:#4ade80'}">${b.gizli?'🙈 Gizli':'👁️ Görünür'}</span></td>
+    <td style="color:var(--muted);font-size:11px">${new Date(b.created_at).toLocaleDateString('tr-TR')}</td>
+    <td style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn ${b.gizli?'btn-success':'btn-warning'}" style="padding:4px 8px;font-size:11px" onclick="bolumGizle('${b.id}',${!b.gizli})">${b.gizli?'👁️ Göster':'🙈 Gizle'}</button>
+      <button class="btn btn-danger" style="padding:4px 8px;font-size:11px" onclick="bolumSil('${b.id}',${b.bolum_no})">Sil</button>
+    </td>
+  </tr>`).join('');
+}
+async function bolumGizle(id,gizli){await sb.from('bolumler').update({gizli}).eq('id',id);loadBolumListesi();}
 async function bolumSil(id,no){if(!confirm(`Bölüm ${no} silinsin mi?`))return;await sb.from('bolumler').delete().eq('id',id);loadBolumListesi();}
+
+// PERSONEL
+async function personelEkle(){
+  const email=document.getElementById('persEmail').value.trim();
+  const ad=document.getElementById('persAd').value.trim();
+  const rol=document.getElementById('persRol').value;
+  const sifre=document.getElementById('persSifre').value;
+  if(!email||!sifre){showMsg('persMsg','error','E-posta ve şifre zorunlu!');return;}
+  const izinler={
+    dashboard:document.getElementById('izin_dashboard').checked,
+    istatistik:document.getElementById('izin_istatistik').checked,
+    manga_ekle:document.getElementById('izin_manga_ekle').checked,
+    manga_listesi:document.getElementById('izin_manga_listesi').checked,
+    bolum_ekle:document.getElementById('izin_bolum_ekle').checked,
+    bolum_listesi:document.getElementById('izin_bolum_listesi').checked,
+    yorumlar:document.getElementById('izin_yorumlar').checked,
+    duyurular:document.getElementById('izin_duyurular').checked,
+    seo:document.getElementById('izin_seo').checked,
+  };
+  const{error}=await sb.from('personel').insert([{email,ad,rol,sifre_hash:btoa(sifre),izinler}]).catch(()=>{
+    return{error:{message:'⚠️ Supabase\'de personel tablosu yok. SQL çalıştır: CREATE TABLE personel (id uuid default gen_random_uuid() primary key, email text unique, ad text, rol text, sifre_hash text, izinler jsonb default \'{}\'::jsonb, created_at timestamptz default now());'}};
+  });
+  if(error)showMsg('persMsg','error',error.message);
+  else{showMsg('persMsg','success','✅ '+(ad||email)+' ('+rol+') eklendi!');loadPersonelList();}
+}
+async function loadPersonelList(){
+  const{data}=await sb.from('personel').select('*').order('created_at',{ascending:false}).catch(()=>({data:[]}));
+  const tbody=document.getElementById('personelTableBody');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">Henüz personel yok.</td></tr>';return;}
+  const rolRenk={yazar:'#9090ff',cevirmmen:'#4ade80',editor:'var(--gold)',moderator:'var(--red)'};
+  tbody.innerHTML=data.map(p=>{
+    const iz=p.izinler||{};
+    const izStr=Object.entries(iz).filter(([,v])=>v).map(([k])=>k.replace('_',' ')).join(', ')||'Hiçbiri';
+    return`<tr>
+      <td><strong>${p.ad||'—'}</strong></td>
+      <td style="color:var(--muted);font-size:12px">${p.email}</td>
+      <td><span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.07);color:${rolRenk[p.rol]||'var(--text)'}">${p.rol}</span></td>
+      <td style="color:var(--muted);font-size:11px">${izStr}</td>
+      <td style="color:var(--muted);font-size:11px">${new Date(p.created_at).toLocaleDateString('tr-TR')}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-warning" style="padding:4px 8px;font-size:11px" onclick="personelSil('${p.id}')">Sil</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+async function personelSil(id){if(!confirm('Personel silinsin mi?'))return;await sb.from('personel').delete().eq('id',id).catch(()=>{});loadPersonelList();}
+
 
 async function loadSeoSelect(){await loadMangaSelect();}
 async function loadSeoData(){
