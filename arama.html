@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arama – AkaToon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0f; --bg2: #141418; --bg3: #1c1c22; --border: #2a2a35; --red: #e8192c; --red-dark: #b01020; --gold: #f5c842; --text: #e8e8f0; --muted: #888899; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    nav { background: rgba(13,13,15,0.96); border-bottom: 1px solid var(--border); padding: 0 24px; height: 58px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
+    .logo { font-family: 'Bebas Neue'; font-size: 26px; } .logo span { color: var(--red); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+    /* ARAMA KUTUSU */
+    .search-hero { text-align: center; margin-bottom: 32px; }
+    .search-hero h1 { font-family: 'Bebas Neue'; font-size: 42px; margin-bottom: 16px; }
+    .search-hero h1 span { color: var(--red); }
+    .search-wrap { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
+    .search-input { flex: 1; background: var(--bg2); border: 1px solid var(--border); color: var(--text); padding: 13px 18px; border-radius: 10px; font-size: 15px; outline: none; font-family: 'Inter', sans-serif; transition: border-color .2s; }
+    .search-input:focus { border-color: var(--red); }
+    .search-btn { background: var(--red); color: #fff; border: none; padding: 13px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .search-btn:hover { background: var(--red-dark); }
+
+    /* FİLTRELER */
+    .filters-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .filters-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .filters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+    .filter-group label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .filter-select { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .filter-select:focus { border-color: var(--red); }
+
+    /* TÜR BUTONLARI */
+    .tur-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .tur-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; }
+    .tur-btn:hover { border-color: var(--red); color: var(--text); }
+    .tur-btn.active { background: rgba(232,25,44,0.15); border-color: var(--red); color: var(--red); font-weight: 700; }
+
+    .filter-actions { display: flex; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .btn-ara { background: var(--red); color: #fff; border: none; padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .btn-temizle { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-temizle:hover { color: var(--text); border-color: var(--red); }
+
+    /* SONUÇLAR */
+    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+    .results-count { font-size: 14px; color: var(--muted); }
+    .results-count strong { color: var(--text); }
+    .sort-select { background: var(--bg2); border: 1px solid var(--border); color: var(--text); padding: 7px 12px; border-radius: 8px; font-size: 13px; outline: none; cursor: pointer; }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+    .card { background: var(--bg2); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
+    .card:hover { transform: translateY(-4px); border-color: var(--red); box-shadow: 0 8px 30px rgba(232,25,44,0.15); }
+    .card-cover { height: 230px; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue'; font-size: 36px; color: rgba(255,255,255,0.4); position: relative; background: var(--bg3); overflow: hidden; }
+    .card-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .card-badge { position: absolute; top: 8px; right: 8px; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .card-durum { position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .card-durum.devam { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .card-durum.tamamlandi { background: rgba(96,96,255,0.2); color: #9090ff; }
+    .card-info { padding: 12px; }
+    .card-info h3 { font-size: 13px; font-weight: 600; margin-bottom: 6px; line-height: 1.4; }
+    .card-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .genre-tag { background: rgba(232,25,44,0.1); color: var(--red); font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
+    .card-rating { color: var(--gold); font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+    .loading { text-align: center; padding: 40px; color: var(--muted); }
+
+    /* SAYFALAMA */
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 32px; flex-wrap: wrap; }
+    .page-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all .2s; }
+    .page-btn:hover { border-color: var(--red); color: var(--text); }
+    .page-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .page-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    @media (max-width: 600px) {
+      .filters-grid { grid-template-columns: 1fr 1fr; }
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .container { padding: 20px 16px; }
+      .search-hero h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo"><span>Aka</span>Toon</a>
+  <a href="index.html" style="color:var(--muted);font-size:13px;margin-left:8px">← Ana Sayfa</a>
+</nav>
+
+<div class="container">
+  <!-- ARAMA KUTUSU -->
+  <div class="search-hero">
+    <h1>🔍 <span>Arama</span></h1>
+    <div class="search-wrap">
+      <input type="text" class="search-input" id="searchInput" placeholder="Manga veya webtoon adı yazın..." onkeydown="if(event.key==='Enter')ara()" />
+      <button class="search-btn" onclick="ara()">Ara</button>
+    </div>
+  </div>
+
+  <!-- FİLTRELER -->
+  <div class="filters-card">
+    <div class="filters-title" onclick="toggleFilters()">
+      <span>⚙️ Gelişmiş Filtreler</span>
+      <span id="filterToggleIcon">▼</span>
+    </div>
+    <div id="filtersBody">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label>Tür</label>
+          <select class="filter-select" id="fTur">
+            <option value="">Tümü</option>
+            <option value="manga">Manga</option>
+            <option value="webtoon">Webtoon</option>
+            <option value="manhua">Manhua</option>
+            <option value="manhwa">Manhwa</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Durum</label>
+          <select class="filter-select" id="fDurum">
+            <option value="">Tümü</option>
+            <option value="devam">Devam Ediyor</option>
+            <option value="tamamlandi">Tamamlandı</option>
+            <option value="beklemede">Beklemede</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Min Puan</label>
+          <select class="filter-select" id="fMinPuan">
+            <option value="">Fark etmez</option>
+            <option value="6">6+</option>
+            <option value="7">7+</option>
+            <option value="8">8+</option>
+            <option value="9">9+</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Sıralama</label>
+          <select class="filter-select" id="fSiralama">
+            <option value="puan">En Yüksek Puan</option>
+            <option value="yeni">En Yeni</option>
+            <option value="ad">A-Z</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px">Kategori</label>
+        <div class="tur-wrap" id="turWrap">
+          <button class="tur-btn" onclick="toggleTur(this,'Aksiyon')">⚔️ Aksiyon</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Romantik')">💕 Romantik</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Fantastik')">🔮 Fantastik</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Korku')">👻 Korku</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Komedi')">😂 Komedi</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Dram')">🎭 Dram</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Psikolojik')">🧠 Psikolojik</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Spor')">⚽ Spor</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Shounen')">🔥 Shounen</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Shoujo')">🌸 Shoujo</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Seinen')">💀 Seinen</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Isekai')">🌀 Isekai</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Macera')">🗺️ Macera</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Tarihi')">🏯 Tarihi</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Bilim Kurgu')">🚀 Bilim Kurgu</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Gerilim')">😰 Gerilim</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Hayatta Kalma')">🏕️ Hayatta Kalma</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Oyun')">🎮 Oyun</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Yaşam Dilimi')">☕ Yaşam Dilimi</button>
+          <button class="tur-btn" onclick="toggleTur(this,'Ağlatan')">😭 Ağlatan</button>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn-ara" onclick="ara()">🔍 Ara</button>
+        <button class="btn-temizle" onclick="temizle()">✕ Filtreleri Temizle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SONUÇLAR -->
+  <div class="results-header" id="resultsHeader" style="display:none">
+    <div class="results-count" id="resultsCount"></div>
+  </div>
+  <div id="resultsArea">
+    <div class="empty-state">
+      <div class="icon">🔍</div>
+      <h3>Aramaya Başla</h3>
+      <p>Manga adı yaz veya filtrele</p>
+    </div>
+  </div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://wxfmatafacdjhiurowut.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let seciliTurler = [];
+let mevcutSayfa = 1;
+const SAYFA_BOYUTU = 18;
+let filtersAcik = true;
+
+// URL'den arama parametresi al
+const urlParams = new URLSearchParams(window.location.search);
+const urlQ = urlParams.get('q');
+if (urlQ) {
+  document.getElementById('searchInput').value = urlQ;
+  window.addEventListener('DOMContentLoaded', () => ara());
+}
+
+function toggleFilters() {
+  filtersAcik = !filtersAcik;
+  document.getElementById('filtersBody').style.display = filtersAcik ? 'block' : 'none';
+  document.getElementById('filterToggleIcon').textContent = filtersAcik ? '▼' : '▶';
+}
+
+function toggleTur(btn, tur) {
+  if (seciliTurler.includes(tur)) {
+    seciliTurler = seciliTurler.filter(t => t !== tur);
+    btn.classList.remove('active');
+  } else {
+    seciliTurler.push(tur);
+    btn.classList.add('active');
+  }
+}
+
+function temizle() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('fTur').value = '';
+  document.getElementById('fDurum').value = '';
+  document.getElementById('fMinPuan').value = '';
+  document.getElementById('fSiralama').value = 'puan';
+  seciliTurler = [];
+  document.querySelectorAll('.tur-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('resultsArea').innerHTML = '<div class="empty-state"><div class="icon">🔍</div><h3>Aramaya Başla</h3><p>Manga adı yaz veya filtrele</p></div>';
+  document.getElementById('resultsHeader').style.display = 'none';
+  document.getElementById('pagination').innerHTML = '';
+}
+
+async function ara(sayfa = 1) {
+  mevcutSayfa = sayfa;
+  const q = document.getElementById('searchInput').value.trim();
+  const tur = document.getElementById('fTur').value;
+  const durum = document.getElementById('fDurum').value;
+  const minPuan = document.getElementById('fMinPuan').value;
+  const siralama = document.getElementById('fSiralama').value;
+
+  document.getElementById('resultsArea').innerHTML = '<div class="loading">⏳ Aranıyor...</div>';
+  document.getElementById('resultsHeader').style.display = 'none';
+  document.getElementById('pagination').innerHTML = '';
+
+  let query = sb.from('manga').select('*', { count: 'exact' });
+
+  if (q) query = query.ilike('baslik', `%${q}%`);
+  if (tur) query = query.eq('tur', tur);
+  if (durum) query = query.eq('durum', durum);
+  if (minPuan) query = query.gte('puan', parseFloat(minPuan));
+  if (seciliTurler.length > 0) {
+    seciliTurler.forEach(t => { query = query.ilike('kategori', `%${t}%`); });
+  }
+
+  if (siralama === 'puan') query = query.order('puan', { ascending: false });
+  else if (siralama === 'yeni') query = query.order('created_at', { ascending: false });
+  else if (siralama === 'ad') query = query.order('baslik', { ascending: true });
+
+  const from = (sayfa - 1) * SAYFA_BOYUTU;
+  query = query.range(from, from + SAYFA_BOYUTU - 1);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    document.getElementById('resultsArea').innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>Hata</h3><p>${error.message}</p></div>`;
+    return;
+  }
+
+  document.getElementById('resultsHeader').style.display = 'flex';
+  document.getElementById('resultsCount').innerHTML = `<strong>${count || 0}</strong> sonuç bulundu`;
+
+  if (!data || !data.length) {
+    document.getElementById('resultsArea').innerHTML = '<div class="empty-state"><div class="icon">😔</div><h3>Sonuç Bulunamadı</h3><p>Farklı anahtar kelime veya filtre dene</p></div>';
+    return;
+  }
+
+  document.getElementById('resultsArea').innerHTML = `<div class="cards-grid">${data.map(m => `
+    <div class="card" onclick="window.location='detay.html?manga=${m.id}'">
+      <div class="card-cover">
+        ${m.kapak_url ? `<img src="${m.kapak_url}" loading="lazy" />` : `<span>${m.baslik.substring(0,3).toUpperCase()}</span>`}
+        <div class="card-badge">${m.tur.toUpperCase()}</div>
+        ${m.durum ? `<div class="card-durum ${m.durum}">${m.durum === 'devam' ? '▶ Devam' : m.durum === 'tamamlandi' ? '✓ Bitti' : '⏸ Beklemede'}</div>` : ''}
+      </div>
+      <div class="card-info">
+        <h3>${m.baslik}</h3>
+        <div class="card-meta">
+          ${m.kategori ? `<span class="genre-tag">${m.kategori.split(',')[0].trim()}</span>` : ''}
+        </div>
+        ${m.puan ? `<div class="card-rating">⭐ ${m.puan}</div>` : ''}
+      </div>
+    </div>`).join('')}</div>`;
+
+  // Sayfalama
+  const toplamSayfa = Math.ceil((count || 0) / SAYFA_BOYUTU);
+  if (toplamSayfa > 1) {
+    let paginHtml = '';
+    if (sayfa > 1) paginHtml += `<button class="page-btn" onclick="ara(${sayfa-1})">← Önceki</button>`;
+    for (let i = Math.max(1, sayfa-2); i <= Math.min(toplamSayfa, sayfa+2); i++) {
+      paginHtml += `<button class="page-btn ${i===sayfa?'active':''}" onclick="ara(${i})">${i}</button>`;
+    }
+    if (sayfa < toplamSayfa) paginHtml += `<button class="page-btn" onclick="ara(${sayfa+1})">Sonraki →</button>`;
+    document.getElementById('pagination').innerHTML = paginHtml;
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
