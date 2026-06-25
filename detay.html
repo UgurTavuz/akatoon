@@ -141,6 +141,12 @@
 
   <div class="ad-banner">Reklam</div>
 
+  <!-- BENZER SERİLER (ÖNERİ ALGORİTMASI) -->
+  <div class="section" id="benzerSection" style="display:none">
+    <div class="section-title">🎯 Benzer Seriler</div>
+    <div id="benzerGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px"></div>
+  </div>
+
   <!-- YORUMLAR -->
   <div class="section">
     <div class="section-title">💬 Yorumlar</div>
@@ -212,6 +218,8 @@ async function loadManga() {
       `<span class="kat-tag" onclick="window.location='arama.html?q=${encodeURIComponent(k.trim())}'">${k.trim()}</span>`
     ).join('');
   }
+  // Öneri algoritması
+  loadBenzerSeriler(m);
 }
 
 async function loadBolumler() {
@@ -337,6 +345,44 @@ async function yorumGonder() {
   if (error) showMsg('yorumMsg','error','Hata: '+error.message);
   else { showMsg('yorumMsg','success','✅ Yorumunuz admin onayından sonra yayınlanacak!'); document.getElementById('yorumText').value=''; seciliPuan=0; document.querySelectorAll('.puan-btn').forEach(b=>b.classList.remove('selected')); }
   btn.disabled=false; btn.textContent='Yorum Gönder';
+}
+
+// ── ÖNERİ ALGORİTMASI ──
+async function loadBenzerSeriler(manga) {
+  // Kategorileri al
+  const kategoriler = (manga.kategori || '').split(',').map(k => k.trim()).filter(Boolean);
+  const tur = manga.tur;
+  if (!kategoriler.length && !tur) return;
+
+  // Benzer kategorilerdeki mangaları çek
+  let query = sb.from('manga').select('*').neq('id', mangaId).limit(20);
+  if (tur) query = query.eq('tur', tur);
+
+  const { data: adaylar } = await query;
+  if (!adaylar || !adaylar.length) return;
+
+  // Skor hesapla: ortak kategori sayısına göre
+  const skorlu = adaylar.map(m => {
+    const mKats = (m.kategori || '').split(',').map(k => k.trim());
+    const ortakSayi = kategoriler.filter(k => mKats.includes(k)).length;
+    return { manga: m, skor: ortakSayi * 10 + (m.puan || 0) };
+  });
+
+  // En yüksek skorlu 6 tane
+  const onerilenler = skorlu.sort((a, b) => b.skor - a.skor).slice(0, 6).filter(s => s.skor > 0);
+  if (!onerilenler.length) return;
+
+  document.getElementById('benzerSection').style.display = 'block';
+  document.getElementById('benzerGrid').innerHTML = onerilenler.map(({ manga: m }) => `
+    <div onclick="window.location.href='detay.html?manga=${m.id}'" style="background:var(--bg3);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+      <div style="height:170px;overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:24px;color:var(--red)">
+        ${m.kapak_url ? `<img src="${m.kapak_url}" style="width:100%;height:100%;object-fit:cover" loading="lazy"/>` : m.baslik.substring(0,3).toUpperCase()}
+      </div>
+      <div style="padding:8px 10px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:3px;line-height:1.3">${m.baslik}</div>
+        ${m.puan ? `<div style="color:var(--gold);font-size:11px">⭐ ${m.puan}</div>` : ''}
+      </div>
+    </div>`).join('');
 }
 
 function timeAgo(d){const s=(Date.now()-new Date(d))/1000;if(s<3600)return Math.floor(s/60)+' dk önce';if(s<86400)return Math.floor(s/3600)+' saat önce';return Math.floor(s/86400)+' gün önce';}
