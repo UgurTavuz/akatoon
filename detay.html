@@ -36,8 +36,28 @@
     .rating { color: var(--gold); font-size: 18px; font-weight: 700; }
     .aciklama { color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 600px; }
     .kategori-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .kat-tag { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 3px 10px; border-radius: 6px; font-size: 12px; }
+    .kat-tag { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 3px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all .15s; }
+    .kat-tag:hover { border-color: var(--red); color: var(--red); }
     .action-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+
+    /* EMOJİ REAKSİYON */
+    .reaksiyon-wrap { margin-top: 4px; }
+    .reaksiyon-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+    .reaksiyon-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .reaksiyon-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 20px; padding: 6px 14px; cursor: pointer;
+      font-size: 14px; font-weight: 600; transition: all .2s;
+      color: var(--text); position: relative;
+    }
+    .reaksiyon-btn:hover { border-color: var(--red); transform: scale(1.08); }
+    .reaksiyon-btn.secili { background: rgba(232,25,44,0.15); border-color: var(--red); }
+    .reaksiyon-sayi { font-size: 12px; color: var(--muted); }
+    .reaksiyon-btn.secili .reaksiyon-sayi { color: var(--red); }
+    .reaksiyon-btn .emoji { font-size: 18px; transition: transform .2s; }
+    .reaksiyon-btn:hover .emoji { transform: scale(1.3); }
+
     .section { margin-bottom: 36px; }
     .section-title { font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
     .bolum-list { display: flex; flex-direction: column; gap: 4px; }
@@ -45,16 +65,16 @@
     .bolum-item:hover { background: var(--bg3); border-color: var(--border); }
     .bolum-item.kaldigim { border-color: var(--red) !important; background: rgba(232,25,44,0.05) !important; }
     .bolum-no { font-weight: 700; font-size: 14px; }
-    .bolum-baslik { color: var(--muted); font-size: 13px; }
     .bolum-info { display: flex; align-items: center; gap: 12px; }
     .bolum-sayfa { color: var(--muted); font-size: 12px; }
     .kaldigim-badge { background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+
     /* YORUM */
     .yorum-form { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
     .yorum-form h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
-    .puan-secim { display: flex; gap: 6px; margin-bottom: 12px; }
-    .puan-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 16px; transition: all .2s; }
-    .puan-btn.selected { background: var(--gold); color: #000; border-color: var(--gold); }
+    .puan-secim { display: flex; gap: 6px; margin-bottom: 12px; align-items: center; }
+    .puan-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 18px; transition: all .2s; }
+    .puan-btn.selected { background: var(--gold); color: #000; border-color: var(--gold); transform: scale(1.1); }
     textarea.yorum-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; resize: vertical; min-height: 80px; }
     textarea.yorum-input:focus { border-color: var(--red); }
     .yorum-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 10px; }
@@ -82,7 +102,6 @@
 
 <div class="container" id="content" style="display:none">
   <div class="ad-banner">Reklam</div>
-
   <div class="hero">
     <div class="cover" id="kapak">?</div>
     <div class="info">
@@ -91,6 +110,20 @@
       <div class="rating" id="mangaPuan"></div>
       <p class="aciklama" id="mangaAciklama"></p>
       <div class="kategori-tags" id="kategoriTags"></div>
+
+      <!-- EMOJİ REAKSİYONLAR -->
+      <div class="reaksiyon-wrap">
+        <div class="reaksiyon-label">Tepkini Göster</div>
+        <div class="reaksiyon-row" id="reaksiyonRow">
+          <button class="reaksiyon-btn" onclick="reaksiyonVer('atesh')" id="r_atesh"><span class="emoji">🔥</span><span class="reaksiyon-sayi" id="rs_atesh">0</span></button>
+          <button class="reaksiyon-btn" onclick="reaksiyonVer('kalp')" id="r_kalp"><span class="emoji">❤️</span><span class="reaksiyon-sayi" id="rs_kalp">0</span></button>
+          <button class="reaksiyon-btn" onclick="reaksiyonVer('agla')" id="r_agla"><span class="emoji">😭</span><span class="reaksiyon-sayi" id="rs_agla">0</span></button>
+          <button class="reaksiyon-btn" onclick="reaksiyonVer('sasir')" id="r_sasir"><span class="emoji">😱</span><span class="reaksiyon-sayi" id="rs_sasir">0</span></button>
+          <button class="reaksiyon-btn" onclick="reaksiyonVer('komik')" id="r_komik"><span class="emoji">😂</span><span class="reaksiyon-sayi" id="rs_komik">0</span></button>
+          <button class="reaksiyon-btn" onclick="reaksiyonVer('guz')" id="r_guz"><span class="emoji">🤩</span><span class="reaksiyon-sayi" id="rs_guz">0</span></button>
+        </div>
+      </div>
+
       <div class="action-btns">
         <button class="btn btn-primary" id="okuBtn">📖 Okumaya Başla</button>
         <button class="btn btn-gold" id="istekBtn" onclick="toggleIstek()">♡ İstek Listesi</button>
@@ -111,11 +144,10 @@
   <!-- YORUMLAR -->
   <div class="section">
     <div class="section-title">💬 Yorumlar</div>
-
     <div id="yorumFormDiv" class="yorum-form">
       <h3>Yorum Yap</h3>
       <div class="puan-secim" id="puanSecim">
-        <span style="color:var(--muted);font-size:13px;align-self:center">Puan:</span>
+        <span style="color:var(--muted);font-size:13px">Puan:</span>
         <button class="puan-btn" onclick="puanSec(1)">⭐</button>
         <button class="puan-btn" onclick="puanSec(2)">⭐</button>
         <button class="puan-btn" onclick="puanSec(3)">⭐</button>
@@ -126,10 +158,7 @@
       <div style="margin-top:10px"><button class="btn btn-primary" onclick="yorumGonder()">Yorum Gönder</button></div>
       <div class="msg" id="yorumMsg"></div>
     </div>
-
-    <div id="yorumlarList">
-      <div style="color:var(--muted);text-align:center;padding:20px">Yükleniyor...</div>
-    </div>
+    <div id="yorumlarList"></div>
   </div>
 </div>
 
@@ -140,14 +169,17 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const params = new URLSearchParams(window.location.search);
 const mangaId = params.get('manga');
 let currentUser = null, seciliPuan = 0, istekteVar = false, kaldigimBolum = null;
+let kullaniciReaksiyon = null;
+
+const REAKSIYONLAR = { atesh:'🔥', kalp:'❤️', agla:'😭', sasir:'😱', komik:'😂', guz:'🤩' };
 
 async function init() {
   if (!mangaId) { window.location.href = 'index.html'; return; }
   const { data: { user } } = await sb.auth.getUser();
   currentUser = user;
   updateNavAuth();
-  await Promise.all([loadManga(), loadBolumler(), loadYorumlar()]);
-  if (currentUser) { await loadIstek(); await loadKaldigimBolum(); }
+  await Promise.all([loadManga(), loadBolumler(), loadYorumlar(), loadReaksiyonlar()]);
+  if (currentUser) { await loadIstek(); await loadKaldigimBolum(); await loadKullaniciReaksiyon(); }
   document.getElementById('loading').style.display = 'none';
   document.getElementById('content').style.display = 'block';
   if (!currentUser) {
@@ -159,7 +191,7 @@ function updateNavAuth() {
   const el = document.getElementById('navAuth');
   if (currentUser) {
     const i = (currentUser.user_metadata?.username || currentUser.email)[0].toUpperCase();
-    el.innerHTML = `<a href="ayarlar.html" style="background:var(--red);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${i}</a>`;
+    el.innerHTML = `<a href="profil.html" style="background:var(--red);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${i}</a>`;
   } else {
     el.innerHTML = `<a href="giris.html" style="background:var(--red);color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600">Giriş Yap</a>`;
   }
@@ -172,25 +204,25 @@ async function loadManga() {
   document.getElementById('mangaBaslik').textContent = m.baslik;
   document.getElementById('mangaPuan').textContent = m.puan ? '⭐ ' + m.puan + ' / 10' : '';
   document.getElementById('mangaAciklama').textContent = m.aciklama || '';
-  if (m.kapak_url) { document.getElementById('kapak').innerHTML = `<img src="${m.kapak_url}" />`; }
-  else { document.getElementById('kapak').textContent = m.baslik.substring(0,3).toUpperCase(); }
+  if (m.kapak_url) document.getElementById('kapak').innerHTML = `<img src="${m.kapak_url}" />`;
+  else document.getElementById('kapak').textContent = m.baslik.substring(0,3).toUpperCase();
   document.getElementById('badgeRow').innerHTML = `<span class="badge badge-${m.tur}">${m.tur}</span><span class="badge badge-${m.durum}">${m.durum}</span>`;
   if (m.kategori) {
-    document.getElementById('kategoriTags').innerHTML = m.kategori.split(',').map(k => `<span class="kat-tag">${k.trim()}</span>`).join('');
+    document.getElementById('kategoriTags').innerHTML = m.kategori.split(',').map(k =>
+      `<span class="kat-tag" onclick="window.location='arama.html?q=${encodeURIComponent(k.trim())}'">${k.trim()}</span>`
+    ).join('');
   }
 }
 
 async function loadBolumler() {
-  const { data } = await sb.from('bolumler').select('*').eq('manga_id', mangaId).order('bolum_no');
+  const { data } = await sb.from('bolumler').select('*').eq('manga_id', mangaId).eq('gizli', false).order('bolum_no');
   const el = document.getElementById('bolumList');
   if (!data || !data.length) { el.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px">Henüz bölüm eklenmedi.</div>'; return; }
   document.getElementById('bolumTitle').textContent = `📚 Bölümler (${data.length})`;
   document.getElementById('okuBtn').onclick = () => window.location.href = `oku.html?manga=${mangaId}&bolum=${data[0].bolum_no}`;
   el.innerHTML = data.map(b => `
     <div class="bolum-item ${kaldigimBolum==b.bolum_no?'kaldigim':''}" onclick="window.location.href='oku.html?manga=${mangaId}&bolum=${b.bolum_no}'">
-      <div>
-        <div class="bolum-no">Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</div>
-      </div>
+      <div><div class="bolum-no">Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</div></div>
       <div class="bolum-info">
         ${kaldigimBolum==b.bolum_no?'<span class="kaldigim-badge">📌 Kaldığım Yer</span>':''}
         <span class="bolum-sayfa">${b.sayfalar?.length||0} sayfa</span>
@@ -210,21 +242,66 @@ async function loadIstek() {
   istekteVar = !!data;
   const btn = document.getElementById('istekBtn');
   btn.textContent = istekteVar ? '❤️ İstek Listesinde' : '♡ İstek Listesi';
-  if (istekteVar) btn.classList.add('active');
-  else btn.classList.remove('active');
+  if (istekteVar) btn.classList.add('active'); else btn.classList.remove('active');
 }
 
 async function toggleIstek() {
   if (!currentUser) { window.location.href = 'giris.html'; return; }
-  if (istekteVar) {
-    await sb.from('istek_listesi').delete().eq('user_id', currentUser.id).eq('manga_id', mangaId);
-  } else {
-    await sb.from('istek_listesi').insert([{ user_id: currentUser.id, manga_id: mangaId }]);
-  }
+  if (istekteVar) await sb.from('istek_listesi').delete().eq('user_id', currentUser.id).eq('manga_id', mangaId);
+  else await sb.from('istek_listesi').insert([{ user_id: currentUser.id, manga_id: mangaId }]);
   istekteVar = !istekteVar;
   const btn = document.getElementById('istekBtn');
   btn.textContent = istekteVar ? '❤️ İstek Listesinde' : '♡ İstek Listesi';
   if (istekteVar) btn.classList.add('active'); else btn.classList.remove('active');
+}
+
+// ── EMOJİ REAKSİYONLAR ──
+async function loadReaksiyonlar() {
+  const { data } = await sb.from('reaksiyonlar')
+    .select('tip, count(*)', { count: 'exact' })
+    .eq('manga_id', mangaId)
+    .then(r => r); // fallback
+
+  // Sayıları çek
+  const { data: sayilar } = await sb.from('reaksiyonlar').select('tip').eq('manga_id', mangaId);
+  const counts = {};
+  Object.keys(REAKSIYONLAR).forEach(k => counts[k] = 0);
+  (sayilar || []).forEach(r => { if (counts[r.tip] !== undefined) counts[r.tip]++; });
+  Object.keys(REAKSIYONLAR).forEach(tip => {
+    const el = document.getElementById('rs_' + tip);
+    if (el) el.textContent = counts[tip] || 0;
+  });
+}
+
+async function loadKullaniciReaksiyon() {
+  if (!currentUser) return;
+  const { data } = await sb.from('reaksiyonlar').select('tip').eq('manga_id', mangaId).eq('user_id', currentUser.id).single();
+  if (data) {
+    kullaniciReaksiyon = data.tip;
+    document.getElementById('r_' + data.tip)?.classList.add('secili');
+  }
+}
+
+async function reaksiyonVer(tip) {
+  if (!currentUser) { window.location.href = 'giris.html?return=detay.html?manga=' + mangaId; return; }
+
+  if (kullaniciReaksiyon === tip) {
+    // Aynı reaksiyonu tekrar tıkladı → geri al
+    await sb.from('reaksiyonlar').delete().eq('manga_id', mangaId).eq('user_id', currentUser.id);
+    document.getElementById('r_' + tip)?.classList.remove('secili');
+    kullaniciReaksiyon = null;
+  } else {
+    // Önceki reaksiyonu kaldır
+    if (kullaniciReaksiyon) {
+      document.getElementById('r_' + kullaniciReaksiyon)?.classList.remove('secili');
+    }
+    // Yeni reaksiyonu ekle (upsert)
+    await sb.from('reaksiyonlar').upsert([{ manga_id: mangaId, user_id: currentUser.id, tip }], { onConflict: 'manga_id,user_id' });
+    document.getElementById('r_' + tip)?.classList.add('secili');
+    kullaniciReaksiyon = tip;
+  }
+  // Sayıları güncelle
+  await loadReaksiyonlar();
 }
 
 async function loadYorumlar() {
@@ -257,7 +334,7 @@ async function yorumGonder() {
   btn.disabled=true; btn.textContent='Gönderiliyor...';
   const username = currentUser.user_metadata?.username || currentUser.email.split('@')[0];
   const { error } = await sb.from('yorumlar').insert([{ manga_id: mangaId, user_id: currentUser.id, kullanici_adi: username, yorum: text, puan: seciliPuan||null, onaylandi: false }]);
-  if (error) { showMsg('yorumMsg','error','Hata: '+error.message); }
+  if (error) showMsg('yorumMsg','error','Hata: '+error.message);
   else { showMsg('yorumMsg','success','✅ Yorumunuz admin onayından sonra yayınlanacak!'); document.getElementById('yorumText').value=''; seciliPuan=0; document.querySelectorAll('.puan-btn').forEach(b=>b.classList.remove('selected')); }
   btn.disabled=false; btn.textContent='Yorum Gönder';
 }
