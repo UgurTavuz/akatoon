@@ -18,7 +18,6 @@
     body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.6; min-height: 100vh; }
     a { color: inherit; text-decoration: none; }
 
-    /* NAVBAR */
     .navbar { position: sticky; top: 0; z-index: 100; background: rgba(13,13,15,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
     .nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; gap: 24px; }
     .logo { font-family: 'Bebas Neue'; font-size: 28px; letter-spacing: 1px; flex-shrink: 0; }
@@ -30,33 +29,13 @@
     .search-btn { background: none; border: none; color: var(--muted); cursor: pointer; padding: 6px; border-radius: 6px; }
     .btn-login { background: var(--red); color: #fff; padding: 7px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; }
     .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; margin-left: auto; }
-
-    /* USER AVATAR */
-    .user-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: var(--red); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; cursor: pointer;
-      position: relative;
-    }
-    .user-dropdown {
-      position: absolute; top: 44px; right: 0;
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 8px 0; min-width: 180px;
-      display: none; z-index: 200;
-      box-shadow: 0 8px 30px rgba(0,0,0,.4);
-    }
+    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--red); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; position: relative; }
+    .user-dropdown { position: absolute; top: 44px; right: 0; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 0; min-width: 180px; display: none; z-index: 200; box-shadow: 0 8px 30px rgba(0,0,0,.4); }
     .user-dropdown.open { display: block; }
-    .user-dropdown a, .user-dropdown button {
-      display: block; width: 100%; text-align: left;
-      padding: 10px 16px; color: var(--muted); font-size: 13px;
-      background: none; border: none; cursor: pointer;
-      transition: color .2s, background .2s;
-    }
+    .user-dropdown a, .user-dropdown button { display: block; width: 100%; text-align: left; padding: 10px 16px; color: var(--muted); font-size: 13px; background: none; border: none; cursor: pointer; transition: color .2s, background .2s; }
     .user-dropdown a:hover, .user-dropdown button:hover { color: var(--text); background: var(--bg3); }
     .user-dropdown .divider { border-top: 1px solid var(--border); margin: 4px 0; }
     .user-dropdown .logout { color: var(--red) !important; }
-
     .search-bar { display: none; padding: 10px 24px; background: var(--bg2); border-top: 1px solid var(--border); gap: 10px; }
     .search-bar.open { display: flex; }
     .search-bar input { flex: 1; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 6px; font-size: 14px; outline: none; }
@@ -66,7 +45,6 @@
     .mobile-menu.open { display: flex; }
     .mobile-menu a { color: var(--muted); font-size: 15px; }
 
-    /* HERO */
     .hero { position: relative; max-width: 1280px; margin: 0 auto; padding: 60px 24px; display: flex; align-items: center; gap: 48px; min-height: 420px; overflow: hidden; }
     .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(232,25,44,0.12) 0%, transparent 70%); pointer-events: none; }
     .hero-content { flex: 1; z-index: 1; }
@@ -83,28 +61,24 @@
     .hero-image { z-index: 1; }
     .hero-img-placeholder { width: 240px; height: 340px; background: linear-gradient(135deg, #1c1c22, #2a2a35); border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue'; font-size: 48px; color: var(--red); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
 
-    /* AD */
     .ad-banner { max-width: 1280px; margin: 0 auto 8px; padding: 0 24px; }
     .ad-banner > span { display: flex; align-items: center; justify-content: center; background: var(--bg2); border: 1px dashed var(--border); color: var(--muted); font-size: 12px; height: 90px; border-radius: 8px; }
 
-    /* SECTION */
     .section { max-width: 1280px; margin: 0 auto; padding: 40px 24px; }
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
     .section-header h2 { font-family: 'Bebas Neue'; font-size: 26px; letter-spacing: 1px; }
     .see-all { color: var(--red); font-size: 13px; font-weight: 600; }
 
-    /* UPDATES */
     .updates-list { display: flex; flex-direction: column; gap: 2px; }
     .update-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--bg2); border-radius: 8px; cursor: pointer; border: 1px solid transparent; transition: all .2s; }
     .update-item:hover { background: var(--bg3); border-color: var(--border); }
-    .update-cover { width: 44px; height: 44px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue'; font-size: 13px; color: #fff; flex-shrink: 0; background: var(--bg3); }
+    .update-cover { width: 44px; height: 44px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue'; font-size: 13px; color: #fff; flex-shrink: 0; background: var(--bg3); overflow: hidden; }
     .update-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
     .update-title { font-weight: 600; font-size: 14px; }
     .update-chapter { color: var(--muted); font-size: 12px; }
     .update-time { color: var(--muted); font-size: 12px; flex-shrink: 0; }
     .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
 
-    /* CARDS */
     .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
     .card { background: var(--bg2); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: transform .2s, border-color .2s, box-shadow .2s; }
     .card:hover { transform: translateY(-4px); border-color: var(--red); box-shadow: 0 8px 30px rgba(232,25,44,0.15); }
@@ -115,15 +89,12 @@
     .card-info h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
     .card-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
     .genre-tag { background: rgba(232,25,44,0.12); color: var(--red); font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
-    .chapter-count { color: var(--muted); font-size: 11px; }
     .card-rating { color: var(--gold); font-size: 12px; font-weight: 600; }
 
-    /* GENRE */
     .genre-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .genre-btn { display: flex; align-items: center; justify-content: center; padding: 16px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 1px solid var(--border); background: var(--bg2); transition: all .15s; gap: 8px; }
     .genre-btn:hover { transform: translateY(-2px); border-color: var(--red); background: rgba(232,25,44,0.08); }
 
-    /* FOOTER */
     .footer { background: var(--bg2); border-top: 1px solid var(--border); margin-top: 40px; }
     .footer-inner { max-width: 1280px; margin: 0 auto; padding: 48px 24px; display: flex; gap: 64px; }
     .footer-logo { flex: 1; }
@@ -140,98 +111,15 @@
     .footer-bottom { border-top: 1px solid var(--border); padding: 16px 24px; text-align: center; }
     .footer-bottom p { color: var(--muted); font-size: 12px; }
 
+    .scroll-top { position: fixed; bottom: 28px; right: 20px; width: 46px; height: 46px; background: var(--red); color: #fff; border: none; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(232,25,44,0.4); opacity: 0; transform: translateY(20px); transition: opacity .3s, transform .3s; z-index: 999; }
+    .scroll-top.visible { opacity: 1; transform: translateY(0); }
+    .scroll-top:hover { background: var(--red-dark); }
 
-    /* === YUKARI ÇIK BUTONU === */
-    .scroll-top {
-      position: fixed;
-      bottom: 28px;
-      right: 20px;
-      width: 46px;
-      height: 46px;
-      background: var(--red);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(232,25,44,0.4);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity .3s, transform .3s;
-      z-index: 999;
-    }
-    .scroll-top.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .scroll-top:hover {
-      background: var(--red-dark);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 28px rgba(232,25,44,0.5);
-    }
-
-    /* === BÜYÜK EKRAN (1440px+) === */
-    @media (min-width: 1440px) {
-      .nav-inner, .hero, .section, .ad-banner { max-width: 1440px; }
-      .cards-grid { grid-template-columns: repeat(6, 1fr); }
-      .hero-title { font-size: 90px; }
-      .hero-img-placeholder { width: 300px; height: 420px; }
-    }
-
-    /* === LAPTOP/PC (1024px-1440px) === */
-    @media (min-width: 1024px) and (max-width: 1439px) {
-      .cards-grid { grid-template-columns: repeat(5, 1fr); }
-    }
-
-    /* === TABLET YATAY (768px-1024px) === */
-    @media (min-width: 768px) and (max-width: 1023px) {
-      .nav-inner { gap: 16px; }
-      .nav-links { gap: 16px; }
-      .nav-links a { font-size: 13px; }
-      .cards-grid { grid-template-columns: repeat(4, 1fr); }
-      .genre-grid { grid-template-columns: repeat(4, 1fr); }
-      .hero { padding: 40px 24px; gap: 32px; }
-      .hero-title { font-size: 56px; }
-      .hero-img-placeholder { width: 200px; height: 280px; }
-      .webtoon-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-
-    /* === TABLET DİKEY (600px-768px) === */
-    @media (min-width: 600px) and (max-width: 767px) {
-      .nav-links, .nav-right { display: none; }
-      .hamburger { display: block; }
-      .hero { flex-direction: column; padding: 32px 24px; }
-      .hero-image { display: none; }
-      .cards-grid { grid-template-columns: repeat(3, 1fr); }
-      .genre-grid { grid-template-columns: repeat(3, 1fr); }
-      .webtoon-grid { grid-template-columns: repeat(3, 1fr); }
-      .footer-inner { flex-direction: column; gap: 32px; }
-      .footer-links { flex-wrap: wrap; gap: 24px; }
-    }
-
-    /* === MOBİL (max 600px) === */
-    @media (max-width: 599px) {
-      .nav-links, .nav-right { display: none; }
-      .hamburger { display: block; }
-      .hero { flex-direction: column; padding: 24px 16px; }
-      .hero-image { display: none; }
-      .hero-title { font-size: 42px; }
-      .cards-grid { grid-template-columns: repeat(2, 1fr); }
-      .genre-grid { grid-template-columns: repeat(2, 1fr); }
-      .webtoon-grid { grid-template-columns: repeat(2, 1fr); }
-      .footer-inner { flex-direction: column; gap: 28px; padding: 32px 16px; }
-      .footer-links { flex-wrap: wrap; gap: 24px; }
-      .section { padding: 28px 16px; }
-      .update-time { display: none; }
-    }
-
-    /* === MACBOOK (RETINA) === */
-    @media (-webkit-min-device-pixel-ratio: 2) and (min-width: 1200px) {
-      .card:hover { box-shadow: 0 8px 30px rgba(232,25,44,0.2); }
-    }
+    @media (min-width: 1440px) { .nav-inner, .hero, .section, .ad-banner { max-width: 1440px; } .cards-grid { grid-template-columns: repeat(6, 1fr); } }
+    @media (min-width: 1024px) and (max-width: 1439px) { .cards-grid { grid-template-columns: repeat(5, 1fr); } }
+    @media (min-width: 768px) and (max-width: 1023px) { .cards-grid { grid-template-columns: repeat(4, 1fr); } .hero-title { font-size: 56px; } .hero-img-placeholder { width: 200px; height: 280px; } }
+    @media (min-width: 600px) and (max-width: 767px) { .nav-links, .nav-right { display: none; } .hamburger { display: block; } .hero { flex-direction: column; padding: 32px 24px; } .hero-image { display: none; } .cards-grid { grid-template-columns: repeat(3, 1fr); } .genre-grid { grid-template-columns: repeat(3, 1fr); } .footer-inner { flex-direction: column; gap: 32px; } .footer-links { flex-wrap: wrap; gap: 24px; } }
+    @media (max-width: 599px) { .nav-links, .nav-right { display: none; } .hamburger { display: block; } .hero { flex-direction: column; padding: 24px 16px; } .hero-image { display: none; } .hero-title { font-size: 42px; } .cards-grid { grid-template-columns: repeat(2, 1fr); } .genre-grid { grid-template-columns: repeat(2, 1fr); } .footer-inner { flex-direction: column; gap: 28px; padding: 32px 16px; } .footer-links { flex-wrap: wrap; gap: 24px; } .section { padding: 28px 16px; } .update-time { display: none; } }
   </style>
 </head>
 <body>
@@ -266,7 +154,6 @@
   </div>
 </nav>
 
-<!-- HERO - Supabase'den en çok okunan -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-content" id="heroContent">
@@ -285,7 +172,6 @@
 
 <div class="ad-banner"><span>Reklam</span></div>
 
-<!-- SON EKLENEN BÖLÜMLER -->
 <section class="section">
   <div class="section-header">
     <h2>🆕 Son Eklenen Bölümler</h2>
@@ -296,7 +182,6 @@
   </div>
 </section>
 
-<!-- POPÜLER MANGALAR -->
 <section class="section">
   <div class="section-header">
     <h2>🔥 Popüler</h2>
@@ -309,7 +194,6 @@
 
 <div class="ad-banner"><span>Reklam</span></div>
 
-<!-- TÜR FİLTRE -->
 <section class="section">
   <div class="section-header"><h2>🎭 Türe Göre Keşfet</h2></div>
   <div class="genre-grid">
@@ -324,7 +208,6 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-logo">
@@ -356,7 +239,6 @@
       <div class="footer-col">
         <h4>İletişim</h4>
         <div class="footer-contact">
-          <span>📞 0530 101 36 18</span>
           <span>✉️ akatoon003@gmail.com</span>
         </div>
       </div>
@@ -367,33 +249,21 @@
   </div>
 </footer>
 
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
 <script>
 const SUPABASE_URL = 'https://wxfmatafacdjhiurowut.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4Zm1hdGFmYWNkamhpdXJvd3V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzc0NzgsImV4cCI6MjA5NzcxMzQ3OH0.3uLH8fQ-FrCJ-gdPNEY5Zi56F8fBuVUCdVTrEK7zoZE';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// AUTH
 async function initAuth() {
   const { data: { user } } = await sb.auth.getUser();
   const navAuth = document.getElementById('navAuth');
   const mobileAuth = document.getElementById('mobileAuth');
-
   if (user) {
     const initial = (user.user_metadata?.username || user.email)[0].toUpperCase();
     const avatarUrl = user.user_metadata?.avatar_url || '';
-    navAuth.innerHTML = `
-      <div class="user-avatar" onclick="toggleUserMenu()" id="userAvatar">
-        ${avatarUrl ? '<img src="'+avatarUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />' : initial}
-        <div class="user-dropdown" id="userDropdown">
-          <a href="profil.html">👤 Profilim</a>
-          <a href="ayarlar.html">⚙️ Ayarlar</a>
-          <a href="istek.html">❤️ İstek Listem</a>
-          <a href="manga-istekleri.html">📋 Manga İstekleri</a>
-          <a href="duyurular.html">📢 Duyurular</a>
-          <div class="divider"></div>
-          <button class="logout" onclick="cikisYap()">🚪 Çıkış Yap</button>
-        </div>
-      </div>`;
+    navAuth.innerHTML = `<div class="user-avatar" onclick="toggleUserMenu()" id="userAvatar">${avatarUrl ? '<img src="'+avatarUrl+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />' : initial}<div class="user-dropdown" id="userDropdown"><a href="profil.html">👤 Profilim</a><a href="ayarlar.html">⚙️ Ayarlar</a><a href="istek.html">❤️ İstek Listem</a><a href="manga-istekleri.html">📋 Manga İstekleri</a><a href="duyurular.html">📢 Duyurular</a><div class="divider"></div><button class="logout" onclick="cikisYap()">🚪 Çıkış Yap</button></div></div>`;
     mobileAuth.innerHTML = `<a href="profil.html">👤 Profilim</a><a href="ayarlar.html">⚙️ Ayarlar</a><a onclick="cikisYap()" style="color:var(--red);cursor:pointer">Çıkış Yap</a>`;
   } else {
     navAuth.innerHTML = `<a href="giris.html" class="btn-login">Giriş Yap</a>`;
@@ -401,120 +271,45 @@ async function initAuth() {
   }
 }
 
-function toggleUserMenu() {
-  document.getElementById('userDropdown').classList.toggle('open');
-}
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#userAvatar')) {
-    document.getElementById('userDropdown')?.classList.remove('open');
-  }
-});
+function toggleUserMenu() { document.getElementById('userDropdown').classList.toggle('open'); }
+document.addEventListener('click', (e) => { if (!e.target.closest('#userAvatar')) document.getElementById('userDropdown')?.classList.remove('open'); });
+async function cikisYap() { await sb.auth.signOut(); window.location.reload(); }
 
-async function cikisYap() {
-  await sb.auth.signOut();
-  window.location.reload();
-}
-
-// HERO - en çok okunan manga
 async function loadHero() {
   const { data } = await sb.from('manga').select('*').order('puan', { ascending: false }).limit(1);
   if (!data || data.length === 0) return;
   const m = data[0];
-
   const { data: bolumler } = await sb.from('bolumler').select('bolum_no').eq('manga_id', m.id).order('bolum_no', { ascending: false }).limit(1);
   const sonBolum = bolumler?.[0]?.bolum_no || '-';
-
   document.getElementById('heroTitle').textContent = m.baslik;
   document.getElementById('heroDesc').textContent = m.aciklama || 'Türkiye\'nin en kaliteli manga platformunda oku.';
-  document.getElementById('heroMeta').innerHTML = `
-    ${m.kategori ? m.kategori.split(',').map(k => `<span class="tag">${k.trim()}</span>`).join('') : ''}
-    <span class="hero-chapter" style="color:var(--gold);font-size:12px;font-weight:600">Bölüm ${sonBolum} – Güncel</span>`;
-  document.getElementById('heroBtns').innerHTML = `
-    <a href="oku.html?manga=${m.id}&bolum=1" class="btn-primary">Okumaya Başla</a>
-    <a href="detay.html?manga=${m.id}" class="btn-secondary">Detaylar</a>`;
-
-  if (m.kapak_url) {
-    document.getElementById('heroImg').innerHTML = `<img src="${m.kapak_url}" style="width:100%;height:100%;object-fit:cover;border-radius:12px" />`;
-  } else {
-    document.getElementById('heroImg').textContent = m.baslik.substring(0,3).toUpperCase();
-  }
+  document.getElementById('heroMeta').innerHTML = `${m.kategori ? m.kategori.split(',').map(k => `<span class="tag">${k.trim()}</span>`).join('') : ''}<span class="hero-chapter">Bölüm ${sonBolum} – Güncel</span>`;
+  document.getElementById('heroBtns').innerHTML = `<a href="oku.html?manga=${m.id}&bolum=1" class="btn-primary">Okumaya Başla</a><a href="detay.html?manga=${m.id}" class="btn-secondary">Detaylar</a>`;
+  if (m.kapak_url) document.getElementById('heroImg').innerHTML = `<img src="${m.kapak_url}" style="width:100%;height:100%;object-fit:cover;border-radius:12px" />`;
+  else document.getElementById('heroImg').textContent = m.baslik.substring(0,3).toUpperCase();
 }
 
-// SON EKLENEN BÖLÜMLER
 async function loadSonEklenenler() {
-  const { data } = await sb.from('bolumler')
-    .select('*, manga(baslik, kapak_url, tur)')
-    .order('created_at', { ascending: false })
-    .limit(8);
-
+  const { data } = await sb.from('bolumler').select('*, manga(baslik, kapak_url, tur)').eq('gizli', false).order('created_at', { ascending: false }).limit(8);
   const el = document.getElementById('sonEklenenler');
-  if (!data || data.length === 0) {
-    el.innerHTML = '<div class="empty-state">Henüz bölüm eklenmedi. Yakında içerikler gelecek! 🎌</div>';
-    return;
-  }
-
-  el.innerHTML = data.map(b => {
-    const zaman = timeAgo(b.created_at);
-    const initial = b.manga?.baslik?.substring(0,3).toUpperCase() || '?';
-    return `
-      <div class="update-item" onclick="window.location='oku.html?manga=${b.manga_id}&bolum=${b.bolum_no}'">
-        <div class="update-cover" style="background:linear-gradient(135deg,#1a1a2e,#e8192c44)">
-          ${b.manga?.kapak_url ? `<img src="${b.manga.kapak_url}" style="width:100%;height:100%;object-fit:cover;border-radius:6px" />` : initial}
-        </div>
-        <div class="update-info">
-          <span class="update-title">${b.manga?.baslik || 'Bilinmiyor'}</span>
-          <span class="update-chapter">Bölüm ${b.bolum_no}${b.baslik ? ' – ' + b.baslik : ''}</span>
-        </div>
-        <span class="update-time">${zaman}</span>
-      </div>`;
-  }).join('');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="empty-state">Henüz bölüm eklenmedi. Yakında içerikler gelecek! 🎌</div>'; return; }
+  el.innerHTML = data.map(b => `<div class="update-item" onclick="window.location='oku.html?manga=${b.manga_id}&bolum=${b.bolum_no}'"><div class="update-cover" style="background:linear-gradient(135deg,#1a1a2e,#e8192c44)">${b.manga?.kapak_url ? `<img src="${b.manga.kapak_url}" style="width:100%;height:100%;object-fit:cover" />` : (b.manga?.baslik?.substring(0,3).toUpperCase()||'?')}</div><div class="update-info"><span class="update-title">${b.manga?.baslik||'?'}</span><span class="update-chapter">Bölüm ${b.bolum_no}${b.baslik?' – '+b.baslik:''}</span></div><span class="update-time">${timeAgo(b.created_at)}</span></div>`).join('');
 }
 
-// POPÜLER MANGALAR
 async function loadPopuler() {
-  const { data } = await sb.from('manga').select('*, bolumler(count)').order('puan', { ascending: false }).limit(6);
+  const { data } = await sb.from('manga').select('*').order('puan', { ascending: false }).limit(6);
   const el = document.getElementById('populerMangalar');
-
-  if (!data || data.length === 0) {
-    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Henüz manga eklenmedi. Admin panelinden manga ekleyebilirsin! 🚀</div>';
-    return;
-  }
-
-  el.innerHTML = data.map(m => `
-    <div class="card" onclick="window.location='detay.html?manga=${m.id}'">
-      <div class="card-cover">
-        ${m.kapak_url ? `<img src="${m.kapak_url}" />` : `<span>${m.baslik.substring(0,3).toUpperCase()}</span>`}
-        ${m.tur === 'webtoon' ? '<div class="card-badge">WEBTOON</div>' : ''}
-      </div>
-      <div class="card-info">
-        <h3>${m.baslik}</h3>
-        <div class="card-meta">
-          ${m.kategori ? `<span class="genre-tag">${m.kategori.split(',')[0].trim()}</span>` : ''}
-        </div>
-        ${m.puan ? `<div class="card-rating">⭐ ${m.puan}</div>` : ''}
-      </div>
-    </div>`).join('');
+  if (!data || data.length === 0) { el.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Henüz manga eklenmedi. 🚀</div>'; return; }
+  el.innerHTML = data.map(m => `<div class="card" onclick="window.location='detay.html?manga=${m.id}'"><div class="card-cover">${m.kapak_url ? `<img src="${m.kapak_url}" />` : `<span>${m.baslik.substring(0,3).toUpperCase()}</span>`}${m.tur==='webtoon'?'<div class="card-badge">WEBTOON</div>':''}</div><div class="card-info"><h3>${m.baslik}</h3><div class="card-meta">${m.kategori?`<span class="genre-tag">${m.kategori.split(',')[0].trim()}</span>`:''}</div>${m.puan?`<div class="card-rating">⭐ ${m.puan}</div>`:''}</div></div>`).join('');
 }
 
-function timeAgo(dateStr) {
-  const diff = (Date.now() - new Date(dateStr)) / 1000;
-  if (diff < 3600) return Math.floor(diff/60) + ' dakika önce';
-  if (diff < 86400) return Math.floor(diff/3600) + ' saat önce';
-  return Math.floor(diff/86400) + ' gün önce';
-}
+function timeAgo(d) { const s=(Date.now()-new Date(d))/1000; if(s<3600)return Math.floor(s/60)+' dakika önce'; if(s<86400)return Math.floor(s/3600)+' saat önce'; return Math.floor(s/86400)+' gün önce'; }
+function toggleSearch() { document.getElementById('searchBar').classList.toggle('open'); }
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function doSearch() { const q=document.getElementById('searchInput').value.trim(); if(q)window.location=`arama.html?q=${encodeURIComponent(q)}`; }
 
-function toggleSearch() {
-  document.getElementById('searchBar').classList.toggle('open');
-}
-function toggleMenu() {
-  document.getElementById('mobileMenu').classList.toggle('open');
-}
-function doSearch() {
-  const q = document.getElementById('searchInput').value.trim();
-  if (q) window.location = `arama.html?q=${encodeURIComponent(q)}`;
-}
+window.addEventListener('scroll', () => { document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 300); });
 
-// BAŞLAT
 initAuth();
 loadHero();
 loadSonEklenenler();
